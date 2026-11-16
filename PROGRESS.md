@@ -66,6 +66,7 @@
 - MISSED: resume twice vs fork. Picked generic context-rot answer. Correct: 2nd resume sees 1st exploration → not independent → fork_session. Meta-pattern: answer the question's key word with the tool's mechanism; reject true-but-generic answers.
 - MISSED: repeated tool call. History kept only text blocks → Claude never saw tool_use/tool_result → repeats. Passed teach-back but missed under exam wording. On misconceptions page.
 - MISSED: run tests → Bash. Avoided Bash because "dangerous". Only Bash executes; guard it with hooks. Bash wrong only when Read/Glob/Grep fit.
+- Grep across split lines: right but nearly fell for a distractor. Still Grep; multiline pattern or shorter fragment then Read.
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.

@@ -520,7 +520,24 @@ assistant: "config.py sets the port to 8080..."</pre></div>
       "<b>Your instinct</b> “danger word → avoid” is a shortcut. Check what the task needs first."],
  ok:"Your second thought was right: Grep, Glob and Read cannot run anything.",
  trap:"Read the test file, or Grep for “FAIL”. Neither runs the suite, so there is no stack trace.",
- retry:["Which built-in tool can run a command?","When is Bash the WRONG choice?","How do you make Bash safe?"]}
+ retry:["Which built-in tool can run a command?","When is Bash the WRONG choice?","How do you make Bash safe?"]},
+{n:"Grep across split lines (nearly missed)",
+ you:"Got it right, but could have fallen for another option.",
+ wrong:"Low confidence: what to do when a phrase is split over two lines.",
+ rule:'Still Grep. Make the pattern span lines (multiline), or search a shorter piece.',
+ pic:`<div class="b"><span class="sec">The code</span><pre class="code">throw new Error("insufficient " +
+                "permissions for user " + id);</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">Grep "insufficient permissions"</span><small>One-line search. The two words are on different lines, so no match.</small></div>
+<div class="b g"><span class="big">Grep, multiline on</span><small>Pattern like <code>insufficient\s*"\s*\+\s*"\s*permissions</code> can cross the line break.</small></div>
+<div class="b g"><span class="big">Or: Grep "insufficient"</span><small>Shorter piece finds every candidate. Then Read the hits to confirm.</small></div>
+</div>`,
+ gap:["<b>The tool does not change:</b> searching file CONTENTS is always Grep.",
+      "<b>The pattern changes:</b> allow the match to cross lines, or search a fragment that sits on one line.",
+      "<b>Wrong turns:</b> Glob (names only), Read every file (wastes context), Bash grep (a dedicated tool fits)."],
+ ok:"You picked the right answer. Same Grep → Read order you already passed.",
+ trap:"“Read every file in the repo” or “Glob for error files”. Neither searches split-line content well.",
+ retry:["Which tool searches file contents?","Why does the one-line pattern miss?","Name 2 ways to catch the split case."]}
 ];
 
 let i=0;
