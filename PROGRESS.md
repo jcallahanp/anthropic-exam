@@ -60,6 +60,7 @@
 
 ## Low-confidence quiz items (right but guessed)
 - Hook matcher for MCP tools: mcp__billing__(a|b|c) regex, not mcp__billing__.* (on misconceptions page)
+- Subagents vs agent teams: memorized, not understood (quiz-1 Q1 topic; appears on practice exams, so not low priority). On misconceptions page.
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.

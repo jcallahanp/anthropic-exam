@@ -397,7 +397,24 @@ mcp__billing__get_invoice           ← read-only</pre></div>
       "<b>Why a hook at all:</b> “must always verify identity before money moves” = Pattern 1, a mechanism."],
  ok:"You picked the right answer. Now know WHY: exact list in a group, full prefix, no wildcard.",
  trap:"<code>mcp__billing__.*</code>. It looks clean, but it also gates the read-only tools.",
- retry:["How is an MCP tool named?","Write the matcher for the 3 money tools.","Why is mcp__billing__.* wrong here?"]}
+ retry:["How is an MCP tool named?","Write the matcher for the 3 money tools.","Why is mcp__billing__.* wrong here?"]},
+{n:"Subagents vs agent teams (memorized, not understood)",
+ you:"I memorized the answer, but I don't fully understand it.",
+ wrong:"Memorized: agent teams. Missing: WHY.",
+ rule:'Subagent = a one-shot ERRAND. Agent team = COWORKERS who talk.',
+ pic:`<div class="cols">
+<div class="b a"><span class="big">Subagents</span><small>Main agent sends one task. The subagent works alone. It returns ONE final summary. Then it is gone. Subagents never talk to each other.</small></div>
+<div class="b g"><span class="big">Agent team</span><small>Several full Claude Code sessions. A shared task list. They MESSAGE EACH OTHER directly. They keep working over a long session.</small></div>
+</div>
+<div class="flow"><div class="b">Coordinator</div><span class="ar">→ task →</span><div class="b">Subagent</div><span class="ar">→ summary →</span><div class="b">Coordinator</div></div>
+<div class="flow"><div class="b g">Teammate A</div><span class="ar">⇄</span><div class="b g">Teammate B</div><span class="ar">⇄</span><div class="b g">Teammate C</div><div class="b a">shared task list</div></div>`,
+ gap:["<b>Trigger words for agent teams:</b> “message each other directly”, “shared tasks”, “extended / long session”, “coordinate”.",
+      "<b>Trigger words for subagents:</b> “one-shot”, “return a summary”, “isolate context”, “parallel research”.",
+      "<b>Why subagents fail here:</b> they cannot talk to each other. Only the parent sees their results.",
+      "<b>Analogy:</b> subagent = a courier you send on one errand. Team = coworkers on a shared project board."],
+ ok:"Right answer. Now you know the line: one-shot + summary = subagent; talk + shared tasks + long = team.",
+ trap:"“Use more subagents with a better coordinator prompt.” WRONG when they must talk to each other.",
+ retry:["What can teammates do that subagents cannot?","Name 2 trigger words for each.","Give the courier vs coworkers analogy."]}
 ];
 
 let i=0;
