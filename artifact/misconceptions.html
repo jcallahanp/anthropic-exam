@@ -88,7 +88,7 @@ const M=[
  gap:["<b>Claude cannot run tools.</b> It only asks. Your code runs the tool.",
       "<b>The loop is for tool calls,</b> not for failures.",
       "<b>Your code sends the full history</b> each time. That is how Claude knows 3 of 10 are done."],
- ok:"Right: the API keeps no memory between calls.",
+ ok:"Right: the API keeps no memory between calls. SAME SLIP AGAIN in the tool_result teach-back: “Claude just uses the tool.” No: Claude asks, your code runs it.",
  trap:"Stop when Claude's text says “done”. WRONG. Stop when <code>stop_reason == \"end_turn\"</code>.",
  retry:["Who runs the tool?","What does your code send back?","Which stop_reason ends the loop?"]}
 ];

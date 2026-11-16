@@ -21,6 +21,7 @@
 (add: pattern/tool | pass/retry | what was missing)
 
 - stop_reason | retry (on misconceptions page) | Thought the loop retries failures. Missing: Claude cannot run tools; your code runs the tool, appends tool_result, resends full history; loop until end_turn. Got right: API holds no memory between calls.
+- tool_use → tool_result | pass | Causal why correct (no append → Claude never sees it → repeats call). Slip repeated: said "Claude uses the tool". Added note to stop_reason entry.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
