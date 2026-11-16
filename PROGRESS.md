@@ -84,6 +84,7 @@
 - D1 = 5: 1.1 loop 2 · 1.3, 1.5, 1.7 one each
 - D4 = 2: 4.3, 4.5 | D5 = 0 (untested in teach-backs; Patterns deck covers it)
 - Vendor-contract end<start question: right (4.4).
+- detected_pattern granularity: context guess, right (4.4, named in guide). Specific construct → dismissal analysis per rule.
 
 ## Scope check: Cert Safari questions vs official guide (v0.2 text)
 Explicitly out of scope: NONE of the pasted questions.
