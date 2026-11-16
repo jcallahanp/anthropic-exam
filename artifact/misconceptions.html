@@ -738,7 +738,30 @@ doc-0042_fr (twice)  ✗  must be unique in the batch
       "<b>Make it meaningful:</b> encode what you need, for example doc ID + target language."],
  ok:"Right answer, and your common sense was the right reasoning: a short, unique, plain label.",
  trap:"Relying on result ORDER instead of custom_id, or reusing the same ID for two requests.",
- retry:["Why does a batch need custom_id?","Give 2 rules for a valid custom_id.","Is “doc 42/fr” valid?"]}
+ retry:["Why does a batch need custom_id?","Give 2 rules for a valid custom_id.","Is “doc 42/fr” valid?"]},
+{n:"XML tags to separate examples from the real request (new topic, missed)",
+ you:"I don't think we covered this.",
+ wrong:"New topic: how to keep examples from being read as the real request.",
+ rule:'Mixed-up parts <span class="arrow">→</span> wrap each part in its own XML tag.',
+ pic:`<div class="cols">
+<div class="b r"><span class="big">One blob</span><small>Background… format rules… Example: “Translate ‘Good morning’.” Answer: “Buenos días.” … Translate this contract clause…<br><br>Where does the example end and the real request start? Claude guesses.</small></div>
+<div class="b g"><span class="big">Tagged</span><pre class="code">&lt;context&gt;…background…&lt;/context&gt;
+&lt;instructions&gt;…format rules…&lt;/instructions&gt;
+&lt;examples&gt;
+  &lt;example&gt;
+    &lt;input&gt;Good morning&lt;/input&gt;
+    &lt;output&gt;Buenos días&lt;/output&gt;
+  &lt;/example&gt;
+&lt;/examples&gt;
+&lt;request&gt;…the REAL clause…&lt;/request&gt;</pre></div>
+</div>`,
+ gap:["<b>XML tags mark boundaries.</b> Claude knows exactly what is an example and what is the live request.",
+      "<b>Tag names are yours to choose.</b> Use clear names (examples, request) and use them the same way every time.",
+      "<b>You can refer to tags in instructions:</b> “Answer only the text in &lt;request&gt;.”",
+      "<b>Lightest fix at the cause (Pattern 2):</b> the cause is unclear boundaries, so mark the boundaries."],
+ ok:"New topic, not a repeat. Few-shot examples stay; they just get fenced off.",
+ trap:"“Remove the examples” (loses consistency) or “tell Claude to ignore examples” (still unclear where they end) or “a bigger model”.",
+ retry:["What causes the literal answer to sample data?","What is the fix?","Write the tag that holds the real request."]}
 ];
 
 let i=0;
