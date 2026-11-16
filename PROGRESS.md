@@ -6,4 +6,4 @@
 - MAIN PAGE: `artifact/cram-station.html` (Plan, Weak spots, 9 rules, 62 cards, 66 MCQs, mastery in localStorage). Published privately.
 - Older pages: `artifact/blind-spots.html`, `artifact/d1-d2-field-guide.html`.
 - Anki deck: `anki/cards.tsv` → `anki/deck.apkg` + `anki/paste.txt` via `python3 anki/build.py`.
-- In progress: independent grading of the cram bank against the guide.
+- Cram bank graded by independent agent vs guide v0.2: 137 items, 1 fix applied (q22 trap note). Note: guide says skill allowed-tools "restricts"; current docs say "pre-approves". Exam keys to the guide.
