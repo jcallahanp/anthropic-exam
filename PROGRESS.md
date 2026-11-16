@@ -2,7 +2,8 @@
 
 ## Published pages (update with Artifact `url` = link below; source file = path)
 - LEARN (start here): `artifact/patterns.html` → https://claude.ai/artifact/Q2qBxYYfjwEr9hD6gHkVjx
-- MISCONCEPTIONS (round 2): `artifact/misconceptions.html` → https://claude.ai/artifact/MvD3BKyQ82zYiy9PPxzwn6
+- SPEED RUN (fast lookup during practice tests, one tab per domain): `artifact/speedrun.html` → https://claude.ai/artifact/6JeTiUPbvF9MZYwVzRgw6p
+- MISCONCEPTIONS (round 2, thorough backup): `artifact/misconceptions.html` → https://claude.ai/artifact/MvD3BKyQ82zYiy9PPxzwn6
 - DRILL: `artifact/cram-station.html` → https://claude.ai/artifact/MfxEtU3WyoXCDkA46HrfZt
 - Older: `artifact/blind-spots.html` → https://claude.ai/artifact/ViK8SiURGoiFjWSi3Y9oEa ; `artifact/d1-d2-field-guide.html` → https://claude.ai/artifact/3keyF35TbDuZWYHgRxQq3S
 - Anki: `anki/cards.tsv` → `anki/deck.apkg` + `anki/paste.txt` via `python3 anki/build.py` (needs `pip install genanki`).

@@ -1,0 +1,335 @@
+<title>Exam Speed Run</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky domain tabs + search; a grid of scan-fast cards (rule, picture, cue words, trap, one tap-to-reveal drill). */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#141b26; --muted:#4f5a6b; --line:#cfd6e0;
+  --accent:#0d6c78; --accent-soft:#dcf0f2; --good:#17773a; --good-soft:#e1f3e7; --bad:#b3332a; --bad-soft:#fbe3e0; --warn:#8a5a00; --warn-soft:#fbefd6;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#14301f; --bad:#f2857a; --bad-soft:#3a1e1b; --warn:#f0c25a; --warn-soft:#3a2e12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#14301f; --bad:#f2857a; --bad-soft:#3a1e1b; --warn:#f0c25a; --warn-soft:#3a2e12; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:19px/1.45 var(--body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+p{margin:0}
+code{font-family:var(--mono);font-size:.85em;background:var(--accent-soft);padding:0 5px;border-radius:5px;overflow-wrap:anywhere}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:2px solid var(--line)}
+.topin{max-width:1180px;margin:0 auto;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.tab{flex:0 0 auto;font:700 .95rem var(--display);padding:9px 14px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:flex;gap:8px;align-items:center}
+.tab .n{font:700 .75rem var(--body);background:var(--bad);color:var(--bg);border-radius:99px;padding:1px 7px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab:focus-visible,.search:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.search{font:400 1rem var(--body);padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding-block:16px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.moves{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.move{background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:.95rem}
+.move b{font-family:var(--display)}
+.dh{font:700 clamp(1.3rem,3.6vw,1.8rem)/1.15 var(--display);margin:0;text-wrap:balance}
+.dh small{display:block;font:400 .95rem var(--body);color:var(--muted);margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr));gap:14px;align-items:start}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card.hot{border-color:var(--bad)}
+.ct{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.ct h3{font:700 1.2rem/1.2 var(--display);margin:0}
+.tag{font:700 .72rem var(--body);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:var(--line);color:var(--ink);white-space:nowrap}
+.tag.miss{background:var(--bad);color:var(--bg)}
+.tag.ps{background:var(--warn-soft);color:var(--warn)}
+.rule{font:700 1.12rem/1.3 var(--display);color:var(--accent)}
+.vis{border-radius:12px;background:var(--bg);padding:12px;overflow-x:auto;display:flex;flex-direction:column;gap:8px}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.b{min-width:0;overflow-wrap:anywhere;border:2px solid var(--line);border-radius:10px;padding:6px 10px;font:700 .9rem var(--display);background:var(--surface);text-align:center}
+.b small{display:block;font:400 .78rem var(--body);color:var(--muted)}
+.b.g{border-color:var(--good);background:var(--good-soft)}
+.b.r{border-color:var(--bad);background:var(--bad-soft)}
+.b.a{border-color:var(--accent);background:var(--accent-soft)}
+.ar{font:700 1.2rem var(--display);color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.two>.b{display:flex;flex-direction:column;justify-content:center}
+pre.code{font:500 .8rem/1.5 var(--mono);margin:0;white-space:pre;overflow-x:auto}
+table.t{border-collapse:collapse;font-size:.88rem;width:100%}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+table.t th{font:700 .78rem var(--body);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.y{color:var(--good);font-weight:700}.n{color:var(--bad);font-weight:700}
+.cues{display:flex;flex-wrap:wrap;gap:6px}
+.cue{font-size:.85rem;background:var(--accent-soft);border-radius:8px;padding:2px 8px}
+.trap{font-size:.92rem;background:var(--bad-soft);border-radius:10px;padding:8px 10px}
+.trap b{color:var(--bad)}
+details{border:2px dashed var(--accent);border-radius:12px;padding:8px 10px}
+summary{cursor:pointer;font-weight:700;font-size:.95rem}
+details p{margin-top:6px;color:var(--good);font-weight:700}
+.tree{font:500 .82rem/1.65 var(--mono);white-space:pre;margin:0;overflow-x:auto}
+.tree .me{color:var(--warn);font-weight:700}.tree .team{color:var(--good);font-weight:700}.tree .when{color:var(--accent);font-weight:700}.tree .dim{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.85rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+.empty{color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}
+</style>
+
+<header class="top"><div class="topin">
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <input class="search" id="q" type="search" placeholder="Search a word from the question (glob, resume, schema, hook…)" aria-label="Search all cards">
+</div></header>
+<main class="wrap" id="main"></main>
+
+<script>
+/* d: domain · t: title · tag: miss | guess | ps (practice-site only) · r: rule · v: picture html · c: cue words · x: trap · a: [drill, answer] · wide: full row */
+const DOM=[
+ {id:"d3",n:"D3 Claude Code config",w:"20%",note:"Your biggest gap: 14 misses. Globs alone cost 3."},
+ {id:"d1",n:"D1 Agentic architecture",w:"27%",note:"Heaviest domain. Loop, subagents, hooks, sessions."},
+ {id:"d2",n:"D2 Tools + MCP",w:"18%",note:"Which built-in tool, descriptions, MCP config."},
+ {id:"d4",n:"D4 Prompts + output",w:"20%",note:"Criteria, schemas, retries, batches."},
+ {id:"d5",n:"D5 Context + reliability",w:"15%",note:"Strongest. 0 misses. Skim."}];
+const C=[
+/* ---------- D3 ---------- */
+{d:"d3",wide:1,tag:"miss",t:"WHERE EACH FILE LIVES, WHO GETS IT, WHEN IT LOADS",
+ r:"Home folder (~) = only you. Repo = the team + CI. paths: = only for matching files.",
+ v:`<div class="legend"><span><i class="dot" style="background:var(--warn)"></i>only you (not in git)</span><span><i class="dot" style="background:var(--good)"></i>whole team + CI (committed)</span><span><i class="dot" style="background:var(--accent)"></i>when it loads</span></div>
+<pre class="tree"><span class="me">~/.claude/CLAUDE.md</span>              <span class="dim">you · EVERY project on your machine</span>         <span class="when">session start</span>
+<span class="me">~/.claude/commands/x.md</span>          <span class="dim">your personal /x</span>                              <span class="when">when you type /x</span>
+<span class="me">~/.claude.json</span>                   <span class="dim">your personal MCP servers</span>                     <span class="when">session start</span>
+
+repo/
+├─ <span class="team">CLAUDE.md</span>                     <span class="dim">team rules for the whole project</span>              <span class="when">session start</span>
+│    @docs/style.md               <span class="dim">@import: pulls the file IN</span>                    <span class="when">session start (with it)</span>
+├─ <span class="team">.mcp.json</span>                     <span class="dim">team MCP servers, "\${GITHUB_TOKEN}" only</span>      <span class="when">session start</span>
+├─ packages/api/
+│  └─ <span class="team">CLAUDE.md</span>                  <span class="dim">rules for ONE folder</span>                          <span class="when">when Claude works in packages/api/</span>
+└─ .claude/
+   ├─ rules/
+   │  ├─ <span class="team">testing.md</span>              <span class="dim">paths: ["**/*.test.ts"]</span>                       <span class="when">only when a matching file is touched</span>
+   │  └─ <span class="team">terraform.md</span>            <span class="dim">paths: ["terraform/**/*"]</span>                     <span class="when">only when a matching file is touched</span>
+   ├─ commands/<span class="team">review.md</span>         <span class="dim">team slash command /review</span>                    <span class="when">when someone types /review</span>
+   └─ skills/audit/<span class="team">SKILL.md</span>      <span class="dim">a skill (frontmatter: context, allowed-tools)</span> <span class="when">when called or picked</span></pre>`,
+ c:["teammate","CI","personal","never committed","only when","shared"],
+ x:"Team rules in ~/.claude/CLAUDE.md. Teammates and CI never see the home folder.",
+ a:["Your teammate's Claude ignores the team's test rules. Where are the rules probably sitting, and what is the fix?","In YOUR ~/.claude/CLAUDE.md. Move them to ./CLAUDE.md and commit. (/memory shows which files loaded.)"]},
+{d:"d3",tag:"miss",t:"Which file? Folder vs file type",
+ r:"ONE folder → CLAUDE.md in that folder. A FILE TYPE spread everywhere → glob rule.",
+ v:`<div class="two"><div class="b g">One folder<small>“only when working in packages/api”<br>→ packages/api/CLAUDE.md</small></div><div class="b a">Scattered type<small>“*.test.ts across src/, lib/, e2e/”<br>→ .claude/rules/testing.md + paths</small></div></div>
+<div class="two"><div class="b r">Root CLAUDE.md<small>loads for everything, always</small></div><div class="b r">A skill<small>needs a call, not automatic</small></div></div>`,
+ c:["scattered across","automatically","without duplicating","only when working in"],
+ x:"A CLAUDE.md in each of 40 test folders (duplication), or a skill (not automatic).",
+ a:["Migration conventions must load whenever Claude edits any file under db/migrations/, and nowhere else. Folder file or glob rule?","Either works, but it is ONE folder: db/migrations/CLAUDE.md is the simple fit. (Glob rule db/migrations/**/* also matches.)"]},
+{d:"d3",tag:"miss",t:"Glob decoder: * vs **",
+ r:"* = one name, stops at /. ** = any folders, any depth.",
+ v:`<table class="t"><tr><th>file</th><th>terraform/*</th><th>terraform/**/*</th><th>**/*.tf</th></tr>
+<tr><td>terraform/main.tf</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+<tr><td>terraform/prod/vpc/main.tf</td><td class="n">✗</td><td class="y">✓</td><td class="y">✓</td></tr>
+<tr><td>modules/old.tf</td><td class="n">✗</td><td class="n">✗</td><td class="y">✓</td></tr></table>
+<div class="two"><div class="b a">Under folder X, any depth<small><code>X/**/*</code></small></div><div class="b a">Type Y, anywhere<small><code>**/*.Y</code></small></div></div>`,
+ c:["any subfolder depth","under the … directory","matching *.x"],
+ x:"terraform/* (top level only) or **/*.tf (every .tf in the repo).",
+ a:["Write the glob: every .sql file anywhere in the repo.","**/*.sql"]},
+{d:"d3",tag:"miss",t:"Frontmatter + @import vs paths:",
+ r:"Frontmatter = the settings block between --- lines. @import loads at start. paths: loads on match.",
+ v:`<pre class="code">---                       ← frontmatter starts
+paths: ["src/graphql/**"]  ← key: value
+---                       ← frontmatter ends
+Resolvers must batch with DataLoader.   ← rule text</pre>
+<div class="two"><div class="b r">@import<small>splits the file, still ALL loads at start. No context saved.</small></div><div class="b g">rules/ + paths:<small>loads only when a matching file is touched. Context drops.</small></div></div>`,
+ c:["300 lines","context climbing","relevant only to one part","path-specific"],
+ x:"“Split CLAUDE.md with @imports” to cut session-start context. Tidier, same load.",
+ a:["CLAUDE.md is 300 lines of GraphQL, migration and CSS rules. Start-up context is high. Fix?","Move each topic to .claude/rules/<topic>.md with a paths: glob."]},
+{d:"d3",tag:"miss",t:"Skill frontmatter keys",
+ r:"context: fork = run isolated, return summary. allowed-tools = limit tools. argument-hint = prompt for input.",
+ v:`<pre class="code">---
+name: dep-audit
+context: fork            ← noisy work stays in a subagent
+allowed-tools: Read, Grep  ← config, not a prompt (Pattern 1)
+argument-hint: &lt;package&gt;  ← tells the user what to pass
+---</pre>
+<div class="flow"><div class="b">/dep-audit</div><span class="ar">→</span><div class="b">fork reads 200 files</div><span class="ar">→</span><div class="b g">main gets the summary only</div></div>`,
+ c:["floods the main context","must never run","people forget the argument"],
+ x:"context: fork as a chat you steer. It is not interactive; it runs and returns.",
+ a:["A skill's long output clutters the main session. Which key?","context: fork"]},
+{d:"d3",tag:"miss",t:"CI: -p, JSON, schema",
+ r:"No -p = interactive, waits → CI hangs. -p = run once, print, exit. Schema = fixed keys.",
+ v:`<div class="two"><div class="b r">claude "review"<small>waits for typing → hangs</small></div><div class="b g">claude -p "review"<small>prints answer, exits</small></div></div>
+<pre class="code">claude -p "review" --output-format json --json-schema review.json
+→ {"findings":[{"file":"auth.ts","line":42,"severity":"high","issue":"..."}]}
+→ script posts each finding as a PR comment on file + line</pre>`,
+ c:["job hangs","waiting for interactive input","post findings","machine-readable"],
+ x:"Longer timeout, or “don't ask questions” in the prompt. Or regex on prose.",
+ a:["The CI script crashes because the JSON keys change between runs. Fix?","Add --json-schema so every run has the same keys and types."]},
+{d:"d3",tag:"miss",t:"Iterative refinement",
+ r:"Test-driven = write tests FIRST. Interacting issues → one message. Independent → one at a time.",
+ v:`<div class="flow"><div class="b a">Your tests<small>edge cases too</small></div><span class="ar">→</span><div class="b">Claude codes</div><span class="ar">→</span><div class="b">run (Bash)</div><span class="ar">→</span><div class="b g">failures back → loop</div></div>
+<div class="two"><div class="b g">Same critical section / one fix changes the other<small>send TOGETHER</small></div><div class="b a">Unrelated files<small>send ONE AT A TIME</small></div></div>`,
+ c:["test-driven","reduce correction cycles","same critical section","also touches"],
+ x:"Plan mode for a “test-driven” question. Good habit, wrong key word.",
+ a:["Fix A changes the lock that bug B relies on. How do you send them?","Both in one detailed message."]},
+{d:"d3",tag:"guess",t:"Plan mode vs direct · Explore vs Grep",
+ r:"Size the tool to the job.",
+ v:`<table class="t"><tr><th>job</th><th>use</th></tr>
+<tr><td>big change, many files, several valid designs</td><td class="y">plan mode (read-only)</td></tr>
+<tr><td>small clear fix</td><td class="y">just do it</td></tr>
+<tr><td>map a 200-file flow</td><td class="y">Explore subagent → summary</td></tr>
+<tr><td>find 1 function in a small module</td><td class="y">Grep directly</td></tr></table>`,
+ c:["disproportionate","single function","multiple valid approaches"],
+ x:"A subagent “to keep context clean” for a one-line lookup.",
+ a:["Find the one function that sets the tax rate in a 6-file module. Subagent?","No. Grep in the main session, then Read and Edit."]},
+{d:"d3",tag:"ps",t:"Bash permission wildcard",
+ r:"Bash(npm run migrate*) = anything STARTING with that text.",
+ v:`<pre class="code">Bash(npm run migrate*)   → migrate ✓  migrate-cleanup ✓ (oops)
+Bash(npm run migrate)    → exact command only
+Bash(npm run migrate *)  → migrate + arguments, not migrate-cleanup</pre>`,
+ c:["broader match","unexpectedly also executes"],
+ x:"Blaming -p. The pattern is too wide.",
+ a:["Allow only `npm test` with no extras. Rule?","Bash(npm test)"]},
+/* ---------- D1 ---------- */
+{d:"d1",tag:"miss",t:"The agent loop",
+ r:"Claude ASKS for a tool. YOUR code runs it, appends tool_use + tool_result, resends ALL history.",
+ v:`<div class="flow"><div class="b a">your code<small>sends full history</small></div><span class="ar">→</span><div class="b">Claude<small>stop_reason?</small></div></div>
+<div class="two"><div class="b a">tool_use<small>run tool, append result, LOOP</small></div><div class="b g">end_turn<small>STOP</small></div></div>
+<pre class="code">assistant: [text, tool_use id=t1 read_file]   ← keep the WHOLE reply
+user:      [tool_result tool_use_id=t1 ...]  ← then the result</pre>`,
+ c:["same call again","only appends text blocks","loop never ends","stop_reason"],
+ x:"Stop when Claude's TEXT says done. Or “add ‘don't repeat calls’ to the prompt”.",
+ a:["Claude re-reads the same file every turn. History keeps only text blocks. Cause?","tool_use/tool_result never appended, so Claude never saw the read."]},
+{d:"d1",tag:"miss",t:"Subagents + AgentDefinition",
+ r:"\"Task\" in allowedTools. Several Task calls in ONE reply = parallel. Subagents start EMPTY.",
+ v:`<div class="flow"><div class="b a">coordinator<small>allowedTools: ["Task"]</small></div><span class="ar">→</span><div class="b g">1 reply: Task A · B · C</div><span class="ar">→</span><div class="b">3 run at once</div></div>
+<pre class="code">"reviewer-strict": { description, prompt, tools, model: "opus" }
+                       when to pick · role · least privilege · own model</pre>`,
+ c:["never spawns","at the same time","does not know earlier findings","more capable model"],
+ x:"Assuming a subagent remembers the coordinator's context. Pass facts in the prompt.",
+ a:["The coordinator never starts any subagent. First check?","Is \"Task\" in its allowedTools?"]},
+{d:"d1",tag:"miss",t:"Hooks: matcher vs code",
+ r:"Matcher = WHICH TOOL (name). Hook code = WHICH CALL (reads tool_input). Must-always → hook.",
+ v:`<div class="flow"><div class="b">refund_customer call</div><span class="ar">→</span><div class="b a">matcher<small>name only</small></div><span class="ar">→</span><div class="b g">hook code<small>amount &gt; 500 and category = X → deny</small></div></div>
+<div class="two"><div class="b a">PreToolUse<small>before · can deny · reason goes to Claude</small></div><div class="b">PostToolUse<small>after · normalize/trim · cannot block</small></div></div>`,
+ c:["must always","guarantee","inside the arguments","block"],
+ x:"Category inside the matcher regex. Or PostToolUse (refund already done). Or a prompt rule.",
+ a:["Normalize 3 date formats from 3 tools before Claude reads them. Which hook?","PostToolUse."]},
+{d:"d1",tag:"miss",t:"Resume vs fork",
+ r:"Resume continues ONE line. Fork = clean copies from the same point.",
+ v:`<div class="flow"><div class="b">analysis</div><span class="ar">→</span><div class="b">resume: A</div><span class="ar">→</span><div class="b r">resume: B<small>still sees A</small></div></div>
+<div class="flow"><div class="b">analysis</div><span class="ar">→</span><div class="b g">fork A</div><div class="b g">fork B</div></div>`,
+ c:["independent","two approaches","compare","files changed since"],
+ x:"“Context rot” as the concern. True, not the point. The point is independence.",
+ a:["Files changed since the last session. Resume or fresh?","Fresh with a summary of findings, or resume and name the changed files."]},
+{d:"d1",tag:"ps",t:"Subagents vs agent teams",
+ r:"Subagent = one errand, returns a summary. Team = coworkers who message each other.",
+ v:`<div class="two"><div class="b">subagent<small>one-shot · summary · never talk to each other</small></div><div class="b g">agent team<small>message directly · shared task list · long session</small></div></div>`,
+ c:["message each other directly","shared set of tasks","extended session"],
+ x:"More subagents with a smarter coordinator when they must talk.",
+ a:["Agents must message each other over a long session. Pattern?","Agent team."]},
+/* ---------- D2 ---------- */
+{d:"d2",tag:"miss",t:"Pick the built-in tool",
+ r:"RUN → Bash. Search INSIDE → Grep. Find by NAME → Glob. Open → Read. Change → Edit.",
+ v:`<table class="t"><tr><th>need</th><th>tool</th></tr>
+<tr><td>run tests, build, git</td><td class="y">Bash</td></tr>
+<tr><td>every caller of calculateTax(</td><td class="y">Grep</td></tr>
+<tr><td>all **/*.tf files</td><td class="y">Glob</td></tr>
+<tr><td>phrase split over 2 lines</td><td class="y">Grep, multiline (or fragment + Read)</td></tr>
+<tr><td>Edit fails: text not unique</td><td class="y">Read + Write</td></tr></table>`,
+ c:["run the test suite","stack trace","every place","not unique"],
+ x:"Avoiding Bash because it is “dangerous”. Guard it with hooks; it is the only tool that runs things.",
+ a:["Edit keeps failing on `return None`, which appears 3 times. Next move?","Read the file, then Write the whole new version (or add more unique context)."]},
+{d:"d2",tag:"miss",t:"Tool descriptions",
+ r:"Purpose + input format + examples + edge cases + “use X instead when…”.",
+ v:`<div class="two"><div class="b r">“Gets order info.”<small>Claude guesses</small></div><div class="b g">“Find ONE order by ID or email. Input ORD-1234. Not for account data: use get_customer.”</div></div>`,
+ c:["confuses","similar tool","picks Grep instead of","most reliably differentiates"],
+ x:"Fear of naming the other tool. Naming it draws the boundary.",
+ a:["Claude uses Grep instead of your code-search MCP tool. Lightest fix?","Rewrite the MCP tool's description: what it finds, returns, when to prefer it."]},
+{d:"d2",tag:"miss",t:"MCP config + resources",
+ r:".mcp.json = team (committed, ${VAR}). ~/.claude.json = you. Resource = catalog. Tool = action.",
+ v:`<pre class="code">"env": { "GITHUB_TOKEN": "\${GITHUB_TOKEN}" }   ← text only; each machine fills it</pre>
+<div class="two"><div class="b a">resource<small>read-only: schema, doc tree, issue list</small></div><div class="b">tool<small>does something</small></div></div>`,
+ c:["share with the team","keep the secret out of git","exploratory calls","what exists"],
+ x:"Commit the real token. Or paste the catalog into the system prompt.",
+ a:["The agent makes 10 calls just to learn which tables exist. Fix?","Expose the DB schema as an MCP resource."]},
+{d:"d2",tag:"guess",t:"Structured errors + hook matchers",
+ r:"isError + category + isRetryable. Empty result ≠ error. Matcher = regex on mcp__server__tool.",
+ v:`<div class="two"><div class="b">transient<small>retry</small></div><div class="b">validation<small>fix input, retry</small></div><div class="b">business<small>don't retry, explain</small></div><div class="b">permission<small>escalate</small></div></div>
+<pre class="code">mcp__billing__(issue_refund|void_authorization|apply_credit)  ✓ just these
+mcp__billing__.*                                             ✗ also read-only</pre>`,
+ c:["isRetryable","no results","one hook registration"],
+ x:"Treating “found nothing” as a failure.",
+ a:["Gate only 2 tools on server `crm`: delete_contact and merge_contact. Matcher?","mcp__crm__(delete_contact|merge_contact)"]},
+/* ---------- D4 ---------- */
+{d:"d4",tag:"miss",t:"Categorical criteria, not confidence",
+ r:"Say WHAT KIND counts. Not HOW SURE.",
+ v:`<div class="two"><div class="b r">“only issues you are very sure about”<small>“≥ 0.8 confidence” is the same thing</small></div><div class="b g">“report only runtime bugs: null deref, off-by-one, unhandled exception. Not style.”</div></div>`,
+ c:["very sure","high-confidence","be conservative","false positives"],
+ x:"A confidence number dressed up as a rule.",
+ a:["Rewrite “check that comments are accurate” as a categorical rule.","“Flag a comment only when its claimed behavior contradicts what the code does.”"]},
+{d:"d4",tag:"miss",t:"Schemas: shape, not truth",
+ r:"Required + no exit → invented values. Nullable / enum+\"other\" give an honest exit.",
+ v:`<pre class="code">"due_date": { "type": ["string","null"] }       ← null when absent
+"category": { "enum": ["a","b","other"] } + "detail"
+schema/strict = right SHAPE. Values still need checks.</pre>`,
+ c:["invents","fabricates","sometimes absent","new category"],
+ x:"“The schema guarantees correct data.” Only the format.",
+ a:["The model fills a missing invoice date with a made-up one. Fix?","Make the field nullable (and show an absent-date example)."]},
+{d:"d4",tag:"miss",t:"Validation-retry + feedback",
+ r:"Retry fixes FORMAT if the data is there. Missing data → null, not more retries. Send the exact error.",
+ v:`<div class="flow"><div class="b">extract</div><span class="ar">→</span><div class="b a">code checks<small>end ≥ start? total = sum?</small></div><span class="ar">→</span><div class="b g">fail → send exact error back</div></div>
+<div class="two"><div class="b r">detected_pattern: "security"</div><div class="b g">detected_pattern: "regex:hardcoded_key"<small>shows which rule gets dismissed</small></div></div>`,
+ c:["self-correction","dismissal patterns","retry","not in the source"],
+ x:"Retrying when the value is not in the document. Claude starts inventing.",
+ a:["Why record the exact rule that fired, not just “security”?","So dismissal data shows which specific rule is noisy."]},
+{d:"d4",tag:"miss",t:"Batches",
+ r:"50% cheaper, up to 24 h, no mid-task tools, match by custom_id. Only when no one waits.",
+ v:`<div class="flow"><div class="b">request</div><span class="ar">→</span><div class="b">≤ 24 h</div><span class="ar">→</span><div class="b r">tool_use = request ENDS</div></div>
+<pre class="code">custom_id: unique, 1–64 chars, letters digits - _   e.g. doc-0042_fr
+SLA math: 30 h SLA − 24 h window = submit every 6 h</pre>`,
+ c:["overnight","no one waits","blocking","correlate"],
+ x:"Batches for a pre-merge check developers wait on.",
+ a:["Results came back out of order. How do you match them?","By custom_id."]},
+{d:"d4",tag:"ps",t:"XML tags",
+ r:"A labeled box in plain text. Use when parts of a long prompt get mixed up.",
+ v:`<pre class="code">&lt;examples&gt;…&lt;/examples&gt;   &lt;request&gt;the real one&lt;/request&gt;
+&lt;security_criteria&gt;…&lt;/security_criteria&gt;  &lt;style_criteria&gt;…&lt;/style_criteria&gt;</pre>`,
+ c:["treats an example as the request","cross-contamination","one long prompt"],
+ x:"Remove the examples, or one long paragraph with bold headers.",
+ a:["Style rules leak into security findings. Fix?","Put each category's rules in its own XML tag."]},
+/* ---------- D5 ---------- */
+{d:"d5",tag:"guess",t:"Subagent error payload",
+ r:"Failure type · what was attempted · partial results · alternatives.",
+ v:`<pre class="code">{ "failure_type":"timeout", "attempted":"query X",
+  "partial":[...], "alternatives":["try source Y"] }</pre>`,
+ c:["recovery decisions","coordinator"],
+ x:"A bare “failed”, or a full log dump.",
+ a:["Why keep partial results in the error?","So a failure does not erase work that already succeeded."]},
+{d:"d5",tag:"guess",t:"Keep exact facts",
+ r:"/compact and summaries lose numbers, IDs, dates. Keep a case-facts block or scratchpad file.",
+ v:`<div class="flow"><div class="b r">summary<small>“about $400, last month”</small></div><span class="ar">vs</span><div class="b g">case facts<small>$412.50 · ORD-1234 · 2026-03-05</small></div></div>`,
+ c:["long session","amounts drift","compact"],
+ x:"Trusting the summary to keep exact values.",
+ a:["After compaction the agent quotes the wrong refund amount. Fix?","A persistent case-facts block sent every turn."]}
+];
+const MOVES=[["Key word first","Find “independent”, “test-driven”, “automatically”. Pick the answer that explains THAT word."],["Must always → mechanism","Hook, schema, tool_choice, allowed-tools, remove the tool. Never “add it to the prompt”."],["Lightest fix at the cause","Bad pick → better description. Vague → explicit criteria. Mixed parts → XML tags."],["Reject true-but-generic","“Context rot”, “plan first”: true in general, wrong when they skip the key word."]];
+const TAGS={miss:["missed","miss"],guess:["guessed","miss"],ps:["practice-site only","ps"]};
+const $=id=>document.getElementById(id);
+let cur="d3";
+try{const s=localStorage.getItem("cca-speed-tab");if(s&&DOM.some(d=>d.id===s))cur=s}catch(e){}
+const h=location.hash.slice(1);if(DOM.some(d=>d.id===h))cur=h;
+function card(c,showDom){const tg=TAGS[c.tag]||["",""];const dn=showDom?`<span class="tag">${DOM.find(d=>d.id===c.d).n.split(" ")[0]}</span>`:"";
+ return `<article class="card${c.wide?" wide":""}${c.tag==="miss"?" hot":""}"><div class="ct"><h3>${c.t}</h3><span>${dn} <span class="tag ${tg[1]}">${tg[0]}</span></span></div>
+<p class="rule">${c.r}</p><div class="vis">${c.v}</div>
+<div class="cues">${c.c.map(x=>`<span class="cue">“${x}”</span>`).join("")}</div>
+<p class="trap"><b>Trap:</b> ${c.x}</p>
+<details><summary>Apply it: ${c.a[0]}</summary><p>${c.a[1]}</p></details></article>`}
+function tabs(){$("tabs").innerHTML=DOM.map(d=>{const n=C.filter(c=>c.d===d.id&&c.tag!=="ps").length;return `<button class="tab" role="tab" type="button" aria-selected="${!$("q").value&&d.id===cur}" data-id="${d.id}">${d.n.split(" ")[0]} <span style="font-weight:500">${d.n.split(" ").slice(1).join(" ")}</span><span class="n">${n}</span></button>`}).join("");
+ $("tabs").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{cur=b.dataset.id;$("q").value="";try{localStorage.setItem("cca-speed-tab",cur)}catch(e){}try{history.replaceState(null,"","#"+cur)}catch(e){}render();window.scrollTo(0,0)})}
+function render(){tabs();const q=$("q").value.trim().toLowerCase();
+ let html=`<div class="moves">${MOVES.map(m=>`<div class="move"><b>${m[0]}.</b> ${m[1]}</div>`).join("")}</div>`;
+ if(q){const hit=C.filter(c=>(c.t+" "+c.r+" "+c.c.join(" ")+" "+c.x+" "+c.v.replace(/<[^>]+>/g," ")).toLowerCase().includes(q));
+  html+=`<h2 class="dh">${hit.length} card${hit.length===1?"":"s"} for “${q.replace(/</g,"&lt;")}”</h2>`+(hit.length?`<div class="grid">${hit.map(c=>card(c,1)).join("")}</div>`:`<p class="empty">No card matches. Try one word, like glob, hook, schema or resume.</p>`)}
+ else{const d=DOM.find(x=>x.id===cur);html+=`<h2 class="dh">${d.n} · ${d.w}<small>${d.note}</small></h2><div class="grid">${C.filter(c=>c.d===cur).map(c=>card(c,0)).join("")}</div>`}
+ $("main").innerHTML=html}
+$("q").addEventListener("input",render);
+addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(DOM.some(d=>d.id===h)){cur=h;$("q").value="";render()}});
+render();
+</script>
