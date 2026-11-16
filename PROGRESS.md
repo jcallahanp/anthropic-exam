@@ -44,6 +44,7 @@
 - .claude/commands/ | pass | Project .claude/commands/ is committed → whole team. Personal path garbled; correct = ~/.claude/commands/.
 - Skills (SKILL.md) | pass | Strong analogy: CLAUDE.md = always-on house rules; skill = recipe loaded on demand. Not mentioned: context: fork, allowed-tools.
 - context: fork | retry (on misconceptions page) | Problem right (keep noise out of main). Mechanism wrong: thought it is an interactive side chat. Missing: SKILL.md frontmatter; skill runs in subagent; summary returns. Mixed up with fork_session / git fork.
+- allowed-tools | retry (on misconceptions page) | Least privilege right. Did not know "Pattern 1" = mechanism over prompt; missed config-vs-prompt link.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.

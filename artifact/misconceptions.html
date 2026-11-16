@@ -289,7 +289,23 @@ Read every package file. Report risky deps.</pre></div>
       "<b>Second example:</b> a /brainstorm skill that writes 30 ideas in the fork and returns the top 3."],
  ok:"Right: the PROBLEM is that noisy work fills the main context. Only the output should return. That is exactly what it solves.",
  trap:"“Skill output floods the main chat.” Fix: <code>context: fork</code> in SKILL.md. Not: tell Claude to be brief.",
- retry:["Where do you write context: fork?","What stays in the fork and what comes back?","Give one example skill that needs it."]}
+ retry:["Where do you write context: fork?","What stays in the fork and what comes back?","Give one example skill that needs it."]},
+{n:"allowed-tools",
+ you:"Pattern 1 = the first thing to do. Define the tools first, for security.",
+ wrong:"“Pattern 1” means “do this first”.",
+ rule:'Pattern 1: must ALWAYS hold? <span class="arrow">→</span> Code/config. Not the prompt.',
+ pic:`<div class="cols">
+<div class="b r"><span class="big">Prompt</span><small>SKILL.md body: “Please never run Bash.” Claude USUALLY obeys. Not guaranteed.</small></div>
+<div class="b g"><span class="big">allowed-tools: Read, Write</span><small>Frontmatter config. Bash is not offered at all. Guaranteed.</small></div>
+</div>
+<div class="flow"><div class="b">“Must never” in the question</div><span class="ar">→</span><div class="b a">Pick the mechanism<small>allowed-tools, hook, tool_choice, schema, remove the tool</small></div></div>`,
+ gap:["<b>“Pattern 1” is the first card on the Patterns deck:</b> must-always rules need a mechanism, not a prompt.",
+      "<b>allowed-tools IS a mechanism.</b> It is config, so the limit holds every run.",
+      "<b>A prompt only asks.</b> It can fail on an odd input. That is why the exam rejects “add it to the instructions”.",
+      "<b>Same family:</b> PreToolUse deny, tool_choice, removing a tool, a JSON schema."],
+ ok:"Right: least privilege. Limit the skill's tools before it ever runs.",
+ trap:"“Add ‘never run destructive commands’ to the SKILL.md body.” WRONG. Use allowed-tools.",
+ retry:["What is Pattern 1, in one line?","Why is allowed-tools stronger than a sentence in the prompt?","Name two other mechanisms in the same family."]}
 ];
 
 let i=0;

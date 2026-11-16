@@ -402,7 +402,7 @@ const T=[
  h:"Least privilege for skills: a docs skill has no reason to run shell commands, so remove the risk. (Exam guide wording: restricts tools.)",
  u:["A skill must only write files, never run destructive commands.","allowed-tools with file-write tools only."],
  t:"<b>Trap:</b> a prompt line 'do not run commands'.",
- q:"Explain why allowed-tools is Pattern 1 applied to skills."},
+ q:"Explain why allowed-tools is Pattern 1 (must always hold → code/config, not the prompt) applied to skills."},
 {n:"argument-hint",k:"SKILL.md frontmatter · D3",w:"Tells the developer what argument the skill expects.",
  pic:`<div class="flow"><div class="b">/migrate</div><span class="ar">→</span><div class="b g">hint: &lt;table-name&gt;</div></div>`,
  h:"Prompts people for the <b>required parameter</b> instead of the skill running with missing input.",
