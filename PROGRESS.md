@@ -67,6 +67,7 @@
 - MISSED: repeated tool call. History kept only text blocks → Claude never saw tool_use/tool_result → repeats. Passed teach-back but missed under exam wording. On misconceptions page.
 - MISSED: run tests → Bash. Avoided Bash because "dangerous". Only Bash executes; guard it with hooks. Bash wrong only when Read/Glob/Grep fit.
 - Grep across split lines: right but nearly fell for a distractor. Still Grep; multiline pattern or shorter fragment then Read.
+- MISSED: tool description vs similar tool. Feared naming the other tool. Correct: purpose + input format + examples + edge cases + explicit boundary ("use X instead when").
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.

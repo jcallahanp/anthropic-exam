@@ -537,7 +537,23 @@ assistant: "config.py sets the port to 8080..."</pre></div>
       "<b>Wrong turns:</b> Glob (names only), Read every file (wastes context), Bash grep (a dedicated tool fits)."],
  ok:"You picked the right answer. Same Grep → Read order you already passed.",
  trap:"“Read every file in the repo” or “Glob for error files”. Neither searches split-line content well.",
- retry:["Which tool searches file contents?","Why does the one-line pattern miss?","Name 2 ways to catch the split case."]}
+ retry:["Which tool searches file contents?","Why does the one-line pattern miss?","Name 2 ways to catch the split case."]},
+{n:"Tool description that separates similar tools (missed)",
+ you:"I thought a plain description was enough, and that naming the other tool might be a bad idea.",
+ wrong:"Naming the similar tool in the description is risky.",
+ rule:'Say WHEN to use it AND when to use the OTHER tool instead. Naming the boundary is the point.',
+ pic:`<div class="cols">
+<div class="b r"><span class="big">Weak</span><small>get_customer: “Gets customer info.”<br>lookup_order: “Gets order info.”<br>Claude guesses on “Where is Jo's package?”</small></div>
+<div class="b g"><span class="big">Strong</span><small>lookup_order: “Find ONE order by order ID or by customer email. Returns status, items, tracking. Input: order_id like ORD-1234. Example: ‘Where is my package?’ Do NOT use for account details: use get_customer.”</small></div>
+</div>
+<div class="flow"><div class="b a">What it does</div><span class="ar">+</span><div class="b a">Input format</div><span class="ar">+</span><div class="b a">Example queries</div><span class="ar">+</span><div class="b a">Edge cases</div><span class="ar">+</span><div class="b g">Boundary: “use X instead when…”</div></div>`,
+ gap:["<b>The description is the main tool-selection mechanism,</b> but only a DETAILED one works.",
+      "<b>The exam's list:</b> purpose, input format, example queries, edge cases, and a boundary vs the similar tool.",
+      "<b>Naming the other tool HELPS.</b> It draws the line Claude needs. Your fear was backward.",
+      "<b>If two tools still blur,</b> rename them to be specific, or split one generic tool into narrower ones."],
+ ok:"You knew the description is the lever. You passed the MCP tool teach-back on this.",
+ trap:"“Few-shot examples in the system prompt” or “a routing layer” or “a shorter name”. Fix the descriptions first (lightest fix at the cause).",
+ retry:["List the 5 parts of a strong description.","Why name the similar tool?","What if two tools still overlap?"]}
 ];
 
 let i=0;
