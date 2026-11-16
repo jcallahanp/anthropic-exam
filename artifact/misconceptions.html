@@ -651,7 +651,33 @@ npm run build               ✗ not allowed</pre></div>
       "<b>Same meta-pattern as resume vs fork:</b> plan mode is true in general, but it does not answer the question's key word."],
  ok:"Your instinct to define things up front is right. Tests are the most exact way to define them.",
  trap:"Plan mode, or a long description of the rate limiter. Both are good practice; neither is test-driven.",
- retry:["What does Claude get first in test-driven iteration?","Why does that reduce correction cycles?","Name 2 edge cases to test for a rate limiter."]}
+ retry:["What does Claude get first in test-driven iteration?","Why does that reduce correction cycles?","Name 2 edge cases to test for a rate limiter."]},
+{n:"GLOB DECODER: * vs ** (missed, 3rd glob miss)",
+ you:"Something about these asterisk file paths.",
+ wrong:"Cannot read * vs ** yet.",
+ rule:'<code>*</code> = any name, ONE level. <code>**</code> = any folders, ANY depth.',
+ pic:`<div class="b a"><span class="sec">The 2 symbols</span><pre class="code">*    one name, stops at the next /        main.tf, vars.tf
+**   any number of folders, even zero     a/  a/b/  a/b/c/</pre></div>
+<div class="b"><span class="sec">Test 4 globs against the repo</span><pre class="code">                                   terraform/*   terraform/**/*   **/*.tf   *.tf
+terraform/main.tf                       ✓            ✓             ✓        ✗
+terraform/prod/vpc/main.tf              ✗            ✓             ✓        ✗
+modules/legacy/old.tf                   ✗            ✗             ✓        ✗
+main.tf (repo root)                     ✗            ✗             ✓        ✓</pre></div>
+<div class="b g"><span class="sec">Answer: under terraform/, any depth</span><pre class="code">---
+paths: ["terraform/**/*"]
+---</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">terraform/*</span><small>Top level only. Misses terraform/prod/vpc/main.tf.</small></div>
+<div class="b r"><span class="big">**/*.tf</span><small>Every .tf anywhere. Too wide: catches modules/legacy/.</small></div>
+<div class="b g"><span class="big">terraform/**/*</span><small>Starts at terraform/, goes any depth, any file.</small></div>
+</div>`,
+ gap:["<b>Read a glob left to right.</b> Fixed text must match exactly. * fills ONE name. ** fills any number of folders.",
+      "<b>“Under directory X, any depth”</b> → <code>X/**/*</code> (or X/**).",
+      "<b>“Every file of type Y, anywhere”</b> → <code>**/*.Y</code> (the scattered-tests case).",
+      "<b>The key is spelled paths:</b> inside the --- frontmatter, as a list in [ ]."],
+ ok:"Same skill as the test-files questions. One decoder fixes all three misses.",
+ trap:"terraform/* (one level) or **/*.tf (everywhere). Check: does it start at the right folder AND reach any depth?",
+ retry:["What does * match? What does **?","Write the glob for “anything under docs/, any depth”.","Write the glob for “every .sql file anywhere”."]}
 ];
 
 let i=0;
