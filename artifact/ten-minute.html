@@ -79,7 +79,7 @@ const F=[
 <pre>terraform/main.tf            terraform/*  ✓   terraform/**/*  ✓   **/*.tf ✓
 terraform/prod/vpc/main.tf   terraform/*  ✗   terraform/**/*  ✓   **/*.tf ✓
 modules/old.tf               terraform/*  ✗   terraform/**/*  ✗   **/*.tf ✓</pre>`,[
-[`<q>under terraform/, any subfolder depth</q>`,"terraform/**/*","Starts at terraform/, goes any depth, any file.",[["terraform/*","Top level of terraform/ only."],["**/*.tf","Every .tf anywhere, even outside terraform/."]]],
+[`<q>under terraform/, any subfolder depth</q>`,"---  paths: [\"terraform/**/*\"]  ---","The full frontmatter at the top of .claude/rules/terraform.md. terraform/ = start there. ** = any depth. * = any file. Loads only when Claude edits a matching file.",[["paths: [\"terraform/*\"]","Top level of terraform/ only. Misses terraform/prod/vpc/main.tf."],["paths: [\"**/*.tf\"]","Every .tf anywhere, even outside terraform/."],["globs: / files: / include:","Wrong key. Only paths: scopes a rule. Without it, the rule loads every session."]]],
 [`<q>every test file, anywhere</q>`,"**/*.test.ts","Any folder, any depth, name ends in .test.ts.",[["*.test.ts","Only test files sitting in the repo root."]]],
 [`<q>only .ts under src/api, any depth</q>`,"src/api/**/*.ts","src/api and all its subfolders, .ts only.",[["src/api/*.ts","Only .ts files directly in src/api."]]],
 [`<q>allow only npm run migrate</q>`,"Bash(npm run migrate)","Exact command only.",[["Bash(npm run migrate*)","Prefix match: also allows npm run migrate-cleanup."]]],
