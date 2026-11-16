@@ -54,6 +54,7 @@
 - Read (Grep → Read order) | pass | Grep first to find files, then Read only those. Missing "why": Read costs context; follow imports from the entry point. Grep has its own card (searches contents; Glob = names).
 - Write vs Edit | retry (on misconceptions page) | Thought Write wins for many changes; did not know what makes Edit fail. Missing: Edit needs unique exact old text; repeated/mismatched text → fail → Read + Write.
 - Edit | pass | Not unique → cannot know which one. (Learned from Write vs Edit screen.)
+- Bash | pass | Most powerful/destructive → PreToolUse hooks guard it. Add: hook inspects the command string (e.g. deny rm -rf on prod); prefer Read/Glob over cat/ls.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
