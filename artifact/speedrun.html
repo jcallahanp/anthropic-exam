@@ -243,6 +243,15 @@ user:      [tool_result tool_use_id=t1 ...]  ← then the result</pre>`,
  c:["independent","two approaches","compare","files changed since"],
  x:"“Context rot” as the concern. True, not the point. The point is independence.",
  a:["Files changed since the last session. Resume or fresh?","Fresh with a summary of findings, or resume and name the changed files."]},
+{d:"d1",tag:"miss",t:"Pick the workflow pattern",
+ r:"Steps FIXED + INDEPENDENT → run in parallel. Steps VARY per input → orchestrator-workers. Each step needs the last → chain.",
+ v:`<table class="t"><tr><th>stem says</th><th>pattern</th></tr>
+<tr><td>same steps every time, none needs another</td><td class="y">parallel calls</td></tr>
+<tr><td>step 2 needs step 1's output</td><td class="y">prompt chain (fixed order)</td></tr>
+<tr><td>steps differ per input, unknown up front</td><td class="y">orchestrator-workers (dynamic)</td></tr></table>`,
+ c:["always performs the same","never depend on","vary from ticket to ticket","unknown in advance"],
+ x:"Orchestrator for a fixed, known task list. Its justification (“steps vary”) contradicts the stem.",
+ a:["Every invoice: extract vendor, extract total, check currency. No step uses another's result. Pattern?","Parallel calls."]},
 {d:"d1",tag:"ps",t:"Subagents vs agent teams",
  r:"Subagent = one errand, returns a summary. Team = coworkers who message each other.",
  v:`<div class="two"><div class="b">subagent<small>one-shot · summary · never talk to each other</small></div><div class="b g">agent team<small>message directly · shared task list · long session</small></div></div>`,
