@@ -752,28 +752,27 @@ doc-0042_fr (twice)  ✗  must be unique in the batch
  trap:"Relying on result ORDER instead of custom_id, or reusing the same ID for two requests.",
  retry:["Why does a batch need custom_id?","Give 2 rules for a valid custom_id.","Is “doc 42/fr” valid?"]},
 {n:"XML tags to separate examples from the real request (new topic, missed)",
- you:"I don't think we covered this.",
- wrong:"New topic: how to keep examples from being read as the real request.",
- rule:'Mixed-up parts <span class="arrow">→</span> wrap each part in its own XML tag.',
- pic:`<div class="cols">
-<div class="b r"><span class="big">One blob</span><small>Background… format rules… Example: “Translate ‘Good morning’.” Answer: “Buenos días.” … Translate this contract clause…<br><br>Where does the example end and the real request start? Claude guesses.</small></div>
-<div class="b g"><span class="big">Tagged</span><pre class="code">&lt;context&gt;…background…&lt;/context&gt;
-&lt;instructions&gt;…format rules…&lt;/instructions&gt;
-&lt;examples&gt;
-  &lt;example&gt;
-    &lt;input&gt;Good morning&lt;/input&gt;
-    &lt;output&gt;Buenos días&lt;/output&gt;
-  &lt;/example&gt;
+ you:"Still not super clear on XML tags. (2 questions now: examples vs request, and per-category criteria.)",
+ wrong:"Not sure what an XML tag is or why it helps.",
+ rule:'An XML tag is a LABELED BOX in plain text: <code>&lt;name&gt;</code> … <code>&lt;/name&gt;</code>',
+ pic:`<div class="b a"><span class="sec">What it is</span><pre class="code">&lt;security_criteria&gt;        ← opening tag: “box named security_criteria starts”
+  Report SQL injection, hardcoded secrets.
+&lt;/security_criteria&gt;       ← closing tag (with /): “box ends”</pre><small>Not code. No parser. Just text labels you invent. Claude reads them as clear borders.</small></div>
+<div class="b"><span class="sec">Use 1: keep examples apart from the real request</span><pre class="code">&lt;examples&gt;
+  &lt;example&gt;Good morning → Buenos días&lt;/example&gt;
 &lt;/examples&gt;
-&lt;request&gt;…the REAL clause…&lt;/request&gt;</pre></div>
-</div>`,
- gap:["<b>XML tags mark boundaries.</b> Claude knows exactly what is an example and what is the live request.",
-      "<b>Tag names are yours to choose.</b> Use clear names (examples, request) and use them the same way every time.",
-      "<b>You can refer to tags in instructions:</b> “Answer only the text in &lt;request&gt;.”",
-      "<b>Lightest fix at the cause (Pattern 2):</b> the cause is unclear boundaries, so mark the boundaries."],
- ok:"New topic, not a repeat. Few-shot examples stay; they just get fenced off.",
- trap:"“Remove the examples” (loses consistency) or “tell Claude to ignore examples” (still unclear where they end) or “a bigger model”.",
- retry:["What causes the literal answer to sample data?","What is the fix?","Write the tag that holds the real request."]},
+&lt;request&gt;Translate the contract clause below…&lt;/request&gt;</pre><small>Claude answers only what is in &lt;request&gt;, not the sample.</small></div>
+<div class="b"><span class="sec">Use 2: keep each category's rules in its own box</span><pre class="code">&lt;security_criteria&gt;   include: injection, secrets · severity: high = exploitable &lt;/security_criteria&gt;
+&lt;correctness_criteria&gt; include: wrong output, crashes · severity: high = data loss &lt;/correctness_criteria&gt;
+&lt;style_criteria&gt;      include: naming, formatting · severity: always low &lt;/style_criteria&gt;</pre><small>A style rule cannot leak into security, because each rule sits inside its own named box.</small></div>`,
+ gap:["<b>An XML tag = a named start marker and end marker</b> around a chunk of text. You pick the names.",
+      "<b>Why it helps:</b> in a long prompt, Claude can tell exactly where each part starts and ends. No mixing.",
+      "<b>Trigger:</b> a long prompt where parts get mixed up (examples read as the request, rules applied to the wrong category).",
+      "<b>You can point at a box:</b> “Apply only &lt;security_criteria&gt; to security findings.”",
+      "<b>Priority:</b> not named in the guide, but it showed up twice on the practice site. Know it."],
+ ok:"You picked right both times by memory. Now the WHY: labeled borders stop parts from bleeding into each other.",
+ trap:"“Put everything in one long paragraph with bold headers”, “split into separate API calls”, or “remove the examples”. Tags are the light fix.",
+ retry:["What is an XML tag, in one sentence?","Give 2 problems tags fix.","Write the tag pair for style criteria."]},
 {n:"detected_pattern field (context guess)",
  you:"Got it right, but it was a context guess.",
  wrong:"Unsure why the specific construct beats a broad category.",

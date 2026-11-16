@@ -87,6 +87,7 @@
 - detected_pattern granularity: context guess, right (4.4, named in guide). Specific construct → dismissal analysis per rule.
 - Batch SLA math (30h SLA − 24h window = submit every 6h): right, confident (4.5).
 - MISSED (4.1): categorical criteria = name WHAT KIND of issue counts (in/out list); confidence thresholds (incl. numbers) are not categorical.
+- XML tags per category criteria: right by memory, still unclear. Rewrote XML screen: tag = labeled box; 2 uses (examples vs request, per-category criteria). 2nd XML question on practice site.
 
 ## Scope check: Cert Safari questions vs official guide (v0.2 text)
 Explicitly out of scope: NONE of the pasted questions.
