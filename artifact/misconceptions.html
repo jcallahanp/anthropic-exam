@@ -501,7 +501,26 @@ assistant: "config.py sets the port to 8080..."</pre></div>
       "<b>Same idea as your passed teach-back</b> (tool_use → tool_result). The miss was applying it under exam wording."],
  ok:"You explained this correctly in the teach-back: no append → Claude does not know → repeats.",
  trap:"“Claude's context window is full” or “the model is non-deterministic” or “add ‘do not repeat calls’ to the prompt”. The history code is the cause.",
- retry:["What is missing from the history?","Why does Claude call the tool again?","What must your code append after each tool call?"]}
+ retry:["What is missing from the history?","Why does Claude call the tool again?","What must your code append after each tool call?"]},
+{n:"Bash to run tests (missed)",
+ you:"Saw Bash and defaulted to “don't use it”. Maybe Grep, Glob and Read can't run tests.",
+ wrong:"Bash is dangerous, so avoid it.",
+ rule:'RUN something <span class="arrow">→</span> Bash. Only Bash executes. Guard it. Do not avoid it.',
+ pic:`<div class="cols">
+<div class="b g"><span class="big">Bash</span><small>RUNS commands: npm test, pytest, build, git. The only tool that executes.</small></div>
+<div class="b"><span class="big">Read</span><small>Opens a file. Runs nothing.</small></div>
+<div class="b"><span class="big">Grep</span><small>Searches inside files. Runs nothing.</small></div>
+<div class="b"><span class="big">Glob</span><small>Lists files by name. Runs nothing.</small></div>
+</div>
+<div class="flow"><div class="b">Need</div><span class="ar">→</span><div class="b g">run the test suite + see the stack trace<small>Bash: npm test</small></div></div>
+<div class="flow"><div class="b">Bash is WRONG only when</div><span class="ar">→</span><div class="b r">a dedicated tool fits<small>Bash cat → use Read. Bash ls/find → use Glob. Bash grep → use Grep.</small></div></div>`,
+ gap:["<b>Ask first: does the task RUN something?</b> Tests, builds, scripts, git = yes = Bash.",
+      "<b>Bash's danger is handled by guards,</b> PreToolUse hooks and allowed-tools. Not by refusing to use it.",
+      "<b>The real Bash trap</b> is using it to read or list files when Read or Glob does it.",
+      "<b>Your instinct</b> “danger word → avoid” is a shortcut. Check what the task needs first."],
+ ok:"Your second thought was right: Grep, Glob and Read cannot run anything.",
+ trap:"Read the test file, or Grep for “FAIL”. Neither runs the suite, so there is no stack trace.",
+ retry:["Which built-in tool can run a command?","When is Bash the WRONG choice?","How do you make Bash safe?"]}
 ];
 
 let i=0;
