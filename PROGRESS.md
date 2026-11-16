@@ -47,6 +47,7 @@
 - allowed-tools | retry (on misconceptions page) | Least privilege right. Did not know "Pattern 1" = mechanism over prompt; missed config-vs-prompt link.
 - SKILL.md frontmatter keys | pass | context/allowed-tools/argument-hint matched to problems. Did not know the word "frontmatter"; definition added to patterns page.
 - Plan mode | pass | Explore + find dependencies before editing. Missing: plan mode is read-only (no edits); use for big multi-file/architecture change with several valid approaches; small clear fix = direct execution.
+- Explore subagent | pass | Noise stays out, summary returns: right. Slip repeated: pictured interactive back-and-forth with user. Explore = read-only subagent Claude starts; reads/greps codebase; returns summary. Note added to context: fork screen.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
