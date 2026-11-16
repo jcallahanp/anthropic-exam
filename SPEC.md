@@ -49,9 +49,13 @@ Learning-science rules for the session: see `research/learning-science.md`.
 - Total study time: a few hours (exact time: open question).
 - Short drill blocks. Visual format. Minimum reading.
 
+## Answers from the user
+
+- Exam: Anthropic "Claude Certified Architect – Foundations". Official facts: `research/exam-guide.md`.
+- "KD20" means the 80/20 rule.
+- Sleep: about 5 hours. A short nap is possible.
+
 ## Open questions
 
-1. Exam name, format, question count, pass score, date and time.
-2. "KD20 rule": assumed to mean the 80/20 rule.
-3. Hours left before the exam, and sleep plan.
-4. Practice-exam input: questions, the user's answers, correct answers, explanations.
+1. Hours left before the exam (exam date and time).
+2. Practice-exam input: questions, the user's answers, correct answers, explanations. (User is pasting it.)
