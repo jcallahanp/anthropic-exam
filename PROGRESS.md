@@ -32,6 +32,7 @@
 - JSON schema (tool input) | retry (on misconceptions page) | Why correct. Knowledge gap: could not picture the schema/JSON shape or where it goes. Added picture: form → tool_use JSON → your code.
 - Message Batches API | retry (on misconceptions page) | Thought batch could hold the loop and wait. Missing: request ends at tool_use; continuing = new batch; latency × every tool call.
 - Validation-retry loop | pass | Fixable = format/structure when data is in source; not fixable = data absent. Missing: send the exact validation error back; retrying absent data can push Claude to INVENT → allow null instead.
+- MCP tool | pass | Vague description loses to a richer one. Missing: fix stated explicitly (description: what it does, inputs, returns, when to use vs similar tool); built-ins like Grep also compete.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
