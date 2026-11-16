@@ -36,6 +36,7 @@
 - MCP resource | retry (on misconceptions page) | Framed resource as a clearer tool description. Missing: resource = read-only content/catalog; tool = action; fixes exploratory calls; no library analogy given.
 - isError + structured errors | pass | All 4 reactions right. Needed validation example (bad date format → fix input, retry). Not mentioned: empty result is NOT an error; isError separates failure from "found nothing".
 - .mcp.json | retry (on misconceptions page) | Thought a function blurs the token. Unsure which part shares. Missing: committed project file = shared; file holds only ${VAR} text; each machine's env fills it at startup.
+- ~/.claude.json | pass | Home folder not in repo → teammates/CI never see it. Did not know "CI"; added definition to patterns page.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.

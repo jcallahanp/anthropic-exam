@@ -351,7 +351,7 @@ const T=[
  q:"Explain why env-var expansion lets a file be shared but the secret stay private."},
 {n:"~/.claude.json",k:"Claude Code · user scope · D2",w:"MCP config in <b>your home folder</b>: personal and experimental servers.",
  pic:`<div class="cols"><div class="b a"><span class="big">~/.claude.json</span><small>only on your machine</small></div><div class="b g"><span class="big">Both load</span><small>project + personal servers work together</small></div></div>`,
- h:"Your home folder is not in the repo, so nothing there reaches teammates or CI. Good for trying a server without forcing it on the team.",
+ h:"<b>CI</b> = continuous integration: a server (for example GitHub Actions) that clones the repo and runs checks on every push. Your home folder is not in the repo, so nothing there reaches teammates or CI. Good for trying a server without forcing it on the team.",
  u:["You want to test a new MCP server alone.","Add it to ~/.claude.json."],
  t:"<b>Trap:</b> expecting teammates or CI to see it.",
  q:"Explain why CI never sees your ~/.claude.json servers."},
