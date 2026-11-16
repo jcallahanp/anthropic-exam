@@ -75,6 +75,7 @@
 - MISSED: terraform/**/* glob (3rd glob miss). * = one level; ** = any depth. HIGH PRIORITY. Added GLOB DECODER screen with match table.
 - MISSED: packages/api conventions → packages/api/CLAUDE.md (one folder). Decision rule: folder scope → folder CLAUDE.md; scattered file type → glob rule. Watch overcorrection toward globs.
 - MISSED: interacting issues (same critical section) → send together in one message; independent → sequential. (3.5)
+- Batch custom_id: guessed right. Unique in batch, 1-64 chars, [a-zA-Z0-9_-]; results in any order → match by custom_id.
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.

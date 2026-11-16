@@ -722,7 +722,23 @@ unlock(cache)</pre></div>
       "<b>Independent issues</b> → sequential, so each fix is small and verifiable."],
  ok:"Your instinct (small steps) is right for INDEPENDENT issues. The question says they interact.",
  trap:"“Fix the stale-read first, then report the concurrency bug” (sequential for interacting issues).",
- retry:["How do you tell interacting from independent?","How do you send interacting issues?","How do you send independent ones?"]}
+ retry:["How do you tell interacting from independent?","How do you send interacting issues?","How do you send independent ones?"]},
+{n:"Batch custom_id rules (guessed right)",
+ you:"Did not know this one. It just seemed like common sense.",
+ wrong:"Unknown: what a valid custom_id looks like.",
+ rule:'custom_id = YOUR label per request: unique in the batch, 1–64 chars, letters, digits, - and _ only.',
+ pic:`<div class="b"><span class="sec">Valid vs invalid</span><pre class="code">doc-0042_fr          ✓  letters, digits, - and _
+translate_es_17      ✓
+doc 42 / fr          ✗  spaces and / not allowed
+doc-0042_fr (twice)  ✗  must be unique in the batch
+(70 characters)      ✗  max 64</pre></div>
+<div class="flow"><div class="b a">You send 3 requests<small>doc-1_fr, doc-2_fr, doc-3_fr</small></div><span class="ar">→</span><div class="b">up to 24 h</div><span class="ar">→</span><div class="b">Results in ANY order<small>doc-3, doc-1, doc-2</small></div><span class="ar">→</span><div class="b g">Match by custom_id</div></div>`,
+ gap:["<b>Why it exists:</b> batch results can come back in any order. custom_id is how you match each result to its request.",
+      "<b>Rules:</b> unique within the batch; 1 to 64 characters; only letters, digits, hyphen, underscore.",
+      "<b>Make it meaningful:</b> encode what you need, for example doc ID + target language."],
+ ok:"Right answer, and your common sense was the right reasoning: a short, unique, plain label.",
+ trap:"Relying on result ORDER instead of custom_id, or reusing the same ID for two requests.",
+ retry:["Why does a batch need custom_id?","Give 2 rules for a valid custom_id.","Is “doc 42/fr” valid?"]}
 ];
 
 let i=0;
