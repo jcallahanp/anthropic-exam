@@ -191,7 +191,25 @@ const M=[
       "<b>Personal-only server?</b> Put it in <code>~/.claude.json</code> (user scope). It is not in the repo."],
  ok:"Right: the placeholder is why the token stays private. Your guess that .mcp.json shares it was correct.",
  trap:"“Commit the token in .mcp.json and make the repo private.” WRONG. Use <code>${ENV}</code> expansion.",
- retry:["Which file shares the server with the team, and why?","What text is in the file instead of the token?","Where does the real token come from?"]}
+ retry:["Which file shares the server with the team, and why?","What text is in the file instead of the token?","Where does the real token come from?"]},
+{n:"CLAUDE.md (3 levels)",
+ you:"~/.claude/CLAUDE.md only applies when I work in my own home folder.",
+ wrong:"User-level CLAUDE.md works only inside your home folder.",
+ rule:'Same sentence, different REACH: WHO gets it and WHERE it loads.',
+ pic:`<div class="cols">
+<div class="b a"><span class="big">~/.claude/CLAUDE.md</span><small>WHO: only you. WHERE: EVERY project you open on your machine. Not in git, so teammates and CI never see it.</small></div>
+<div class="b g"><span class="big">./CLAUDE.md</span><small>WHO: the whole team + CI. WHERE: this whole project. Committed to git.</small></div>
+<div class="b"><span class="big">src/api/CLAUDE.md</span><small>WHO: the team. WHERE: loads when Claude works on files in src/api/.</small></div>
+</div>
+<div class="flow"><div class="b">Claude edits src/api/payments.ts</div><span class="ar">→</span><div class="b g">Loads: yours + ./CLAUDE.md + src/api/CLAUDE.md</div></div>
+<div class="flow"><div class="b">Claude edits web/app.tsx</div><span class="ar">→</span><div class="b r">src/api/CLAUDE.md does NOT load</div></div>`,
+ gap:["<b>User level is about WHO, not WHERE.</b> “~” is where the file lives. Its rules follow you into every project.",
+      "<b>The ./CLAUDE.md is the only one teammates and CI get.</b> It is in git.",
+      "<b>“Working in a directory”</b> means Claude reads or edits files in that folder, for example src/api/payments.ts.",
+      "<b>Many folders share one rule by file type?</b> Use .claude/rules/ with a paths: glob instead."],
+ ok:"Right: the sentence does the same thing. Only who gets it and when it loads change.",
+ trap:"“Team test rules in ~/.claude/CLAUDE.md.” WRONG. Teammates and CI never get it. Use ./CLAUDE.md.",
+ retry:["Where does ~/.claude/CLAUDE.md apply, and who gets it?","Which level reaches CI?","When does src/api/CLAUDE.md load?"]}
 ];
 
 let i=0;
