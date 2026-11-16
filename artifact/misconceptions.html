@@ -90,7 +90,24 @@ const M=[
       "<b>Your code sends the full history</b> each time. That is how Claude knows 3 of 10 are done."],
  ok:"Right: the API keeps no memory between calls. SAME SLIP AGAIN in the tool_result teach-back: “Claude just uses the tool.” No: Claude asks, your code runs it.",
  trap:"Stop when Claude's text says “done”. WRONG. Stop when <code>stop_reason == \"end_turn\"</code>.",
- retry:["Who runs the tool?","What does your code send back?","Which stop_reason ends the loop?"]}
+ retry:["Who runs the tool?","What does your code send back?","Which stop_reason ends the loop?"]},
+{n:"Task tool + allowedTools",
+ you:"Spawn them all at once because research tasks are independent.",
+ wrong:"Parallel is only about the tasks being independent.",
+ rule:'3 Task calls in ONE reply <span class="arrow">→</span> run in parallel',
+ pic:`<div class="flow"><div class="b a">Coordinator<small>allowedTools: ["Task", …]</small></div><span class="ar">→</span><div class="b g">ONE reply<small>Task A · Task B · Task C</small></div><span class="ar">→</span><div class="b">3 subagents run together<small>each starts with an EMPTY context</small></div></div>
+<div class="cols">
+<div class="b r"><span class="big">Across 3 turns</span><small>Turn 1: Task A, wait. Turn 2: Task B, wait. Turn 3: Task C. Total time = A + B + C.</small></div>
+<div class="b g"><span class="big">In 1 turn</span><small>Task A + B + C in the same reply. Total time = the slowest one.</small></div>
+<div class="b r"><span class="big">No "Task" in allowedTools</span><small>The coordinator cannot spawn ANY subagent.</small></div>
+</div>`,
+ gap:["<b>The HOW:</b> the coordinator puts several Task tool calls in ONE response. That is what makes them parallel.",
+      "<b>Why turns are slow:</b> each turn waits for the last subagent to finish. Sequential time adds up.",
+      "<b>allowedTools must include \"Task\".</b> Without it, the coordinator cannot spawn anything. You did not mention this.",
+      "<b>Subagents inherit nothing.</b> Put every fact they need in the Task prompt."],
+ ok:"Right: independent research has no dependency, so it can run in parallel.",
+ trap:"“Coordinator never starts a subagent.” Fix: add <code>\"Task\"</code> to allowedTools. Not: rewrite the prompt.",
+ retry:["How does the coordinator start 3 subagents at the same time?","What must be in its allowedTools?","What does a subagent know when it starts?"]}
 ];
 
 let i=0;
