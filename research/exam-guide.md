@@ -45,3 +45,11 @@ The [Partner Academy prep page][prep] lists these free courses: AI Fluency: Fram
 [g0]: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor%2F8lsy243ftffjjy1cx9lm3o2bw%2Fpublic%2F1773274827%2FClaude+Certified+Architect+%E2%80%93+Foundations+Certification+Exam+Guide.pdf
 [faq]: https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/8lsy243ftffjjy1cx9lm3o2bw/public/1773276532/Claude+Certified+Architect+-+Foundations+(CCA-F)+FAQs+(1).pdf
 [prep]: https://anthropic-partners.skilljar.com/page/claude-certified-architect-foundations-prep-courses
+
+## Update: user's Drive copy (v0.2, June 30 2026, 37 pages)
+
+Google Drive file id `16EIKI1oY7XnmdKkIg-fzW8r27Do9xMfE` ("Claude_Certified_Architect_-_Foundations_-_Exam_Guide.pdf"). Local copy in `source/` (gitignored; re-download from Drive).
+- Format: 60 questions, single answer (1 correct + 3 wrong), 120 min, 4 of 6 scenarios, pass 720/1000.
+- Includes all 12 sample questions with explanations, an appendix of technologies, and in-scope / out-of-scope lists.
+- Not in the guide's in-scope list: agent teams, `CLAUDE.local.md`, subagent API-error behavior. Quiz-1 misses Q1, Q5, Q16 are likely practice-site extras → low priority.
+- Out of scope: fine-tuning, auth/billing, MCP hosting, computer use, vision, streaming, rate limits, pricing math, prompt-caching details, tokenization, embeddings.

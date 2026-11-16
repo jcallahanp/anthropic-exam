@@ -1,0 +1,440 @@
+<title>Architect Cram Station</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column app. Tabs: Plan · Weak spots · Rules · Cards · Drill. Progress lives in this browser only. */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#18202c; --muted:#5b6575; --line:#d9dee6;
+  --accent:#0f6e7a; --accent-soft:#dff0f1; --good:#1d7a3e; --good-soft:#e5f4ea;
+  --bad:#b4372b; --bad-soft:#fae6e3; --warn:#9a5b06; --warn-soft:#f8ecd8; --miss:#7a3fb0; --miss-soft:#efe5f8;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --surface:#18202b; --ink:#e6ebf2; --muted:#9aa5b5; --line:#2b3644;
+  --accent:#4fc0cc; --accent-soft:#163238; --good:#5fcf86; --good-soft:#15301f;
+  --bad:#f08072; --bad-soft:#38201c; --warn:#e8b25a; --warn-soft:#382a12; --miss:#c49af0; --miss-soft:#2c2140; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --surface:#18202b; --ink:#e6ebf2; --muted:#9aa5b5; --line:#2b3644;
+  --accent:#4fc0cc; --accent-soft:#163238; --good:#5fcf86; --good-soft:#15301f;
+  --bad:#f08072; --bad-soft:#38201c; --warn:#e8b25a; --warn-soft:#382a12; --miss:#c49af0; --miss-soft:#2c2140; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.5 var(--body)}
+.wrap{max-width:780px;margin:0 auto;padding-block:18px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.2}
+h1{font-size:1.6rem} h2{font-size:1.25rem} h3{font-size:1rem}
+p,ul,ol{margin:0} ul,ol{padding-left:20px;display:flex;flex-direction:column;gap:4px}
+code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:0 4px;border-radius:4px;overflow-wrap:anywhere}
+.label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{font:600 .88rem var(--body);padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.timer{display:flex;gap:6px;align-items:center;font:500 .9rem var(--mono)}
+.timer button{font:600 .8rem var(--body);padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+#tleft{min-width:52px;text-align:right;font-variant-numeric:tabular-nums}
+#tleft.over{color:var(--bad);font-weight:600}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.view{display:flex;flex-direction:column;gap:16px}
+.mast{display:grid;grid-template-columns:minmax(0,1fr) 110px 70px;gap:10px;align-items:center;font-size:.9rem}
+.bar{height:9px;background:var(--line);border-radius:5px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.num{font:500 .82rem var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:10px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.step.brk{background:transparent;border-style:dashed}
+.step .t{font:600 .85rem var(--mono);color:var(--accent)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.74rem;text-transform:uppercase;letter-spacing:.05em}
+.pill{font:600 .7rem var(--body);letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.p-hi{background:var(--bad-soft);color:var(--bad)} .p-mid{background:var(--warn-soft);color:var(--warn)} .p-lo{background:var(--good-soft);color:var(--good)} .p-off{background:var(--miss-soft);color:var(--miss)}
+.rule{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.rule:last-child{border-bottom:0}
+.rule .n{font:700 1rem var(--display);color:var(--accent)}
+.rule b{display:block}
+.rule .ev{font-size:.82rem;color:var(--muted)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fbtn{font:600 .8rem var(--body);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.fbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.flash{min-height:190px;justify-content:center;text-align:center;align-items:center;cursor:pointer}
+.flash .front{font:600 1.1rem var(--display)}
+.flash .back{font-size:1rem;max-width:56ch}
+.tag{font:600 .72rem var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:600 .92rem var(--body);padding:10px 16px;border-radius:10px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn.good{background:var(--good);border-color:var(--good);color:var(--bg)}
+.btn.bad{background:var(--bad);border-color:var(--bad);color:var(--bg)}
+.btn:disabled{opacity:.35;cursor:default}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;font:inherit;color:inherit;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;gap:10px}
+.opt b{font-family:var(--mono);color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.fb{border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--good-soft)} .fb.no{background:var(--bad-soft)}
+.prog{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.85rem}
+.boxes{display:flex;gap:4px}
+.boxes i{width:10px;height:10px;border-radius:3px;background:var(--line)}
+.boxes i.on{background:var(--accent)}
+.small{font-size:.84rem}
+@media (max-width:560px){.mast{grid-template-columns:minmax(0,1fr) 70px 58px}.step{grid-template-columns:1fr;gap:2px}}
+</style>
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <div class="top">
+      <span class="label">Claude Certified Architect – Foundations · 90-minute cram</span>
+      <div class="timer"><span id="tleft">--:--</span><button id="t20" type="button">20-min block</button><button id="t5" type="button">5-min break</button></div>
+    </div>
+    <h1>Cram Station</h1>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-v="plan">Plan</button>
+      <button class="tab" role="tab" data-v="weak">Weak spots</button>
+      <button class="tab" role="tab" data-v="rules">9 rules</button>
+      <button class="tab" role="tab" data-v="cards">Cards</button>
+      <button class="tab" role="tab" data-v="drill">Drill</button>
+    </div>
+  </header>
+
+  <!-- PLAN -->
+  <section class="view" id="v-plan">
+    <div class="panel">
+      <h2>Mastery</h2>
+      <p class="muted small">An item is mastered after 2 correct answers in a row that you marked <b>sure</b>. A miss resets it. Progress saves in this browser.</p>
+      <div id="mastery"></div>
+    </div>
+    <h2>90 minutes</h2>
+    <div class="steps">
+      <div class="step"><span class="t">0–5</span><div><b>Read the 9 rules.</b> They decide most "two answers look right" questions.</div></div>
+      <div class="step"><span class="t">5–25</span><div><b>Cards: D1 + D2.</b> Say the answer out loud before you flip. Repeat until the queue is empty.</div></div>
+      <div class="step brk"><span class="t">25–30</span><div>Break. Stand up. No screen.</div></div>
+      <div class="step"><span class="t">30–50</span><div><b>Drill: Official 12.</b> These are the real exam's style. Then <b>Drill: D1 + D2</b>.</div></div>
+      <div class="step brk"><span class="t">50–55</span><div>Break.</div></div>
+      <div class="step"><span class="t">55–75</span><div><b>Cards then Drill: D3 + D4 + D5.</b></div></div>
+      <div class="step brk"><span class="t">75–80</span><div>Break.</div></div>
+      <div class="step"><span class="t">80–90</span><div><b>Drill: All, not mastered only.</b> Sure-but-wrong items come first. Then sleep or nap: it locks in what you learned.</div></div>
+    </div>
+    <div class="row"><button class="btn alt" id="reset" type="button">Reset all progress</button><span id="resetmsg" class="muted small"></span></div>
+  </section>
+
+  <!-- WEAK SPOTS -->
+  <section class="view" id="v-weak" hidden>
+    <div class="panel">
+      <h2>Priority = exam weight × your miss rate</h2>
+      <div class="tbl"><table>
+        <thead><tr><th>Domain</th><th>Weight</th><th>Quiz 1</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td>D1 Agentic architecture</td><td>27%</td><td>3/6</td><td><span class="pill p-hi">1 · highest</span></td></tr>
+          <tr><td>D2 Tool design &amp; MCP</td><td>18%</td><td>2/4</td><td><span class="pill p-hi">2</span></td></tr>
+          <tr><td>D4 Prompts &amp; structured output</td><td>20%</td><td>3/5</td><td><span class="pill p-mid">3</span></td></tr>
+          <tr><td>D3 Claude Code config</td><td>20%</td><td>4/6</td><td><span class="pill p-mid">4</span></td></tr>
+          <tr><td>D5 Context &amp; reliability</td><td>15%</td><td>4/4</td><td><span class="pill p-lo">5 · light review</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted small">D5: 4 questions is a small sample. It is 15% of the exam, so keep a light review.</p>
+    </div>
+    <div class="panel">
+      <h2>Your 9 misses, sorted</h2>
+      <div class="tbl"><table>
+        <thead><tr><th>Q</th><th>Topic</th><th>Root idea</th><th>In official guide?</th></tr></thead>
+        <tbody>
+          <tr><td>9</td><td>PreToolUse deny</td><td>Mechanism over prompt</td><td>Yes · 1.5</td></tr>
+          <tr><td>22</td><td>Date normalization</td><td>Mechanism over prompt</td><td>Yes · 1.5 / 4.3</td></tr>
+          <tr><td>17</td><td>Router has refund tool</td><td>Least privilege</td><td>Yes · 2.3</td></tr>
+          <tr><td>23</td><td>Force a tool every turn</td><td><code>tool_choice: any</code></td><td>Yes · 2.3 / 4.3</td></tr>
+          <tr><td>10</td><td>CI needs team rules</td><td>Project CLAUDE.md</td><td>Yes · 3.6</td></tr>
+          <tr><td>19</td><td>Varied layouts, invented values</td><td>Few-shot + nullable</td><td>Yes · 4.2</td></tr>
+          <tr><td>1</td><td>Agents message each other</td><td>Agent teams</td><td><span class="pill p-off">No</span></td></tr>
+          <tr><td>5</td><td>Personal per-repo notes</td><td><code>CLAUDE.local.md</code></td><td><span class="pill p-off">No</span></td></tr>
+          <tr><td>16</td><td>Subagent cut off by API error</td><td>Partial text + note</td><td><span class="pill p-off">No</span></td></tr>
+        </tbody>
+      </table></div>
+      <p><b>Finding:</b> all 6 in-scope misses come from 3 ideas: <b>mechanism over prompt</b>, <b>least privilege</b>, and <b><code>tool_choice</code></b>. The other 3 are practice-site trivia that is not in your exam guide. Spend no more time on them.</p>
+    </div>
+    <div class="panel">
+      <h2>Not on the exam (skip)</h2>
+      <p class="small">Fine-tuning · auth, billing, API keys, OAuth · hosting MCP servers · computer use · vision · streaming · rate limits and pricing math · prompt-caching details · tokenization · embeddings and vector DBs · cloud-provider setup · model internals, RLHF.</p>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section class="view" id="v-rules" hidden>
+    <div class="panel">
+      <h2>9 tie-break rules</h2>
+      <p class="muted small">Taken from the official sample explanations. When two answers look right, use these.</p>
+      <div id="rules"></div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="view" id="v-cards" hidden>
+    <div class="filters" id="cfilt"></div>
+    <div class="prog"><span id="cprog" class="mono"></span><span class="boxes" id="cbox"></span></div>
+    <div class="panel flash" id="flash" tabindex="0" role="button" aria-label="Flip card"></div>
+    <div class="row" id="cbtns"></div>
+  </section>
+
+  <!-- DRILL -->
+  <section class="view" id="v-drill" hidden>
+    <div class="filters" id="dfilt"></div>
+    <div class="prog"><span id="dprog" class="mono"></span><span id="dscore" class="mono"></span></div>
+    <div class="panel" id="dcard"></div>
+  </section>
+</div>
+
+<script>
+/* ---------- content ---------- */
+const DOMW={D1:27,D2:18,D3:20,D4:20,D5:15};
+const DOMN={D1:"D1 Agentic architecture",D2:"D2 Tool design & MCP",D3:"D3 Claude Code config",D4:"D4 Prompts & structured output",D5:"D5 Context & reliability"};
+
+const RULES=[
+["A must-always rule needs a mechanism, not words.","Hook, prerequisite gate, code, schema, tool_choice, or remove the tool. Prompts and few-shot are probabilistic.","Official Q1 · your Q9, Q17, Q22"],
+["The first step is the lightest fix at the root cause.","Bad tool picks → better descriptions. Bad escalation → explicit criteria + few-shot. Reject classifiers, routing layers, bigger models as a first step.","Official Q2, Q3"],
+["Read the logs in the stem. Blame the real culprit.","If the subagents did their assigned job well, the coordinator's assignment was wrong.","Official Q7"],
+["Least privilege, with one scoped exception.","Each agent gets only its role's tools. A small scoped tool covers the frequent case; rare cases go through the coordinator.","Official Q9 · your Q17"],
+["Only documented features exist.","Made-up flags, env vars, and config files are common distractors: CLAUDE_HEADLESS, --batch, .claude/config.json.","Official Q4, Q10"],
+["Errors are structured, never hidden, never fatal to everything.","Return type, attempted query, partial results, alternatives. An empty result is not an error.","Official Q8"],
+["Match the API to the latency need.","Batches API: 50% cheaper, up to 24 h, no SLA. Only for non-blocking work.","Official Q11"],
+["Split big work to fix diluted attention.","Per-file passes + one integration pass. A separate instance reviews, not the author session. A bigger context window is not the fix.","Official Q12"],
+["Self-reported confidence and sentiment are not escalation signals.","Escalate on: the customer asks for a human, a policy gap, or no progress.","Official Q3"]
+];
+
+/* Cards: [id, domain, front, back] */
+const CARDS=[
+["c1","D1","Agentic loop: when do you continue and when do you stop?","Continue when stop_reason = tool_use (run the tool, append tool_result, call again). Stop when stop_reason = end_turn."],
+["c2","D1","Three loop-stop anti-patterns","Parsing text like 'done'. An iteration cap as the main stop rule. Treating 'reply has text' as finished."],
+["c3","D1","Tool used to spawn a subagent in the Agent SDK","The Task tool. The coordinator's allowedTools must include \"Task\"."],
+["c4","D1","Does a subagent see the coordinator's conversation?","No. Put all needed findings in its prompt. No shared memory between calls."],
+["c5","D1","How do you run subagents in parallel?","Emit several Task tool calls in ONE coordinator response, not across separate turns."],
+["c6","D1","What goes in an AgentDefinition?","Description, system prompt, and tool restrictions for that subagent type."],
+["c7","D1","Hub-and-spoke: why route everything through the coordinator?","Observability, one consistent error policy, controlled information flow."],
+["c8","D1","Coordinator prompt style for subagents","Goals and quality criteria, not step-by-step procedures."],
+["c9","D1","PreToolUse vs PostToolUse","Pre: intercept the outgoing call (block refund > $500, redirect to escalation). Post: transform the result (normalize timestamps, formats) before Claude sees it."],
+["c10","D1","Human handoff must contain…","Customer ID, root cause, amount, recommended action. The human has no transcript."],
+["c11","D1","Prompt chaining vs dynamic decomposition","Chaining: fixed steps for predictable work (reviews). Dynamic: open-ended investigation; plan adapts to findings."],
+["c12","D1","--resume vs fork_session vs fresh start","--resume <name>: context still valid (say which files changed). fork_session: compare 2 approaches from one baseline. Fresh + summary: old tool results are stale."],
+["c13","D2","Main signal Claude uses to choose a tool","The tool description. Include purpose, input format, examples, edge cases, when to use vs similar tools."],
+["c14","D2","Two tools overlap and get confused. Fix?","Rename and rewrite descriptions to separate them, or split a generic tool into specific ones."],
+["c15","D2","MCP error fields","isError: true + errorCategory + isRetryable + readable description."],
+["c16","D2","Four error categories","Transient (retry), validation (fix input), business (explain to customer, not retryable), permission (escalate)."],
+["c17","D2","Access failure vs empty result","Access failure = error, needs a retry decision. Empty result = successful query with no matches."],
+["c18","D2","Where does a subagent handle transient errors?","Locally. It sends up only what it cannot fix, with partial results and what it tried."],
+["c19","D2","Too many tools: what happens?","Tool selection gets worse (18 vs 4–5). Agents misuse tools outside their role."],
+["c20","D2","tool_choice: auto / any / tool","auto: may answer with no tool. any: must call some tool, Claude picks. tool + name: must call that tool."],
+["c21","D2","Team MCP server config","Project .mcp.json, committed, with secrets as ${ENV_VAR} expansion."],
+["c22","D2","Personal or experimental MCP server","User scope in ~/.claude.json."],
+["c23","D2","MCP resources are for…","Exposing content catalogs (issue lists, doc trees, DB schemas) so the agent makes fewer exploratory calls. Tools are for actions."],
+["c24","D2","Agent prefers Grep over a better MCP tool. Fix?","Improve the MCP tool's description (capabilities, outputs)."],
+["c25","D2","Grep vs Glob","Grep: search file contents. Glob: find files by path pattern (**/*.test.tsx)."],
+["c26","D2","Edit fails: text is not unique. Fallback?","Read the full file, then Write it."],
+["c27","D3","CLAUDE.md hierarchy","User ~/.claude/CLAUDE.md (only you) · project CLAUDE.md or .claude/CLAUDE.md (team, in git) · subdirectory CLAUDE.md (that directory)."],
+["c28","D3","New teammate does not get the instructions. Why?","They are in user-level ~/.claude/CLAUDE.md, not the project file. Check with /memory."],
+["c29","D3","Keep CLAUDE.md modular","@import specific standards files, or split topics into .claude/rules/*.md."],
+["c30","D3","Rules for files spread across folders","A .claude/rules/ file with YAML frontmatter paths: globs (e.g. **/*.test.tsx). Loads only for matching files."],
+["c31","D3","Team slash command vs personal","Team: .claude/commands/ (in git). Personal: ~/.claude/commands/."],
+["c32","D3","SKILL.md frontmatter: context: fork","Runs the skill in an isolated sub-agent context so verbose output does not fill the main session."],
+["c33","D3","SKILL.md frontmatter: allowed-tools / argument-hint","allowed-tools: restrict tools while the skill runs. argument-hint: prompt the user for a missing parameter."],
+["c34","D3","Skill vs CLAUDE.md","Skill: on demand, task-specific. CLAUDE.md: always loaded, universal standards."],
+["c35","D3","Plan mode vs direct execution","Plan: large, multi-file, architectural, several valid approaches. Direct: small and clear (one-file fix with a stack trace)."],
+["c36","D3","Explore subagent","Isolates verbose discovery and returns a summary, to protect the main context."],
+["c37","D3","Run Claude Code in CI","claude -p \"...\" (or --print). Add --output-format json and --json-schema for parseable findings."],
+["c38","D3","Re-review after new commits gives duplicate comments. Fix?","Include prior findings; ask for only new or still-unaddressed issues."],
+["c39","D3","Prose description gives inconsistent transformations. Fix?","2–3 concrete input/output examples."],
+["c40","D3","Interacting bugs vs independent bugs","Interacting: one detailed message with all. Independent: fix one by one."],
+["c41","D3","Interview pattern","Claude asks you questions first to surface design issues (cache invalidation, failure modes) in unfamiliar domains."],
+["c42","D4","Review has too many false positives. Fix?","Explicit categorical criteria (report X, skip Y). Temporarily disable the worst category. Not 'be conservative'."],
+["c43","D4","Few-shot: how many and what kind?","2–4 targeted examples of ambiguous cases, showing why one choice beats the alternatives."],
+["c44","D4","Most reliable structured output","tool_use with a JSON schema (strict). Removes syntax errors, NOT semantic errors."],
+["c45","D4","Stop the model inventing missing fields","Make those fields optional / nullable."],
+["c46","D4","Extensible category field","enum with \"other\" + a detail string; add \"unclear\" for ambiguous cases."],
+["c47","D4","Validation-retry loop sends…","The original document, the failed extraction, and the specific validation errors."],
+["c48","D4","When is retrying useless?","When the information is absent from the source (e.g. it is in another document)."],
+["c49","D4","Catch totals that do not add up","Extract calculated_total next to stated_total; add a conflict_detected flag."],
+["c50","D4","Message Batches API facts","50% cheaper · up to 24 h · no latency SLA · custom_id links request and response · no multi-turn tool calling."],
+["c51","D4","Some batch items failed","Resubmit only the failed ones by custom_id, modified (e.g. chunk oversized documents)."],
+["c52","D4","Why not let the generator review its own code?","It keeps its own reasoning context. An independent instance catches more."],
+["c53","D5","Summaries lose amounts and dates. Fix?","A persistent 'case facts' block in every prompt, outside summarized history."],
+["c54","D5","Tool output has 40 fields, you need 5","Trim to relevant fields before they pile up in context."],
+["c55","D5","Lost in the middle: fix","Key findings summary at the START, plus clear section headers."],
+["c56","D5","Valid escalation triggers","Customer asks for a human (do it immediately) · policy gap or silence · no meaningful progress."],
+["c57","D5","Lookup returns several matching customers","Ask for another identifier. Never pick by heuristic."],
+["c58","D5","Long session gets vague ('typical patterns')","Scratchpad files of key findings · subagents for exploration · /compact."],
+["c59","D5","Crash recovery for multi-agent work","Each agent exports state to a known place; the coordinator loads a manifest on resume."],
+["c60","D5","97% overall accuracy: safe to cut human review?","Not yet. Check accuracy by document type and field; use stratified sampling."],
+["c61","D5","Two credible sources disagree","Keep both values with sources and annotate the conflict. Include dates."],
+["c62","D5","Keep citations through synthesis","Structured claim → source mappings (URL, document, excerpt, date)."]
+];
+
+/* Drill: correct option is first in data; options are shuffled on screen. src: off = official sample, quiz = your miss, new = guide task statement, xtra = not in guide */
+const MCQ=[
+{id:"o1",d:"D1",src:"off",s:"In 12% of cases the support agent skips get_customer and calls lookup_order with only the customer's stated name, causing wrong refunds. Most effective fix?",o:["A programmatic prerequisite that blocks lookup_order and process_refund until get_customer returns a verified customer ID","A system-prompt line saying verification with get_customer is mandatory","Few-shot examples that always call get_customer first","A routing classifier that enables only the tools each request type needs"],w:"Money is at stake, so ordering must be deterministic.",t:"Prompt and few-shot are probabilistic. The classifier fixes tool availability, not ordering."},
+{id:"o2",d:"D2",src:"off",s:"The agent calls get_customer when users ask 'check my order #12345'. Both tools have one-line descriptions and accept similar IDs. Most effective first step?",o:["Expand each description: input formats, example queries, edge cases, and when to use it vs the other tool","Add 5–8 few-shot examples routing order questions to lookup_order","Add a keyword routing layer that pre-selects the tool","Merge both into one lookup_entity tool"],w:"Descriptions are the main selection signal. Lowest effort at the root cause.",t:"Routing layer is over-engineered. Merging is valid but too heavy for a first step."},
+{id:"o3",d:"D5",src:"off",s:"First-contact resolution is 55% (target 80%). The agent escalates easy cases and tries to handle complex policy exceptions itself. Best fix?",o:["Explicit escalation criteria in the system prompt, with few-shot examples of escalate vs resolve","Self-reported confidence 1–10; escalate below a threshold","A classifier trained on historical tickets","Sentiment analysis; escalate on frustration"],w:"The decision boundary is unclear. Fix it with criteria first.",t:"Self-confidence is poorly calibrated. Sentiment does not measure complexity. A classifier is over-engineered."},
+{id:"o4",d:"D3",src:"off",s:"A /review command must be available to every developer who clones the repo. Where does the file go?",o:[".claude/commands/ in the repository","~/.claude/commands/ on each machine","The root CLAUDE.md","A commands array in .claude/config.json"],w:"Project commands live in .claude/commands/ and travel with git.",t:".claude/config.json does not exist. ~/.claude is personal."},
+{id:"o5",d:"D3",src:"off",s:"Restructure a monolith into microservices: dozens of files, service-boundary decisions. Approach?",o:["Plan mode: explore, map dependencies, design, then change","Direct execution; let boundaries emerge","Direct execution with detailed upfront instructions","Start direct; switch to plan mode if it gets complex"],w:"Complexity is known up front. Plan mode is for architectural, multi-file work.",t:"'Switch later' ignores that the stem already states the complexity."},
+{id:"o6",d:"D3",src:"off",s:"Different conventions per area; test files sit next to code everywhere and must share one convention. Most maintainable way?",o:[".claude/rules/ files with YAML frontmatter glob patterns","All conventions in root CLAUDE.md under headers","A skill per code type in .claude/skills/","A CLAUDE.md in every subdirectory"],w:"Globs match files by path regardless of folder, and apply automatically.",t:"Skills need invocation. Directory CLAUDE.md files cannot follow files spread across folders."},
+{id:"o7",d:"D1",src:"off",s:"Topic: 'AI in creative industries'. Every subagent succeeded, but the report covers only visual arts. Coordinator logs show subtasks: digital art, graphic design, photography. Root cause?",o:["The coordinator's decomposition is too narrow","The synthesis agent lacks gap-detection instructions","Web search queries are not broad enough","Document analysis filters out non-visual sources"],w:"Subagents did their assigned work. The assignment was wrong.",t:"The other options blame agents that worked correctly."},
+{id:"o8",d:"D5",src:"off",s:"The web search subagent times out. How should the failure flow back to the coordinator?",o:["Structured error context: failure type, attempted query, partial results, alternatives","Retry with backoff, then a generic 'search unavailable'","Catch it and return an empty result marked success","Propagate to a top-level handler that ends the workflow"],w:"The coordinator needs details to choose a recovery.",t:"Generic hides context. Empty-as-success hides failure. Ending everything is unnecessary."},
+{id:"o9",d:"D2",src:"off",s:"Synthesis often bounces to the coordinator for fact checks (+40% latency). 85% are simple (dates, names); 15% need deep research. Best fix?",o:["Give synthesis a scoped verify_fact tool; complex checks still go through the coordinator","Batch all checks and return them at the end of the pass","Give synthesis all web search tools","Have web search pre-cache extra context"],w:"Least privilege for the common case; keep coordination for the rest.",t:"All tools over-provisions. Batching creates blocking dependencies."},
+{id:"o10",d:"D3",src:"off",s:"The pipeline runs claude \"Analyze this PR for security issues\" and hangs waiting for input. Fix?",o:["claude -p \"Analyze this PR for security issues\"","Set CLAUDE_HEADLESS=true","Redirect stdin from /dev/null","Add --batch"],w:"-p (--print) is the documented non-interactive mode.",t:"CLAUDE_HEADLESS and --batch do not exist."},
+{id:"o11",d:"D4",src:"off",s:"Two workflows: a blocking pre-merge check and an overnight tech-debt report. Manager wants both on the Batches API for 50% savings. Evaluate.",o:["Batch the overnight report only; keep real-time for the pre-merge check","Batch both and poll for completion","Keep both real-time to avoid result-ordering issues","Batch both with a real-time fallback on timeout"],w:"Batches can take up to 24 h with no SLA. Blocking work cannot wait.",t:"Ordering is solved with custom_id. Fallback adds needless complexity."},
+{id:"o12",d:"D4",src:"off",s:"A 14-file PR in one review pass gives uneven depth, missed bugs, and contradictory feedback. Restructure how?",o:["Per-file passes for local issues, then a separate cross-file integration pass","Require PRs of 3–4 files","Use a bigger model with a larger context window","Run 3 passes; flag only issues found twice"],w:"Root cause is diluted attention.",t:"Bigger context does not fix attention. Voting suppresses real, intermittent findings."},
+{id:"q9",d:"D1",src:"quiz",s:"A PreToolUse hook returns permissionDecision \"deny\" with reason 'Use the sandboxed wrapper script instead'. Runtime effect?",o:["The call is blocked and the reason goes to Claude, so it can adapt","The call runs, and the reason is logged for the user","The user is asked to approve or reject the call","The session ends with an error"],w:"deny blocks and tells Claude why.",t:"\"ask\" is the one that goes to the user."},
+{id:"q22",d:"D4",src:"quiz",s:"Prices arrive as '$1,200.50', '1.200,50 €', 'USD 1200.5'. You need integer cents, deterministic and unit-tested. Design?",o:["Claude extracts the raw price text and currency; application code converts to cents","A detailed conversion table in the prompt","A regex pattern on price_cents in the schema","Ask Claude to double-check its conversion"],w:"Deterministic + testable = code. (A PostToolUse hook is the same idea.)",t:"A schema pattern validates; it does not convert."},
+{id:"q17",d:"D2",src:"quiz",s:"A ticket-routing agent has route_ticket plus process_refund, reset_password, close_account 'just in case'. It sometimes refunds instead of routing. Fix?",o:["Remove the extra tools; the router keeps only route_ticket","Add 'NEVER call process_refund' to the prompt","Set tool_choice to auto","Add few-shot routing examples"],w:"A tool it does not have cannot be misused.",t:"Prompt text lowers the rate but never to zero."},
+{id:"q23",d:"D2",src:"quiz",s:"Every turn needs live data or an action; the model must never answer from its own knowledge. It may choose among several tools. tool_choice?",o:["{\"type\": \"any\"}","{\"type\": \"auto\"}","{\"type\": \"tool\", \"name\": \"get_data\"}","{\"type\": \"none\"}"],w:"any = must call some tool, Claude picks which.",t:"auto allows a text-only answer."},
+{id:"q23b",d:"D4",src:"new",s:"extract_metadata must run before any enrichment tool, every time. tool_choice for the first request?",o:["{\"type\": \"tool\", \"name\": \"extract_metadata\"}","{\"type\": \"any\"}","{\"type\": \"auto\"}","Describe the order in the system prompt"],w:"Forced selection guarantees that specific first call; later steps run in follow-up turns.",t:"any lets Claude pick a different tool."},
+{id:"q10",d:"D3",src:"quiz",s:"CI-run Claude Code reviews must always use the team's definition of a 'valuable test' and know the existing fixtures, without repeating it in each workflow prompt. Where?",o:["The repo's committed CLAUDE.md","Each engineer's ~/.claude/CLAUDE.md","The prompt string in each workflow file","A PR description template"],w:"CI checks out the repo and loads project CLAUDE.md on every run.",t:"The CI runner has no personal ~/.claude files."},
+{id:"q19",d:"D4",src:"quiz",s:"Invoices come in very different layouts. Detailed field rules exist, but the model invents values when a layout is unexpected. Best next step?",o:["Few-shot examples of varied layouts, including a missing field returned as null","More detailed rules per field","A larger model","Temperature 0"],w:"Rules already failed on variety; examples show the handling, including 'absent'.",t:"More rules repeat the same failure."},
+{id:"n1",d:"D1",src:"new",s:"Your agentic loop sometimes stops early when Claude writes some text alongside a tool call. What is wrong?",o:["The loop treats 'has text' as done; it must continue while stop_reason is tool_use","The iteration cap is too low","Tool results are not summarized","The system prompt needs 'keep going'"],w:"Loop control = stop_reason. tool_use → continue; end_turn → stop.",t:"Text content and iteration caps are anti-patterns."},
+{id:"n2",d:"D1",src:"new",s:"The coordinator runs three research subagents one after another; latency is too high. They are independent. Fix?",o:["Emit all three Task calls in one coordinator response","Spawn each in a separate turn as soon as the previous ends","Merge all three into one subagent","Give each subagent the Task tool"],w:"Multiple Task calls in one response run in parallel.",t:"Separate turns are sequential by design."},
+{id:"n3",d:"D1",src:"new",s:"The coordinator cannot spawn any subagents. Most likely configuration error?",o:["Its allowedTools does not include \"Task\"","The subagents have no system prompts","fork_session is disabled","The subagents lack the coordinator's history"],w:"Task is the spawn mechanism; it must be allowed.",t:"Missing history affects quality, not spawning."},
+{id:"n4",d:"D1",src:"new",s:"The synthesis subagent writes good prose but loses which source each claim came from. Fix?",o:["Pass findings in a structured format separating content from metadata (URL, document, page)","Tell synthesis to 'remember sources'","Give synthesis the coordinator's full history","Use a larger model for synthesis"],w:"Structure keeps claim→source mappings through hand-offs.",t:"Subagents never inherit history automatically."},
+{id:"n5",d:"D1",src:"new",s:"Refunds above $500 must never run without a human. Best implementation?",o:["A tool-call interception hook that blocks refunds over $500 and redirects to escalation","A bold system-prompt rule","Few-shot examples of escalating large refunds","A PostToolUse hook that reverses large refunds"],w:"Guaranteed compliance → intercept before the call.",t:"PostToolUse runs after the money moved."},
+{id:"n6",d:"D1",src:"new",s:"Three MCP tools return dates as Unix time, ISO 8601, and 'MM/DD'. The agent misreads them. Cleanest fix?",o:["A PostToolUse hook that normalizes all dates before the model sees them","Prompt rules explaining each format","Ask each tool owner to change formats","Few-shot examples of reading each format"],w:"PostToolUse = deterministic normalization of results.",t:"Prompt rules are probabilistic."},
+{id:"n7",d:"D1",src:"new",s:"You must compare two refactoring strategies starting from the same codebase analysis. Session approach?",o:["fork_session to create two branches from the shared baseline","--resume the same session and try both in turn","Start two fresh sessions and re-analyze","/compact between the two attempts"],w:"Fork = independent branches from one baseline.",t:"Resuming one session mixes the two attempts."},
+{id:"n8",d:"D1",src:"new",s:"You resume a named investigation after teammates changed 3 files it analyzed. Best move?",o:["--resume the session and tell it exactly which files changed","Resume and let it rediscover everything","Always start fresh with no context","fork_session and ignore the changes"],w:"Mostly valid context → resume + targeted re-analysis.",t:"If most tool results were stale, a fresh session with a summary would win instead."},
+{id:"n9",d:"D1",src:"new",s:"'Add comprehensive tests to a legacy codebase.' Decomposition strategy?",o:["Map the structure, find high-impact areas, then a prioritized plan that adapts as you learn","A fixed prompt chain: one file at a time in alphabetical order","One pass writing tests for everything","Ask a bigger model to do it in one go"],w:"Open-ended → dynamic, adaptive decomposition.",t:"Fixed chains suit predictable work like reviews."},
+{id:"n10",d:"D1",src:"new",s:"Escalating to a human mid-case. What should the handoff contain?",o:["A structured summary: customer ID, root cause, amount, recommended action","The full raw transcript","Only the customer's last message","A sentiment score"],w:"The human has no transcript access; give them decision-ready facts.",t:"Raw transcripts make the human redo the work."},
+{id:"n11",d:"D2",src:"new",s:"A subagent's search API returns zero hits for a valid query. How should it report this?",o:["As a successful query with no results, not as an error","As a transient error with isRetryable true","As a permission error","Retry until something is found"],w:"Empty result ≠ access failure.",t:"Calling it an error triggers useless retries."},
+{id:"n12",d:"D2",src:"new",s:"A refund is rejected because it violates policy. What should the tool return?",o:["isError true, category business, not retryable, plus a customer-friendly explanation","A generic 'Operation failed'","isError true, transient, retryable","An empty success response"],w:"Business errors: do not retry; explain to the customer.",t:"Generic messages block correct recovery."},
+{id:"n13",d:"D2",src:"new",s:"The team needs a shared GitHub MCP server that uses a personal token. How to configure?",o:[".mcp.json in the repo with ${GITHUB_TOKEN} expansion","Token written into .mcp.json","Each developer's ~/.claude.json","A note in CLAUDE.md"],w:"Shared config in git; secrets from the environment.",t:"Never commit the token."},
+{id:"n14",d:"D2",src:"new",s:"The agent makes many exploratory calls just to learn what docs exist. Better design?",o:["Expose the documentation hierarchy as an MCP resource","Add a list_everything tool","Put the doc list in the system prompt","Raise max_tokens"],w:"Resources expose catalogs; tools perform actions.",t:"A giant prompt list wastes context and goes stale."},
+{id:"n15",d:"D2",src:"new",s:"Your team needs Jira access for agents. Best choice?",o:["Use an existing community Jira MCP server","Build a custom Jira MCP server","Scrape Jira pages with Bash","Paste Jira exports into prompts"],w:"Standard integration → community server; custom only for team-specific needs.",t:"Custom builds cost more for no gain."},
+{id:"n16",d:"D2",src:"new",s:"Find every file named *.test.tsx anywhere in the repo. Which built-in tool?",o:["Glob","Grep","Read","Bash with ls"],w:"Glob matches file paths by pattern.",t:"Grep searches file contents."},
+{id:"n17",d:"D2",src:"new",s:"Find every caller of calculateTax() across the codebase. Which built-in tool?",o:["Grep","Glob","Read every file","Write"],w:"Grep searches contents.",t:"Reading everything up front wastes context."},
+{id:"n18",d:"D2",src:"new",s:"Edit fails because the anchor text appears several times in the file. Reliable fallback?",o:["Read the full file, then Write the new version","Retry Edit with the same text","Use Grep to edit","Use Glob to pick the line"],w:"Read + Write when Edit cannot find a unique match.",t:"Grep and Glob do not modify files."},
+{id:"n19",d:"D3",src:"new",s:"A new teammate's Claude ignores the team's coding standards. Yours follows them. Likely cause?",o:["The standards are in your ~/.claude/CLAUDE.md, not the project CLAUDE.md","The teammate needs plan mode","The standards need @import","The teammate's model is older"],w:"User-level files are not shared through git. Verify with /memory.",t:"@import is for modularity, not sharing."},
+{id:"n20",d:"D3",src:"new",s:"A codebase-analysis skill dumps huge output that floods the main conversation. Fix?",o:["Add context: fork to the SKILL.md frontmatter","Add allowed-tools","Move it into CLAUDE.md","Run /compact after each use"],w:"context: fork runs the skill in an isolated sub-agent context.",t:"/compact treats the symptom after the damage."},
+{id:"n21",d:"D3",src:"new",s:"A skill must only be able to write files, never run shell commands. Which frontmatter?",o:["allowed-tools","argument-hint","context: fork","paths"],w:"allowed-tools restricts tools during the skill.",t:"paths belongs to .claude/rules files."},
+{id:"n22",d:"D3",src:"new",s:"Developers often run /migrate without the required table name. Which frontmatter helps?",o:["argument-hint","allowed-tools","context: fork","description"],w:"argument-hint prompts for the missing parameter.",t:""},
+{id:"n23",d:"D3",src:"new",s:"Universal team standards that must always apply. Skill or CLAUDE.md?",o:["CLAUDE.md (always loaded)","A skill (on demand)","A slash command","An MCP resource"],w:"Skills are on-demand, task-specific; CLAUDE.md is always loaded.",t:""},
+{id:"n24",d:"D3",src:"new",s:"Fix a one-file bug with a clear stack trace. Mode?",o:["Direct execution","Plan mode","Plan mode then Explore subagent","Agent SDK pipeline"],w:"Small, well-scoped change → direct.",t:"Plan mode is for architectural, multi-file work."},
+{id:"n25",d:"D3",src:"new",s:"A long multi-phase task keeps exhausting context during discovery. Which tool helps most?",o:["The Explore subagent, which returns a summary","Plan mode only","A larger max_tokens","Restart the session every hour"],w:"Explore isolates verbose discovery output.",t:""},
+{id:"n26",d:"D3",src:"new",s:"CI review findings must become inline PR comments automatically. CLI flags?",o:["-p with --output-format json and --json-schema","-p only, then parse the text","--batch with JSON","--verbose"],w:"JSON + schema = machine-parseable findings.",t:"--batch does not exist."},
+{id:"n27",d:"D3",src:"new",s:"After new commits, the re-run review repeats old comments. Fix?",o:["Include prior findings; ask for only new or still-unaddressed issues","Delete old comments first","Use a different model each run","Review only the last commit"],w:"Give context of what was already reported.",t:""},
+{id:"n28",d:"D3",src:"new",s:"Your prose description of a data transformation is applied inconsistently. Best fix?",o:["Give 2–3 concrete input/output examples","Rewrite the prose in more detail","Use plan mode","Raise temperature"],w:"Examples beat prose for transformations.",t:""},
+{id:"n29",d:"D3",src:"new",s:"Three bugs interact: fixing one changes the others. How to work with Claude?",o:["Describe all three in one detailed message","Fix them one at a time in separate messages","Open three sessions","Ask for tests only"],w:"Interacting issues → one message. Independent → sequential.",t:""},
+{id:"n30",d:"D4",src:"new",s:"A review bot's 'style' findings are mostly false positives, so developers ignore all findings. Best move?",o:["Define explicit report/skip criteria and temporarily disable the high-false-positive category","Tell the model to 'be conservative'","Only report 'high-confidence' findings","Use a bigger model"],w:"Explicit categorical criteria beat vague caution; restore trust first.",t:"'Be conservative' does not raise precision."},
+{id:"n31",d:"D4",src:"new",s:"Strict tool-use JSON is valid, but line items do not add up to the total. What kind of problem?",o:["A semantic error: add calculated_total vs stated_total and a validation-retry loop","A syntax error: enable strict mode","A tool_choice problem: use any","A batch problem: use custom_id"],w:"Schemas stop syntax errors, not semantic ones.",t:"Strict mode is already on; it cannot check arithmetic."},
+{id:"n32",d:"D4",src:"new",s:"A validation-retry loop keeps failing on 'contract end date'. The date is only in an appendix you did not send. What now?",o:["Stop retrying; retries cannot add missing information. Return null or send the appendix","Retry with stronger wording","Retry 5 more times","Make the field required"],w:"Retries fix format errors, not absent data.",t:"Required fields push the model to invent values."},
+{id:"n33",d:"D4",src:"new",s:"A doc_type field must allow new types the team has not foreseen. Schema design?",o:["enum with \"other\" plus a detail string","Free-text string only","A fixed enum with no escape","A boolean per type"],w:"\"other\" + detail keeps it extensible; add \"unclear\" for ambiguity.",t:""},
+{id:"n34",d:"D4",src:"new",s:"Document type is unknown; you have three extraction tools (invoice, receipt, contract) and must get structured output. tool_choice?",o:["any","auto","tool: extract_invoice","none"],w:"any guarantees a tool call while Claude picks the right schema.",t:"auto may return text."},
+{id:"n35",d:"D4",src:"new",s:"7 of 1,000 batch requests failed for exceeding context. Next step?",o:["Resubmit only the 7 by custom_id, chunked","Resubmit the whole batch","Switch everything to real-time","Ignore them"],w:"custom_id identifies failures; fix and resubmit only those.",t:""},
+{id:"n36",d:"D4",src:"new",s:"Claude generated a module. Who should review it for subtle bugs?",o:["A separate Claude instance without the generator's reasoning context","The same session, told to 'review critically'","The same session with extended thinking","No review; tests are enough"],w:"Independent instances catch more than self-review.",t:""},
+{id:"n37",d:"D5",src:"new",s:"After summarization, a long support chat forgets the order number and refund amount. Fix?",o:["Keep a persistent 'case facts' block in every prompt, outside summarized history","Summarize more often","Use a larger context window","Ask the customer again"],w:"Exact facts must not pass through lossy summaries.",t:""},
+{id:"n38",d:"D5",src:"new",s:"Order lookups return 40+ fields; only 5 matter. Context fills fast. Fix?",o:["Trim tool output to relevant fields before it accumulates","/compact every turn","Bigger model","Summarize each result in prose"],w:"Cut irrelevant tokens at the source.",t:""},
+{id:"n39",d:"D5",src:"new",s:"In long aggregated reports, findings from the middle sections are often missed. Fix?",o:["Put a key-findings summary at the start and use clear section headers","Put the important parts in the middle","Shorten every section equally","Ask the model to read carefully"],w:"Lost-in-the-middle: models handle the start and end best.",t:""},
+{id:"n40",d:"D5",src:"new",s:"A customer with a simple, solvable issue says: 'I want a human right now.' Agent should…",o:["Escalate immediately, without investigating first","Try to solve it first, then escalate","Check sentiment, then decide","Ask why they want a human"],w:"Explicit request for a human → honor it immediately.",t:"Frustration WITHOUT a request → offer to resolve, escalate if they insist."},
+{id:"n41",d:"D5",src:"new",s:"A customer asks for a competitor price match. Policy only covers your own site's prices. Agent should…",o:["Escalate: the policy is silent on this case","Approve it; it is close enough","Deny it; not covered means no","Ask the customer for a confidence rating"],w:"Policy gap or ambiguity is an escalation trigger.",t:""},
+{id:"n42",d:"D5",src:"new",s:"get_customer returns three customers named 'Alex Kim'. Agent should…",o:["Ask for another identifier (email, order number)","Pick the most recent account","Pick the one with the most orders","Escalate immediately"],w:"Multiple matches → clarify, never guess.",t:""},
+{id:"n43",d:"D5",src:"new",s:"Extraction is 97% accurate overall. Leadership wants to stop human review of high-confidence items. First?",o:["Check accuracy by document type and field, and use stratified sampling","Stop review now; 97% is high","Raise the confidence threshold and stop review","Ask the model how sure it is"],w:"An average can hide a weak segment.",t:""},
+{id:"n44",d:"D5",src:"new",s:"Two credible sources give different market-size figures. Synthesis should…",o:["Include both with sources, annotate the conflict, and keep their dates","Pick the larger number","Average them","Drop both"],w:"Preserve provenance; dates may explain the difference.",t:""},
+{id:"n45",d:"D5",src:"new",s:"In a long codebase exploration, answers drift to 'typical patterns' instead of the classes found earlier. Fix?",o:["Keep scratchpad files of key findings and delegate exploration to subagents","Ask it to be more specific","Raise max_tokens","Start over every 10 minutes"],w:"Context degradation → persist findings outside context.",t:""},
+{id:"x1",d:"D1",src:"xtra",s:"(Practice-site only) Agents must message each other directly with a shared task list over a long session. Pattern?",o:["Claude Code agent teams","Coordinator subagents","fork_session","Prompt chaining"],w:"Subagents only report back to their caller.",t:"Not in your exam guide. Low priority."},
+{id:"x2",d:"D3",src:"xtra",s:"(Practice-site only) Personal sandbox URL for one repo, never committed. Where?",o:["CLAUDE.local.md (add it to .gitignore)","Root CLAUDE.md","~/.claude/CLAUDE.md","A skill"],w:"Only me + this repo + not in git.",t:"Not in your exam guide. Low priority."}
+];
+
+/* ---------- state ---------- */
+const KEY="cca-cram-v1";
+let S={};
+try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){S={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function box(id){return (S[id]&&S[id].b)||0}
+function mastered(id){return box(id)>=2}
+function record(id,ok,sure){const r=S[id]||{b:0,sw:0};if(ok&&sure)r.b=Math.min(3,r.b+1);else if(!ok){r.b=0;if(sure)r.sw=(r.sw||0)+1}r.last=ok;S[id]=r;save()}
+
+/* ---------- tabs ---------- */
+const VIEWS=["plan","weak","rules","cards","drill"];
+function show(v){if(!VIEWS.includes(v))v="plan";document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.v===v));VIEWS.forEach(k=>document.getElementById("v-"+k).hidden=k!==v);if(v==="plan")renderMastery()}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{history.replaceState(null,"","#"+t.dataset.v);show(t.dataset.v)});
+addEventListener("hashchange",()=>show(location.hash.slice(1)));
+
+/* ---------- timer ---------- */
+let tEnd=0,tInt=null;
+function startTimer(min){tEnd=Date.now()+min*60000;clearInterval(tInt);tick();tInt=setInterval(tick,1000)}
+function tick(){const el=document.getElementById("tleft");const ms=tEnd-Date.now();const a=Math.abs(ms),m=Math.floor(a/60000),s=Math.floor(a%60000/1000);el.textContent=(ms<0?"+":"")+m+":"+String(s).padStart(2,"0");el.classList.toggle("over",ms<0)}
+document.getElementById("t20").onclick=()=>startTimer(20);
+document.getElementById("t5").onclick=()=>startTimer(5);
+
+/* ---------- mastery ---------- */
+function renderMastery(){
+  const el=document.getElementById("mastery");
+  el.innerHTML=Object.keys(DOMN).map(d=>{
+    const ids=[...CARDS.filter(c=>c[1]===d).map(c=>c[0]),...MCQ.filter(q=>q.d===d&&q.src!=="xtra").map(q=>q.id)];
+    const m=ids.filter(mastered).length,p=ids.filter(i=>box(i)===1).length,n=ids.length;
+    return `<div class="mast"><span>${DOMN[d]} <span class="muted small">· ${DOMW[d]}%</span></span><div class="bar"><i style="width:${100*m/n}%;background:var(--good)"></i><i style="width:${100*p/n}%;background:var(--warn)"></i></div><span class="num">${m}/${n}</span></div>`}).join("")+
+    `<p class="muted small">Green = mastered. Amber = 1 sure-correct answer so far.</p>`;
+}
+let armed=false;
+document.getElementById("reset").onclick=()=>{const m=document.getElementById("resetmsg");if(!armed){armed=true;m.textContent="Tap again to erase all progress.";setTimeout(()=>{armed=false;m.textContent=""},4000);return}S={};save();armed=false;m.textContent="Progress erased.";renderMastery()};
+
+/* ---------- rules ---------- */
+document.getElementById("rules").innerHTML=RULES.map((r,i)=>`<div class="rule"><span class="n">${i+1}</span><div><b>${r[0]}</b><span>${r[1]}</span><div class="ev">${r[2]}</div></div></div>`).join("");
+
+/* ---------- helpers ---------- */
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function prio(id,d){return (S[id]&&S[id].sw?-50:0)+box(id)*100-DOMW[d]+Math.random()*8}
+function filterBar(el,opts,cur,cb){el.innerHTML=opts.map(([k,l])=>`<button class="fbtn" type="button" aria-pressed="${k===cur}" data-k="${k}">${l}</button>`).join("");el.querySelectorAll(".fbtn").forEach(b=>b.onclick=()=>cb(b.dataset.k))}
+
+/* ---------- cards ---------- */
+const CF=[["D12","D1 + D2"],["D345","D3 + D4 + D5"],["all","All"],["review","Not mastered"]];
+let cMode="D12",cQueue=[],cPos=0,cFlip=false;
+function cardPool(){return CARDS.filter(c=>cMode==="all"||cMode==="review"?true:cMode==="D12"?["D1","D2"].includes(c[1]):["D3","D4","D5"].includes(c[1])).filter(c=>cMode!=="review"||!mastered(c[0]))}
+function startCards(m){cMode=m||cMode;filterBar(document.getElementById("cfilt"),CF,cMode,startCards);cQueue=cardPool().filter(c=>!mastered(c[0]));if(!cQueue.length&&cMode!=="review")cQueue=cardPool();cQueue.sort((a,b)=>prio(a[0],a[1])-prio(b[0],b[1]));cPos=0;renderCard()}
+function renderCard(){
+  const f=document.getElementById("flash"),bt=document.getElementById("cbtns");
+  const left=cQueue.length-cPos;document.getElementById("cprog").textContent=left>0?`${left} left in queue`:"Queue empty";
+  if(cPos>=cQueue.length){f.innerHTML=`<p class="front">Queue done.</p><p class="muted">Take a break, then switch to Drill.</p>`;bt.innerHTML=`<button class="btn" id="cagain" type="button">Go again</button>`;document.getElementById("cagain").onclick=()=>startCards();document.getElementById("cbox").innerHTML="";return}
+  const c=cQueue[cPos];cFlip=false;
+  document.getElementById("cbox").innerHTML=[0,1].map(i=>`<i class="${box(c[0])>i?"on":""}"></i>`).join("");
+  f.innerHTML=`<span class="tag">${DOMN[c[1]]}</span><p class="front">${esc(c[2])}</p><p class="muted small">Say the answer out loud. Then tap to flip.</p>`;
+  bt.innerHTML=`<button class="btn" id="flip" type="button">Flip</button>`;
+  const flip=()=>{if(cFlip)return;cFlip=true;f.innerHTML=`<span class="tag">${DOMN[c[1]]}</span><p class="front">${esc(c[2])}</p><p class="back">${esc(c[3])}</p>`;
+    bt.innerHTML=`<button class="btn bad" id="cno" type="button">Missed it</button><button class="btn alt" id="cmeh" type="button">Partly</button><button class="btn good" id="cyes" type="button">Knew it</button>`;
+    document.getElementById("cno").onclick=()=>gradeCard(c,false,false);document.getElementById("cmeh").onclick=()=>gradeCard(c,true,false);document.getElementById("cyes").onclick=()=>gradeCard(c,true,true);document.getElementById("cyes").focus()};
+  f.onclick=flip;f.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flip()}};document.getElementById("flip").onclick=flip;
+}
+function gradeCard(c,ok,sure){record(c[0],ok,sure);if(!mastered(c[0])){const at=Math.min(cQueue.length,cPos+3+Math.floor(Math.random()*3));cQueue.splice(at,0,c)}cPos++;renderCard()}
+
+/* ---------- drill ---------- */
+const DF=[["off","Official 12"],["D12","D1 + D2"],["D345","D3 + D4 + D5"],["all","All, not mastered"],["xtra","Practice-site extras"]];
+let dMode="off",dQueue=[],dPos=0,dRight=0,dPick=null,dOrder=[];
+function drillPool(){return MCQ.filter(q=>dMode==="off"?q.src==="off":dMode==="xtra"?q.src==="xtra":q.src!=="xtra"&&(dMode==="all"||(dMode==="D12"?["D1","D2"].includes(q.d):["D3","D4","D5"].includes(q.d))))}
+function startDrill(m){dMode=m||dMode;filterBar(document.getElementById("dfilt"),DF,dMode,startDrill);let p=drillPool();if(dMode==="all")p=p.filter(q=>!mastered(q.id));dQueue=p.sort((a,b)=>prio(a.id,a.d)-prio(b.id,b.d));if(dMode==="off")dQueue=p.sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));dPos=0;dRight=0;renderDrill()}
+function renderDrill(){
+  const card=document.getElementById("dcard");
+  document.getElementById("dprog").textContent=`${Math.min(dPos+1,dQueue.length)} / ${dQueue.length}`;
+  document.getElementById("dscore").textContent=`${dRight} right`;
+  if(dPos>=dQueue.length){const sw=MCQ.filter(q=>S[q.id]&&S[q.id].sw&&!mastered(q.id)).length;
+    card.innerHTML=`<h2>${dQueue.length?"Round done":"Nothing left here"}</h2><p>${dQueue.length?`${dRight} right answers this round.`:"Everything in this set is mastered. Pick another set."}</p><p class="muted">${sw?`${sw} sure-but-wrong items are still open. They come first next round.`:""}</p><div class="row"><button class="btn" id="dagain" type="button">New round</button></div>`;
+    document.getElementById("dagain").onclick=()=>startDrill();return}
+  const q=dQueue[dPos];dPick=null;dOrder=shuffle([0,1,2,3]);
+  const src={off:"Official sample",quiz:"Your quiz miss",new:"Guide task statement",xtra:"Practice-site extra"}[q.src];
+  card.innerHTML=`<span class="tag">${DOMN[q.d]} · ${src}</span><p>${esc(q.s)}</p>
+  <div class="opts">${dOrder.map((oi,k)=>`<button class="opt" type="button" id="o${k}" aria-pressed="false"><b>${"ABCD"[k]}</b><span>${esc(q.o[oi])}</span></button>`).join("")}</div>
+  <div class="row"><button class="btn" id="dsure" type="button" disabled>Lock in · sure</button><button class="btn alt" id="dunsure" type="button" disabled>Lock in · unsure</button></div><div id="dfb"></div>`;
+  dOrder.forEach((_,k)=>document.getElementById("o"+k).onclick=()=>{dPick=k;dOrder.forEach((_,j)=>document.getElementById("o"+j).setAttribute("aria-pressed",j===k));document.getElementById("dsure").disabled=false;document.getElementById("dunsure").disabled=false});
+  document.getElementById("dsure").onclick=()=>lockDrill(q,true);document.getElementById("dunsure").onclick=()=>lockDrill(q,false);
+}
+function lockDrill(q,sure){
+  const ok=dOrder[dPick]===0;
+  dOrder.forEach((oi,k)=>{const b=document.getElementById("o"+k);b.disabled=true;if(oi===0)b.classList.add("right");else if(k===dPick)b.classList.add("wrong")});
+  document.getElementById("dsure").remove();document.getElementById("dunsure").remove();
+  record(q.id,ok,sure);if(ok)dRight++;
+  if(!mastered(q.id)&&dQueue.filter(x=>x.id===q.id).length<3)dQueue.push(q);
+  const msg=ok?(sure?"Right.":"Right, but unsure. It comes back."):(sure?"Wrong, and you were sure. Real blind spot. It comes back.":"Wrong. It comes back.");
+  document.getElementById("dfb").innerHTML=`<div class="fb ${ok?"ok":"no"}"><b>${msg}</b><p>${esc(q.w)}</p>${q.t?`<p class="small"><b>Trap:</b> ${esc(q.t)}</p>`:""}<div class="row"><button class="btn" id="dnext" type="button">Next</button></div></div>`;
+  const n=document.getElementById("dnext");n.onclick=()=>{dPos++;renderDrill()};n.focus();
+}
+
+/* ---------- boot ---------- */
+startCards("D12");startDrill("off");show(location.hash.slice(1)||"plan");
+</script>
