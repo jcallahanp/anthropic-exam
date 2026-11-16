@@ -60,6 +60,7 @@ code{font-family:var(--mono);font-size:.85em;background:var(--accent-soft);paddi
 .gap li{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 14px;font-size:1.05rem}
 .gap li b{color:var(--good)}
 .ok{background:var(--good-soft);border-radius:12px;padding:10px 14px;font-size:1rem}
+.code{font:500 .85rem/1.5 var(--mono);text-align:left;white-space:pre;overflow-x:auto;margin:0}
 .empty{font-size:1.2rem;color:var(--muted)}
 </style>
 
@@ -107,7 +108,34 @@ const M=[
       "<b>Subagents inherit nothing.</b> Put every fact they need in the Task prompt."],
  ok:"Right: independent research has no dependency, so it can run in parallel.",
  trap:"“Coordinator never starts a subagent.” Fix: add <code>\"Task\"</code> to allowedTools. Not: rewrite the prompt.",
- retry:["How does the coordinator start 3 subagents at the same time?","What must be in its allowedTools?","What does a subagent know when it starts?"]}
+ retry:["How does the coordinator start 3 subagents at the same time?","What must be in its allowedTools?","What does a subagent know when it starts?"]},
+{n:"JSON schema (tool input)",
+ you:"Required makes it invent a value. But what does the JSON even look like? Where does it go?",
+ wrong:"Why: correct. Gap: you could not picture the JSON.",
+ rule:'The schema is a FORM Claude fills in. No “blank” option <span class="arrow">→</span> Claude invents',
+ pic:`<div class="b a"><span class="sec">1. You write the tool (the form)</span><pre class="code">{ "name": "save_invoice",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "total":    { "type": "number" },
+      "due_date": { "type": ["string", "null"] }
+    },
+    "required": ["total", "due_date"] } }</pre></div>
+<div class="flow"><span class="ar">↓</span><div class="b">tool_choice forces save_invoice<small>Claude MUST fill the form</small></div><span class="ar">↓</span></div>
+<div class="b a"><span class="sec">2. Claude replies with a tool_use block (the filled form)</span><pre class="code">{ "total": 412.50, "due_date": null }</pre></div>
+<div class="flow"><span class="ar">↓</span><div class="b">3. YOUR code gets the JSON<small>validate it, then save to Postgres</small></div></div>
+<div class="cols">
+<div class="b r"><span class="big">required, NOT nullable</span><small>No due date on the invoice. The form still wants a string. Claude writes "2026-01-01". Invented.</small></div>
+<div class="b g"><span class="big">required + nullable</span><small>Claude writes null. Honest.</small></div>
+<div class="b g"><span class="big">enum + "other"</span><small>Plus a detail field. The new category fits without a forced wrong pick.</small></div>
+</div>`,
+ gap:["<b>The schema is the tool's input_schema.</b> It is the form Claude must fill when it calls the tool.",
+      "<b>Claude's output IS the JSON.</b> Force the tool with tool_choice, and you get structured data back. That is how extraction works.",
+      "<b>Your code gets the JSON.</b> Validate it (for example with Pydantic). Then store it.",
+      "<b>strict / schema = right SHAPE, not right VALUES.</b> A valid date can still be the wrong date."],
+ ok:"Right: required with no exit forces Claude to invent. Your phone-number example is correct.",
+ trap:"“Schema guarantees the data is correct.” WRONG. It guarantees the format only. Values still need checks.",
+ retry:["What is the schema, in one sentence?","Where does Claude's JSON go after it replies?","Why does nullable stop invented values?"]}
 ];
 
 let i=0;
