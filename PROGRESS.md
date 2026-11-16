@@ -26,6 +26,7 @@
 - AgentDefinition | pass | All 3 parts and bugs correct (description → wrong agent picked; prompt → out-of-scope behavior; tools → misuse/least privilege).
 - PreToolUse hook | pass | Why correct (Claude adapts instead of dead-ending). Thin on mechanism: hook is code, runs before the tool, block is guaranteed; ask/allow go to user.
 - PostToolUse hook | pass | Normalize + "cannot block, call already ran" correct. Gave normalize twice; missing 2nd job: trim noisy/verbose fields to save context.
+- --resume | pass | Stale tool results after file changes → start fresh. Missing: fresh session gets a structured summary of prior findings; or resume and name the changed files.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
