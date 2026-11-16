@@ -305,7 +305,24 @@ Read every package file. Report risky deps.</pre></div>
       "<b>Same family:</b> PreToolUse deny, tool_choice, removing a tool, a JSON schema."],
  ok:"Right: least privilege. Limit the skill's tools before it ever runs.",
  trap:"“Add ‘never run destructive commands’ to the SKILL.md body.” WRONG. Use allowed-tools.",
- retry:["What is Pattern 1, in one line?","Why is allowed-tools stronger than a sentence in the prompt?","Name two other mechanisms in the same family."]}
+ retry:["What is Pattern 1, in one line?","Why is allowed-tools stronger than a sentence in the prompt?","Name two other mechanisms in the same family."]},
+{n:"-p (--print)",
+ you:"-p prints Claude's question so a human can review it later, and the workflow keeps going.",
+ wrong:"-p defers a question to a human for later.",
+ rule:'No -p = interactive, waits for a human. -p = run once, print, EXIT.',
+ pic:`<div class="b"><span class="sec">CI script (no human is there)</span></div>
+<div class="cols">
+<div class="b r"><span class="big">claude "review this PR"</span><small>Opens the INTERACTIVE chat. Waits for someone to type. No one is in CI. The job HANGS forever.</small></div>
+<div class="b g"><span class="big">claude -p "review this PR"</span><small>Runs the prompt ONE time. Prints the answer to the terminal. EXITS. The job continues.</small></div>
+</div>
+<div class="flow"><div class="b">-p</div><span class="ar">+</span><div class="b a">--output-format json<small>machine-readable</small></div><span class="ar">+</span><div class="b a">--json-schema<small>fixed shape for the CI step</small></div></div>`,
+ gap:["<b>The hang:</b> without -p, Claude Code starts its chat screen and waits for your next message. CI has no keyboard.",
+      "<b>-p = print mode.</b> One prompt in, one answer printed out, then the process ends.",
+      "<b>Nothing is saved for a human to review later.</b> “Print” means print the ANSWER to the terminal (stdout).",
+      "<b>For CI that reads the output:</b> add --output-format json and --json-schema."],
+ ok:"Right instinct: something was waiting on a human. That human was the chat input, not a review.",
+ trap:"“Set a longer CI timeout” or “add a ‘do not ask questions’ line to the prompt”. WRONG. Use -p.",
+ retry:["Why does plain claude hang in CI?","What exactly does -p do?","Which two flags make the output usable by the next CI step?"]}
 ];
 
 let i=0;

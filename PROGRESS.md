@@ -49,6 +49,7 @@
 - Plan mode | pass | Explore + find dependencies before editing. Missing: plan mode is read-only (no edits); use for big multi-file/architecture change with several valid approaches; small clear fix = direct execution.
 - Explore subagent | pass | Noise stays out, summary returns: right. Slip repeated: pictured interactive back-and-forth with user. Explore = read-only subagent Claude starts; reads/greps codebase; returns summary. Note added to context: fork screen.
 - /compact | pass | Frees context; loses exact facts in summary; keep facts in files. Exam names: case-facts block, scratchpad file.
+- -p (--print) | retry (on misconceptions page) | Thought -p defers a question for human review. Missing: no -p = interactive chat waits for input → CI hangs; -p = run once, print answer, exit.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
