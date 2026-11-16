@@ -78,5 +78,17 @@
 - Batch custom_id: guessed right. Unique in batch, 1-64 chars, [a-zA-Z0-9_-]; results in any order → match by custom_id.
 - MISSED (new topic, 4.2): examples read as live request → wrap context/instructions/examples/request in separate XML tags.
 
+## Scope check: Cert Safari questions vs official guide (v0.2 text)
+Explicitly out of scope: NONE of the pasted questions.
+Core (named in guide task statements) -> HIGH priority:
+- resume twice vs fork_session (1.7) | repeated tool call / history (1.1) | refund >$500 hook in code (1.5)
+- Bash to run tests, Grep split lines (2.5) | tool description boundaries (2.1)
+- path-specific rules, scattered tests glob, terraform glob (3.3) | packages/api CLAUDE.md (3.1)
+- test-driven iteration, interacting issues (3.5) | custom_id for correlation (4.5)
+Not in guide (practice-site detail) -> LOW priority, skim only:
+- agent teams (0 mentions) | AgentDefinition model field (guide lists description, prompt, tools only)
+- hook matcher regex syntax mcp__server__(a|b) | Bash(cmd*) permission wildcard syntax
+- custom_id format rules (64 chars, charset) | XML tags to fence examples (0 mentions; 4.2 is few-shot)
+
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.
