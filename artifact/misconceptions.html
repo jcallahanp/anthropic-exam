@@ -135,7 +135,26 @@ const M=[
       "<b>strict / schema = right SHAPE, not right VALUES.</b> A valid date can still be the wrong date."],
  ok:"Right: required with no exit forces Claude to invent. Your phone-number example is correct.",
  trap:"“Schema guarantees the data is correct.” WRONG. It guarantees the format only. Values still need checks.",
- retry:["What is the schema, in one sentence?","Where does Claude's JSON go after it replies?","Why does nullable stop invented values?"]}
+ retry:["What is the schema, in one sentence?","Where does Claude's JSON go after it replies?","Why does nullable stop invented values?"]},
+{n:"Message Batches API",
+ you:"Why can't I wait for the tool, append the result, and continue? It seems like only latency.",
+ wrong:"The batch can hold the agent loop and wait for tools.",
+ rule:'1 batch request = 1 reply. No loop inside. <span class="arrow">→</span> every tool call = a NEW batch',
+ pic:`<div class="flow"><div class="b a">Batch 1<small>request</small></div><span class="ar">→</span><div class="b">up to 24 h</div><span class="ar">→</span><div class="b r">reply: stop_reason = tool_use<small>the request ENDS here</small></div></div>
+<div class="flow"><span class="ar">↓</span><div class="b">Your code runs the tool, appends tool_result</div><span class="ar">↓</span></div>
+<div class="flow"><div class="b a">Batch 2<small>a NEW submit</small></div><span class="ar">→</span><div class="b">up to 24 h</div><span class="ar">→</span><div class="b r">tool_use again…</div></div>
+<div class="cols">
+<div class="b r"><span class="big">Agent, 5 tool calls</span><small>5 batches × up to 24 h each = up to 5 days.</small></div>
+<div class="b g"><span class="big">Batches is for</span><small>One-shot, non-blocking jobs: overnight reports, bulk classify 10,000 docs. 50% cheaper.</small></div>
+<div class="b g"><span class="big">Agents need</span><small>The normal Messages API. Fast round trips, loop in your code.</small></div>
+</div>`,
+ gap:["<b>Batches does not run your loop.</b> It runs each request ONE time and returns the reply. If the reply is tool_use, that request is over.",
+      "<b>You CAN continue, but only with a new batch submit.</b> That is exactly your idea. Each tool round then costs up to 24 h.",
+      "<b>So it is latency × every tool call.</b> One tool call is slow. Ten tool calls is unusable.",
+      "<b>Match requests to answers with custom_id.</b> Results can come back in any order."],
+ ok:"Right: no latency guarantee, and one request is one call. Your instinct that it is latency was close. The missing piece is that the latency multiplies.",
+ trap:"“Use Batches to save 50% on the pre-merge check developers wait for.” WRONG. Someone is blocked. Use Batches only when no one waits.",
+ retry:["What does one batch request return when Claude wants a tool?","What must you do to continue?","Why does that kill an agent with 10 tool calls?"]}
 ];
 
 let i=0;

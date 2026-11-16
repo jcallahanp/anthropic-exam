@@ -30,6 +30,7 @@
 - fork_session | pass | Save-game analogy correct: resume = continue same save; fork = copy save, try another path, original untouched. Use case: compare 2 approaches from same analysis.
 - tool_choice | pass | auto, any, tool correct (quiz-1 Q23 fixed). Missing: none = no tools, text only.
 - JSON schema (tool input) | retry (on misconceptions page) | Why correct. Knowledge gap: could not picture the schema/JSON shape or where it goes. Added picture: form → tool_use JSON → your code.
+- Message Batches API | retry (on misconceptions page) | Thought batch could hold the loop and wait. Missing: request ends at tool_use; continuing = new batch; latency × every tool call.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
