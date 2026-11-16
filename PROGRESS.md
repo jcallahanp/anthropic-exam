@@ -59,4 +59,4 @@
 - Glob | pass | Glob **/*.tf, then Grep "prod" in those.
 
 ## Next step
-User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
+Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.
