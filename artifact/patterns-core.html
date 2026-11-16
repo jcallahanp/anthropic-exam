@@ -1,0 +1,52 @@
+<title>Anthropic Exam Patterns</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one page, numbered by yield. Each pattern: rule, where it shows up, pick-over line. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#141b26; --muted:#4f5a6b; --line:#d5dbe4;
+  --accent:#0d6c78; --accent-soft:#dcf0f2; --good:#17773a; --bad:#b3332a;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846; --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --bad:#f2857a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846; --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --bad:#f2857a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:18px/1.42 var(--body)}
+p{margin:0}
+code{font-family:var(--mono);font-size:.85em;background:var(--accent-soft);padding:0 4px;border-radius:5px;overflow-wrap:anywhere}
+.wrap{max-width:980px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+h1{font:700 clamp(1.6rem,4.5vw,2.2rem)/1.1 var(--display);margin:0 0 4px;text-wrap:balance}
+.sub{color:var(--muted);margin-bottom:6px}
+.p{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:2.4rem 1fr;gap:4px 12px}
+.n{font:700 1.6rem/1 var(--display);color:var(--accent);grid-row:span 4}
+.t{font:700 1.18rem/1.25 var(--display)}
+.r{font-size:1rem}
+.w{font-size:.9rem;color:var(--muted)}
+.w::before{content:"Shows up in: ";font-weight:700}
+.k{font-size:.95rem}
+.k .y{color:var(--good);font-weight:700}.k .x{color:var(--bad);font-weight:700}
+</style>
+<main class="wrap">
+  <h1>The Anthropic patterns behind the questions you miss</h1>
+  <p class="sub">Ordered by how often they decide a question. One read, no quiz.</p>
+  <div id="list"></div>
+</main>
+<script>
+/* [title, rule, shows up in, pick, over] */
+const P=[
+["Scope to the narrowest level that still reaches everyone who needs it","Every config question is “who needs this, and when?”. Put it at the smallest scope that covers exactly that: user vs project vs one folder vs matching files; one subagent's model, not the session's; one agent's tools, not all agents'.","CLAUDE.md levels, rules + paths, .mcp.json vs ~/.claude.json, AgentDefinition model, tool distribution","rules + paths: for scattered test files · model on one AgentDefinition · only route_ticket for the router","root CLAUDE.md · changing the session model · giving every agent every tool"],
+["Pick the execution pattern from the task's shape, not its importance","Fixed + independent steps run in parallel. Each step needs the last → chain. Steps unknown until runtime → orchestrator. Big multi-file change → plan mode. Small clear fix → direct. Nobody waiting → batch. Tiny lookup → do it inline.","Workflow patterns, plan mode, Explore vs Grep, Batches, subagent spawning","parallel calls for the same 3 actions on every ticket · Grep for one function","orchestrator-workers “because it is more flexible” · a subagent for a one-line search"],
+["Context never travels on its own","Subagents start empty. A human taking an escalation has no transcript. A resumed session does not know files changed. A summary drops exact numbers. Whatever must cross the gap, you pass explicitly.","Task prompts, escalation handoffs, --resume after edits, /compact, long support chats","full facts in the Task prompt · structured handoff (customer ID, root cause, amount, action) · case-facts block","“the subagent can see the coordinator's history” · resume and assume it knows"],
+["Fresh eyes beat self-review","A session that wrote something keeps its own reasoning and defends it. An independent instance with no shared context catches more. Same idea isolates noise: verbose work runs elsewhere and only a summary returns.","CI code review, extraction review, context: fork, Explore subagent","a separate review instance · context: fork for verbose skills","“ask the same session to double-check” · extended thinking as the reviewer"],
+["Structure at every hand-off","When data crosses a boundary (model → script, subagent → coordinator, step → step), give it a fixed shape. Prose is for humans; machines get schemas and fields.","tool use + JSON schema, --json-schema in CI, structured errors, claim → source maps, detected_pattern","error = type + attempted + partial + alternatives · findings with file/line/severity","“search failed” · “return JSON” in the prompt · regex on prose"],
+["Keep the truth; do not tidy it away","Never resolve uncertainty by hiding it. Conflicting sources: keep both, cite each. Nothing found ≠ failed. Partial results survive a failure. Missing data → null. One failed step does not kill the whole run.","Research synthesis, error propagation, extraction, coverage gaps","annotate both statistics with sources · return valid-empty vs access-failure distinctly","pick the more recent number · return empty as success · abort the workflow"],
+["Retry only when the model can actually succeed","Format or structure errors: retry with the exact validation error. Information absent from the source: retrying makes it invent, so return null. Transient failures: retry locally in the subagent; propagate only what it cannot fix.","Validation-retry loops, Pydantic, subagent errors, MCP isRetryable","retry with the specific error · null when the field is not in the document","“retry until it passes” · retry a business-rule rejection"],
+["Show, don't add more words","When longer instructions already fail, examples fix it: 2–4 targeted few-shot examples, including the hard case and why. For precision, name categories of what counts, not how sure to be.","Inconsistent formats, varied documents, ambiguous tool choice, false positives, escalation criteria","few-shot with the edge case · “only runtime bugs: null deref, off-by-one”","a longer prompt · “only report when very confident”"],
+["Trust only calibrated signals","Self-rated confidence, sentiment, and one overall accuracy number all mislead. Use explicit criteria, labeled validation sets, field-level calibrated confidence, and stratified samples per document type.","Escalation, human review routing, automation go/no-go","escalate on: human asked, policy gap, no progress · check accuracy per field and type","escalate when the customer sounds angry · automate because 97% overall"],
+["Fix the cause at its source, lightest tool first","Wrong tool picked → improve that tool's description before adding routing, few-shot, or merging tools. Built-in Grep beats your MCP tool → your MCP description is too thin. Bigger model, more agents, more context are never the first fix.","Tool selection, MCP integration, router agents","rewrite the description (purpose, inputs, examples, “use X instead when”)","a classifier in front · a bigger model · consolidating everything into one tool"],
+["Let the model decide the path; let code guard the rails","Claude chooses the next tool from context (model-driven), not a hardcoded sequence. But anything that must always hold is enforced in code around it. Two answers both work? The Claude-native one wins unless the constraint is a hard rule.","Agent loop design, hooks, prerequisite gates, ‘parallel agents vs a message queue’","stop on stop_reason · spawn agents for parallel work · PreToolUse gate for identity","a fixed decision tree · iteration cap as the stop · a prompt for a must-always rule"],
+["Only documented features exist","The decoy is often a plausible feature that does not exist: a flag, env var, frontmatter key, or SDK field. If you have not seen it in the docs or guide, assume it is invented. Prefer existing community MCP servers over building your own.","CLI questions, hook config, frontmatter, SDK options","-p · --resume · fork_session · paths: · tool_input in the callback","--batch · CLAUDE_HEADLESS · argument_matcher · globs:"]];
+document.getElementById("list").innerHTML=P.map(([t,r,w,y,x],i)=>`<div class="p"><span class="n">${i+1}</span><span class="t">${t}</span><p class="r">${r}</p><p class="w">${w}</p><p class="k"><span class="y">Pick:</span> ${y}<br><span class="x">Over:</span> ${x}</p></div>`).join("");
+</script>
