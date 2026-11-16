@@ -122,5 +122,8 @@ Not in guide (practice-site detail) -> LOW priority, skim only:
 - hook matcher regex syntax mcp__server__(a|b) | Bash(cmd*) permission wildcard syntax
 - custom_id format rules (64 chars, charset) | XML tags to fence examples (0 mentions; 4.2 is few-shot)
 
+## Final explain-back log
+(format: prompt | parts right / total | gaps)
+
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.
