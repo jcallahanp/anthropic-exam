@@ -93,6 +93,14 @@
 - Small lookup → Grep directly, no subagent (5.4): right but felt wrong. Proportionality: subagents only for big noisy exploration.
 - Subagent error payload (5.3): right, reasoning off (context size). Correct: failure type, attempted, partial results, alternatives → recovery decision.
 
+## Real-exam reports (research/exam-reports.md, spot-checked by main session)
+- Format matches guide (60 items, 120 min, 4 of 6 scenarios, 720). Guide v1.0 (Jul 2026) allows multiple-response items: read "select N". Same task statements as our v0.2.
+- Real exam harder than practice (typical: 950+ practice → 840-890 real). Do not trust practice scores.
+- D3 catches people; CLI flags "hardest part by far" (rogs.me, verified). Added CLI flags card to speed run.
+- Tie-breaker reported: most Claude-native answer, unless constraints say otherwise.
+- No first-hand report of agent teams, CLAUDE.local.md, matcher/permission syntax, XML → keep LOW.
+- Dec 7 2026 content update does NOT include Architect – Foundations (Pearson page, verified).
+
 ## Scope check: Cert Safari questions vs official guide (v0.2 text)
 Explicitly out of scope: NONE of the pasted questions.
 Core (named in guide task statements) -> HIGH priority:

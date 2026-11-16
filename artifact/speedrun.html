@@ -186,6 +186,23 @@ Bash(npm run migrate *)  → migrate + arguments, not migrate-cleanup</pre>`,
  c:["broader match","unexpectedly also executes"],
  x:"Blaming -p. The pattern is too wide.",
  a:["Allow only `npm test` with no extras. Rule?","Bash(npm test)"]},
+{d:"d3",tag:"miss",t:"CLI flags (test-takers: “hardest part by far”)",
+ r:"Know what each real flag does. Reject flags and env vars that do not exist.",
+ v:`<table class="t"><tr><th>flag</th><th>what it does</th></tr>
+<tr><td><code>-p</code> / <code>--print</code></td><td>run once, print, exit (CI)</td></tr>
+<tr><td><code>--output-format json</code></td><td>machine-readable output</td></tr>
+<tr><td><code>--json-schema file</code></td><td>fixed shape for the output</td></tr>
+<tr><td><code>--resume &lt;name&gt;</code> / <code>-r</code></td><td>continue a named session</td></tr>
+<tr><td><code>--continue</code> / <code>-c</code></td><td>continue the most recent session</td></tr>
+<tr><td><code>--allowedTools "Bash(npm test)"</code></td><td>pre-approve tools (no prompt)</td></tr>
+<tr><td><code>--disallowedTools</code></td><td>block tools</td></tr>
+<tr><td><code>--permission-mode plan</code></td><td>start in plan mode</td></tr>
+<tr><td><code>--model</code> · <code>--max-turns</code></td><td>pick model · cap agent turns (-p)</td></tr>
+<tr><td><code>--append-system-prompt</code> · <code>--mcp-config</code></td><td>add to system prompt · load MCP config</td></tr></table>
+<div class="two"><div class="b r">FAKE: <code>--batch</code><small>guide sample-question distractor</small></div><div class="b r">FAKE: <code>CLAUDE_HEADLESS=true</code><small>guide sample-question distractor</small></div></div>`,
+ c:["flag","CLI","pipeline","non-interactive","headless"],
+ x:"A plausible-sounding flag or env var (--batch, --headless, CLAUDE_HEADLESS). If you never saw it in the docs, it is a distractor.",
+ a:["CI must continue yesterday's named investigation session “auth-audit”. Flag?","--resume auth-audit"]},
 /* ---------- D1 ---------- */
 {d:"d1",tag:"miss",t:"The agent loop",
  r:"Claude ASKS for a tool. YOUR code runs it, appends tool_use + tool_result, resends ALL history.",
@@ -309,7 +326,7 @@ SLA math: 30 h SLA − 24 h window = submit every 6 h</pre>`,
  x:"Trusting the summary to keep exact values.",
  a:["After compaction the agent quotes the wrong refund amount. Fix?","A persistent case-facts block sent every turn."]}
 ];
-const MOVES=[["Key word first","Find “independent”, “test-driven”, “automatically”. Pick the answer that explains THAT word."],["Must always → mechanism","Hook, schema, tool_choice, allowed-tools, remove the tool. Never “add it to the prompt”."],["Lightest fix at the cause","Bad pick → better description. Vague → explicit criteria. Mixed parts → XML tags."],["Reject true-but-generic","“Context rot”, “plan first”: true in general, wrong when they skip the key word."]];
+const MOVES=[["Key word first","Find “independent”, “test-driven”, “automatically”. Pick the answer that explains THAT word."],["Must always → mechanism","Hook, schema, tool_choice, allowed-tools, remove the tool. Never “add it to the prompt”."],["Lightest fix at the cause","Bad pick → better description. Vague → explicit criteria. Mixed parts → XML tags."],["Reject true-but-generic","“Context rot”, “plan first”: true in general, wrong when they skip the key word."],["Two answers work? Tie-break","Pick the most Claude-native one (agents, hooks, tools), unless the constraints say not to use Claude."],["Read “select N”","Some items can ask for more than one answer. Check the count on every item."]];
 const TAGS={miss:["missed","miss"],guess:["guessed","miss"],ps:["practice-site only","ps"]};
 const $=id=>document.getElementById(id);
 let cur="d3";
