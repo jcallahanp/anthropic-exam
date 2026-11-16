@@ -1,0 +1,31 @@
+Question stem says ALWAYS / NEVER / MUST / deterministic. Which kind of answer wins?	A mechanism that makes the wrong action impossible: hook, code gate, schema, tool_choice, remove the tool. | Trap: "add it to the prompt" (probabilistic).
+Question is about varied, ambiguous, or inconsistent output (no hard rule). Which kind of answer wins?	The lightest fix at the root cause: clearer tool descriptions, explicit criteria, few-shot examples. | Trap: bigger model, new infrastructure.
+Agent skips a required step (e.g. verify identity before refund) in 8% of cases. Fix?	Programmatic prerequisite gate: the refund tool rejects unless verification succeeded. | Trap: stronger prompt or few-shot (lowers rate, never 0).
+Router agent has route_ticket + process_refund "just in case" and misuses refund. Fix?	Remove the extra tools. Give each agent only the tools its role needs. | Trap: "NEVER call refund" in the prompt.
+Data formats vary (dates, prices). Conversion must be deterministic + unit-testable. Design?	Claude extracts the raw string; application code converts. | Trap: schema pattern or format: "date" (validates shape, Claude still converts).
+Extraction from wildly varied layouts invents values; detailed rules did not help. Next step?	Few-shot examples of diverse layouts, incl. one where the field is absent → null. Make fields nullable.
+tool_choice: Claude must call some tool every turn, and picks which.	{"type": "any"}
+tool_choice: Claude must call one specific tool every time.	{"type": "tool", "name": "..."}
+tool_choice: default; Claude may answer without a tool.	{"type": "auto"}
+Which tool_choice values work with manual extended thinking?	Only auto and none. any/tool give an error.
+PreToolUse hook returns permissionDecision "deny" + reason. Effect?	Tool call is blocked. The reason is shown to Claude, so it can adapt (e.g. use the safe wrapper).
+PreToolUse permissionDecision "allow" vs "ask": who sees the reason?	The user. allow = runs, skips the prompt. ask = user confirms.
+Can a PostToolUse hook stop a dangerous call?	No. It runs after the tool already ran. Use PreToolUse to block. PostToolUse is for normalizing/checking results.
+Agents must message each other directly and share a task list over a long session. Pattern?	Agent teams (experimental flag). | Subagents only return a final result to their caller.
+Can a Claude Code subagent start other subagents?	No. Hub-and-spoke: the coordinator starts subagents.
+Foreground subagent writes text, then an API error cuts it off. What does the coordinator get?	The partial text + a note that it was cut off. (Claude Code first prompts it to continue.) | No text at all → "Agent terminated early due to an API error".
+How does a subagent get the context it needs?	Explicitly in its prompt. It does not see the coordinator's conversation.
+Agentic loop: which stop_reason means "run the tool and continue"? Which means "done"?	tool_use → run the tool, send result, loop. | end_turn → stop.
+Config for: only me, this repo, never in git.	CLAUDE.local.md in repo root (add it to .gitignore).
+Config for: team, this repo, in git.	./CLAUDE.md (or .claude/CLAUDE.md). Also what CI runs load.
+Config for: only me, every repo.	~/.claude/CLAUDE.md
+Conventions that apply only to some files (e.g. tests spread across folders).	.claude/rules/*.md with paths: glob frontmatter. | Trap: root CLAUDE.md (always loads).
+Team-shared slash command for this repo.	.claude/commands/ (committed). Personal: ~/.claude/commands/.
+MCP server shared with everyone who clones the repo.	.mcp.json in repo root. Personal: ~/.claude.json.
+CI must apply team review rules on every run without editing each workflow. Where?	The repo's committed CLAUDE.md. CI runners have no personal ~/.claude.
+Run Claude Code non-interactively in CI with machine-readable output.	claude -p "..." --output-format json (add --json-schema for a fixed shape).
+Plan mode vs direct execution?	Plan mode: large/multi-file or unclear change. Direct: small, well-defined change.
+MCP tool fails. How should it report the error?	Structured error: isError: true + category + retryable. Never hide it; never end the whole workflow.
+Escalate to a human based on the model's self-reported confidence or customer sentiment?	No, unreliable signals. Use explicit escalation criteria.
+When is the Message Batches API the right answer?	Only for non-blocking work (50% cheaper, up to 24 h). Never when a user is waiting.
+Reviewing a large multi-file change for bugs. Best approach?	Per-file passes + a separate cross-file integration pass. | Trap: bigger model, majority vote.

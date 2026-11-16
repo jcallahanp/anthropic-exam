@@ -9,3 +9,14 @@ for front, back, tags in csv.reader(open(here / "cards.tsv"), delimiter="\t", qu
     deck.add_note(genanki.Note(model=model, fields=[front, back], tags=tags.split()))
 genanki.Package(deck).write_to_file(here / "deck.apkg")
 print(len(deck.notes), "cards")
+
+# Plain-text version for "paste text" import: front<TAB>back, one card per line, no HTML, no tags.
+import html, re
+def plain(s):
+    s = re.sub(r"<br\s*/?>", " | ", s)
+    s = re.sub(r"<[^>]+>", "", s)
+    return html.unescape(s).replace("\t", " ").strip()
+with open(here / "paste.txt", "w") as f:
+    for front, back, _ in csv.reader(open(here / "cards.tsv"), delimiter="\t", quoting=csv.QUOTE_NONE):
+        f.write(f"{plain(front)}\t{plain(back)}\n")
+print("paste.txt written")
