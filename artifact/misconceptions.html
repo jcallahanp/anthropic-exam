@@ -209,7 +209,29 @@ const M=[
       "<b>Many folders share one rule by file type?</b> Use .claude/rules/ with a paths: glob instead."],
  ok:"Right: the sentence does the same thing. Only who gets it and when it loads change.",
  trap:"“Team test rules in ~/.claude/CLAUDE.md.” WRONG. Teammates and CI never get it. Use ./CLAUDE.md.",
- retry:["Where does ~/.claude/CLAUDE.md apply, and who gets it?","Which level reaches CI?","When does src/api/CLAUDE.md load?"]}
+ retry:["Where does ~/.claude/CLAUDE.md apply, and who gets it?","Which level reaches CI?","When does src/api/CLAUDE.md load?"]},
+{n:"@import vs .claude/rules/",
+ you:"Rules apply in certain scenarios, like when we use a certain tool. CLAUDE.md holds the global rules. (@import not explained.)",
+ wrong:"Rules are triggered by tools or scenarios. @import skipped.",
+ rule:'@import = pull a file IN. rules/ + paths: = load only for MATCHING FILES.',
+ pic:`<div class="b a"><span class="sec">@import: a line inside a CLAUDE.md</span><pre class="code"># packages/billing/CLAUDE.md
+@standards/payments.md
+@standards/testing.md</pre><small>Those 2 files load every time this CLAUDE.md loads. They are just example file names.</small></div>
+<div class="b a"><span class="sec">.claude/rules/testing.md: a rule file with a glob</span><pre class="code">---
+paths: ["**/*.test.tsx"]
+---
+Use React Testing Library. No snapshots.</pre><small>Loads ONLY when Claude works on a file that matches the glob.</small></div>
+<div class="cols">
+<div class="b g"><span class="big">Use @import</span><small>A CLAUDE.md is too big, or a package needs specific standards files. Split them and import.</small></div>
+<div class="b g"><span class="big">Use rules/ + paths</span><small>A rule is for one FILE TYPE spread across many folders, for example tests in 40 folders.</small></div>
+</div>`,
+ gap:["<b>Rules are triggered by FILE PATHS,</b> not by tools or scenarios. The glob in paths: decides.",
+      "<b>@import pulls a file's text into a CLAUDE.md.</b> It loads whenever that CLAUDE.md loads.",
+      "<b>standards/payments.md and testing.md were example file names</b> for @import, not rules.",
+      "<b>A rule file with no paths:</b> loads every session, like CLAUDE.md."],
+ ok:"Right: keep CLAUDE.md short and general. Put specific detail in separate files.",
+ trap:"“A CLAUDE.md in each of 40 test folders.” WRONG. One .claude/rules/ file with <code>**/*.test.tsx</code>.",
+ retry:["What does an @import line do?","What decides when a .claude/rules/ file loads?","Tests live in 40 folders. Which one do you use?"]}
 ];
 
 let i=0;

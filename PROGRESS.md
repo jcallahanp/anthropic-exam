@@ -38,6 +38,7 @@
 - .mcp.json | retry (on misconceptions page) | Thought a function blurs the token. Unsure which part shares. Missing: committed project file = shared; file holds only ${VAR} text; each machine's env fills it at startup.
 - ~/.claude.json | pass | Home folder not in repo → teammates/CI never see it. Did not know "CI"; added definition to patterns page.
 - CLAUDE.md (3 levels) | retry (on misconceptions page) | Thought user level applies only inside home folder. Missing: user level = you, all projects; project = team + CI; dir = loads when Claude works on files there.
+- @import vs .claude/rules/ | retry (on misconceptions page) | Thought rules trigger by tool/scenario; did not explain @import; thought standards/*.md were rules. Missing: @import pulls file into CLAUDE.md; rules load by paths: glob match.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
