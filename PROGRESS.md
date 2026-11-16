@@ -17,7 +17,9 @@
 - Priority: D1 > D2 > D4 > D3 > D5.
 
 ## Teach-back log
-(none yet; add: pattern/tool | pass/retry | what was missing)
+(add: pattern/tool | pass/retry | what was missing)
+
+- stop_reason | retry | Thought the loop retries failures. Missing: Claude cannot run tools; your code runs the tool, appends tool_result, resends full history; loop until end_turn. Got right: API holds no memory between calls.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
