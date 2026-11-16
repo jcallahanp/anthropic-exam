@@ -1,0 +1,119 @@
+<title>Domain 3 Playbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one map at the top, then 3.1–3.6 as blocks of situation → answer rows (every row is a guide "skill"). */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#141b26; --muted:#4f5a6b; --line:#d5dbe4;
+  --accent:#0d6c78; --accent-soft:#dcf0f2; --good:#17773a; --good-soft:#e3f4e8; --bad:#b3332a; --bad-soft:#fbe6e3; --me:#8a5a00; --me-soft:#fbefd6;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846; --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#132b1c; --bad:#f2857a; --bad-soft:#371c19; --me:#f0c25a; --me-soft:#3a2e12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846; --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#132b1c; --bad:#f2857a; --bad-soft:#371c19; --me:#f0c25a; --me-soft:#3a2e12; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:18px/1.42 var(--body)}
+p{margin:0}
+code{font-family:var(--mono);font-size:.85em;background:var(--accent-soft);padding:0 4px;border-radius:5px;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+h1{font:700 clamp(1.6rem,4.5vw,2.2rem)/1.1 var(--display);margin:0;text-wrap:balance}
+.sub{color:var(--muted)}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav a{font:700 .85rem var(--display);color:var(--ink);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:9px;padding:5px 10px}
+.map{background:var(--surface);border:3px solid var(--ink);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.map h2{font:700 1.2rem var(--display);margin:0}
+.tree{font:500 .8rem/1.7 var(--mono);white-space:pre;margin:0}
+.me{color:var(--me);font-weight:700}.team{color:var(--good);font-weight:700}.when{color:var(--accent);font-weight:700}.dim{color:var(--muted)}
+.ask{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:8px}
+.ask div{background:var(--accent-soft);border-radius:10px;padding:8px 10px;font-size:.92rem}
+.ask b{font-family:var(--display)}
+section{display:flex;flex-direction:column;gap:8px;scroll-margin-top:10px}
+section h2{font:700 clamp(1.25rem,3.2vw,1.55rem)/1.2 var(--display);margin:0}
+section h2 small{font:700 .75rem var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--bad);margin-left:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);background:var(--surface);border:2px solid var(--line);border-radius:12px;overflow:hidden}
+.row>div{padding:9px 12px;min-width:0}
+.s{font-size:.95rem;border-right:2px solid var(--line)}
+.s::before{content:"SITUATION";display:block;font:700 .64rem var(--body);letter-spacing:.07em;color:var(--muted)}
+.a{background:var(--good-soft);font-size:.97rem}
+.a b{color:var(--good);font-family:var(--display)}
+.a .no{display:block;margin-top:4px;color:var(--bad);font-size:.88rem}
+.a .no::before{content:"✗ "}
+.reported{background:var(--me-soft);border-radius:10px;padding:8px 12px;font-size:.92rem}
+.reported b{color:var(--me)}
+@media (max-width:640px){.row{grid-template-columns:1fr}.s{border-right:0;border-bottom:2px solid var(--line)}}
+</style>
+<main class="wrap">
+  <header style="display:flex;flex-direction:column;gap:8px">
+    <h1>Domain 3 playbook: Claude Code configuration</h1>
+    <p class="sub">20% of the exam and your weakest domain. Every row below is a skill the guide says is tested. Start with the map.</p>
+    <nav><a href="#s31">3.1 CLAUDE.md</a><a href="#s32">3.2 Commands + skills</a><a href="#s33">3.3 Path rules</a><a href="#s34">3.4 Plan mode</a><a href="#s35">3.5 Refinement</a><a href="#s36">3.6 CI/CD</a></nav>
+  </header>
+
+  <div class="map">
+    <h2>The map: every file, who gets it, when it loads</h2>
+<pre class="tree"><span class="me">~/.claude/CLAUDE.md</span>            <span class="dim">only you · every project on your machine</span>     <span class="when">session start</span>
+<span class="me">~/.claude/commands/x.md</span>        <span class="dim">your personal /x</span>                              <span class="when">when typed</span>
+<span class="me">~/.claude/skills/x-mine/</span>       <span class="dim">your personal skill variant (new name!)</span>       <span class="when">when called</span>
+<span class="me">~/.claude.json</span>                 <span class="dim">your personal MCP servers</span>                     <span class="when">session start</span>
+repo/
+├─ <span class="team">CLAUDE.md</span>  (or .claude/CLAUDE.md)  <span class="dim">team + CI · whole project</span>      <span class="when">session start</span>
+│    @standards/testing.md            <span class="dim">@import pulls it in</span>            <span class="when">with its CLAUDE.md</span>
+├─ packages/api/<span class="team">CLAUDE.md</span>           <span class="dim">one folder</span>                     <span class="when">when Claude works in that folder</span>
+├─ <span class="team">.mcp.json</span>                       <span class="dim">team MCP, "${TOKEN}" placeholder</span> <span class="when">session start</span>
+└─ .claude/
+   ├─ rules/<span class="team">testing.md</span>              <span class="dim">paths: ["**/*.test.tsx"]</span>       <span class="when">only for matching files</span>
+   ├─ rules/<span class="team">style.md</span>                <span class="dim">no paths:</span>                      <span class="when">session start (always)</span>
+   ├─ commands/<span class="team">review.md</span>            <span class="dim">team /review</span>                   <span class="when">when typed</span>
+   └─ skills/audit/<span class="team">SKILL.md</span>         <span class="dim">team skill + frontmatter</span>       <span class="when">when called or picked</span></pre>
+    <div class="ask">
+      <div><b>1. Who needs it?</b> Only me → <code>~</code>. Team or CI → repo file.</div>
+      <div><b>2. Always, or sometimes?</b> Always → CLAUDE.md. On demand → skill or command.</div>
+      <div><b>3. Where does it apply?</b> One folder → folder CLAUDE.md. A file type spread out → rules + <code>paths:</code>.</div>
+    </div>
+  </div>
+
+  <div class="reported"><b>Test-takers say:</b> D3 catches people who use Claude Code daily. CLI flags, CI headless mode, the CLAUDE.md hierarchy, and “hook vs CLAUDE.md vs permission” come up most.</div>
+  <div id="secs"></div>
+</main>
+<script>
+/* [id, title, tag, rows: [situation, answer-html]] */
+const S=[
+["s31","3.1 CLAUDE.md hierarchy","you missed 4",[
+["A new team member does not get the team's instructions.","<b>The rules are in someone's ~/.claude/CLAUDE.md.</b> Move them to the project CLAUDE.md and commit.<span class=no>repeat the rules in prompts</span>"],
+["Claude behaves differently across sessions. Which instruction files are loaded?","<b>/memory</b> lists the loaded memory files and lets you open them.<span class=no>/memory is not chat history or “learned” memory</span>"],
+["Each package needs different standards files.","<b>@import</b> the relevant standards files in each package's CLAUDE.md, e.g. <code>@standards/payments.md</code>.<span class=no>one giant root CLAUDE.md</span>"],
+["CLAUDE.md is huge and covers many topics.","<b>Split it into topic files in .claude/rules/</b> (testing.md, api-conventions.md, deployment.md). Add <code>paths:</code> to the ones that apply to part of the code.<span class=no>@import alone: tidier, but still loads everything at start</span>"]]],
+["s32","3.2 Commands + skills","you missed 2",[
+["The whole team needs the same /review command.","<b>.claude/commands/review.md</b> (committed, shared via version control).<span class=no>~/.claude/commands/ = only you</span>"],
+["A reusable workflow, used only for some tasks.","<b>A skill</b> in .claude/skills/x/SKILL.md: loads on demand.<span class=no>CLAUDE.md: always loaded, for universal standards</span>"],
+["The skill's long output floods the main chat (codebase analysis, brainstorming).","<b>context: fork</b> in the skill's frontmatter: it runs in an isolated subagent and returns only the result.<span class=no>“be brief” in the prompt</span>"],
+["The skill must never run destructive commands.","<b>allowed-tools</b> in the frontmatter, e.g. only file-write tools.<span class=no>a sentence asking it not to</span>"],
+["People invoke the skill without the required parameter.","<b>argument-hint</b> in the frontmatter prompts for it.<span class=no>allowed-tools (unrelated)</span>"],
+["You want your own version of a team skill.","<b>~/.claude/skills/</b> with a <b>different name</b>, so teammates are not affected.<span class=no>edit the team skill in the repo</span>"]]],
+["s33","3.3 Path-specific rules","you missed 6",[
+["Terraform conventions only when editing files under terraform/, any depth.","<b>.claude/rules/terraform.md</b> with <code>paths: [\"terraform/**/*\"]</code>.<span class=no>terraform/* (top level only) · **/*.tf (whole repo)</span>"],
+["Test conventions for test files spread through the whole codebase.","<b>One rule file</b> with <code>paths: [\"**/*.test.tsx\"]</code>. Globs match by file type, any folder.<span class=no>a CLAUDE.md in every test folder</span>"],
+["Why path rules at all?","<b>They load only when Claude edits matching files</b> → less irrelevant context, fewer tokens.<span class=no>a rule without paths: loads every session</span>"],
+["Glob reading","<b>*</b> = one name, stops at <code>/</code>. <b>**</b> = any folders, any depth. Plain text must match exactly. Rules in subfolders of .claude/rules/ are still found."]]],
+["s34","3.4 Plan mode vs direct execution","",[
+["Microservice restructuring, a library migration touching 45+ files, choosing between integrations with different infrastructure.","<b>Plan mode</b>: explore and design safely before changing anything. Prevents costly rework.<span class=no>jump straight in</span>"],
+["A single-file bug with a clear stack trace; add a date validation check.","<b>Direct execution.</b><span class=no>plan mode for a clear, small fix</span>"],
+["A multi-phase task whose discovery output would exhaust the context.","<b>Explore subagent</b>: verbose discovery runs there; only a summary returns."],
+["Plan a migration, then do it.","<b>Plan mode to investigate, then direct execution to implement.</b>"]]],
+["s35","3.5 Iterative refinement","you missed 2",[
+["Prose descriptions of a transformation are read inconsistently.","<b>2–3 concrete input → output examples.</b><span class=no>a longer prose description</span>"],
+["You want fewer correction cycles.","<b>Write tests first</b> (expected behavior, edge cases, performance), then share failures to guide each iteration.<span class=no>plan mode: good habit, not test-driven</span>"],
+["Unfamiliar domain: you may not know the design questions (cache invalidation, failure modes).","<b>Interview pattern:</b> have Claude ask YOU questions before it implements."],
+["An edge case keeps breaking (null values in a migration script).","<b>Give a specific test case</b> with example input and expected output."],
+["Two bugs touch the same code; a third is unrelated.","<b>The interacting ones together in one detailed message; the independent one separately.</b><span class=no>all at once · all one at a time</span>"]]],
+["s36","3.6 CI/CD","you missed 2 · test-takers' #1 surprise",[
+["The pipeline job hangs waiting for input.","<b>claude -p \"…\"</b> (or --print): non-interactive, prints, exits.<span class=no>--batch · CLAUDE_HEADLESS · &lt; /dev/null</span>"],
+["Findings must post as inline PR comments.","<b>--output-format json + --json-schema</b>: machine-parseable findings with fixed keys.<span class=no>ask for JSON in the prompt · regex on text</span>"],
+["CI needs the team's testing standards, fixtures, review criteria.","<b>Document them in the project CLAUDE.md.</b> CI-invoked Claude Code reads it.<span class=no>a long prompt in the pipeline script</span>"],
+["The session that wrote the code reviews it and misses issues.","<b>An independent review instance</b> without the author's context.<span class=no>ask the same session to self-review</span>"],
+["Re-running the review after new commits creates duplicate comments.","<b>Include prior findings</b>; tell Claude to report only new or still-unaddressed issues."],
+["Generated tests duplicate existing ones.","<b>Provide the existing test files in context.</b>"],
+["Other real flags to recognize","<code>--resume &lt;name&gt;</code> · <code>-c</code> · <code>--allowedTools</code> · <code>--permission-mode plan</code> · <code>--model</code> · <code>--max-turns</code> · <code>--append-system-prompt</code>"]]]];
+document.getElementById("secs").outerHTML=S.map(([id,t,tag,rows])=>`<section id="${id}"><h2>${t}${tag?`<small>${tag}</small>`:""}</h2>${rows.map(([s,a])=>`<div class="row"><div class="s">${s}</div><div class="a">${a}</div></div>`).join("")}</section>`).join("");
+</script>

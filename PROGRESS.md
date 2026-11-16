@@ -2,6 +2,7 @@
 
 ## Published pages (update with Artifact `url` = link below; source file = path)
 - LEARN (start here): `artifact/patterns.html` → https://claude.ai/artifact/Q2qBxYYfjwEr9hD6gHkVjx
+- D3 PLAYBOOK (weakest domain; every guide 3.1-3.6 skill as situation → answer + file map): `artifact/d3.html` → https://claude.ai/artifact/HGYyvQMNR2ynEXeWhK82Zs
 - CORE PATTERNS (12 Anthropic design patterns, read once): `artifact/patterns-core.html` → https://claude.ai/artifact/GiwmvHkXbYWuPCWQkSX66q
 - TRIAGE (5-min read: high vs low yield + 6 scenarios): `artifact/triage.html` → https://claude.ai/artifact/UaqTgja4pG2AF8daYFTnJb
 - TEN-MINUTE SHEET (final scan before exam; cue → pick → decoy rows): `artifact/ten-minute.html` → https://claude.ai/artifact/314NMcfo1XpawuS6D1GW7q
