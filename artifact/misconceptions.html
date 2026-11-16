@@ -584,7 +584,37 @@ Resolvers must return DataLoader batches.   ← the rule text (body)</pre><small
       "<b>This question's answer:</b> move each topic to its own rules file with a paths: glob. Context drops; each rule appears only when relevant."],
  ok:"You chose right: path-specific rules for topic-specific conventions.",
  trap:"“Split it with @imports.” Tidier, but everything still loads at start. Context does not drop.",
- retry:["What is frontmatter?","When does a rule file with paths: load?","Why does @import not fix the context problem?"]}
+ retry:["What is frontmatter?","When does a rule file with paths: load?","Why does @import not fix the context problem?"]},
+{n:"Scattered test files, AGAIN (missed twice)",
+ you:"This specific one with the file path trips me up.",
+ wrong:"Second miss on the same idea (see the “rules + paths (tests)” screen).",
+ rule:'“Scattered” + “file pattern” <span class="arrow">→</span> ONE .claude/rules/ file with paths: ["**/*.test.ts"]',
+ pic:`<div class="b a"><span class="sec">Read the glob piece by piece</span><pre class="code">**        /      *          .test.ts
+any folders,     any file   ending in .test.ts
+any depth        name</pre></div>
+<div class="b"><span class="sec">Does it match each folder in the question?</span><pre class="code">src/auth/login.test.ts              ✓
+lib/math.test.ts                    ✓
+packages/api/tests/routes.test.ts   ✓
+e2e/checkout.test.ts                ✓
+src/auth/login.ts                   ✗  (not a test, rule stays out)</pre></div>
+<div class="b g"><span class="sec">The answer, as a file</span><pre class="code"># .claude/rules/testing.md
+---
+paths: ["**/*.test.ts"]
+---
+Use Vitest. One assert per test. No network calls.</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">CLAUDE.md in each folder</span><small>The duplication the question forbids.</small></div>
+<div class="b r"><span class="big">Root CLAUDE.md</span><small>Loads every session, even with no test file open.</small></div>
+<div class="b r"><span class="big">A skill</span><small>Someone must call it. Not automatic.</small></div>
+<div class="b g"><span class="big">rules/ + paths glob</span><small>Automatic. One file. Only for test files.</small></div>
+</div>`,
+ gap:["<b>Trigger words:</b> “scattered across” + “matching *.test.ts” + “automatically” + “without duplicating”.",
+      "<b>Folders cannot follow a file TYPE.</b> A glob can.",
+      "<b>“Automatically”</b> rules out skills and slash commands (those need a call).",
+      "<b>Read globs left to right:</b> ** = any folders, * = any name, then the fixed ending."],
+ ok:"Same answer as screen “rules + paths (tests)”. Learn the trigger words, then it is instant.",
+ trap:"A CLAUDE.md per test folder, or a /test-conventions skill. Both fail “automatic + no duplicates”.",
+ retry:["What are the 4 trigger words?","Write the rule file, frontmatter included.","Why not a skill?"]}
 ];
 
 let i=0;
