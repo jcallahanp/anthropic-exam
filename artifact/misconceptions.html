@@ -823,7 +823,27 @@ finding 3  regex:hardcoded_key     dismissed</pre><small>“regex:hardcoded_key 
       "<b>Same idea as plan mode:</b> use it for big multi-file changes, skip it for a small clear fix."],
  ok:"Your answer was right. It is not bad practice; it is proportionate practice.",
  trap:"Spawning Explore or a subagent “to keep context clean” for a one-function lookup.",
- retry:["When does a subagent save context?","What should you do for a one-function lookup?","Name one other “match the tool to the job size” rule."]}
+ retry:["When does a subagent save context?","What should you do for a one-function lookup?","Name one other “match the tool to the job size” rule."]},
+{n:"Subagent error payload (right, reasoning off)",
+ you:"Assumed it was the best balance of enough context without context rot.",
+ wrong:"Picked it for context SIZE. The real reason is recovery DECISIONS.",
+ rule:'Error payload = 4 fields: failure TYPE · what was ATTEMPTED · PARTIAL results · ALTERNATIVES.',
+ pic:`<div class="b g"><span class="sec">Subagent returns to the coordinator</span><pre class="code">{ "failure_type":  "timeout",                    ← retry? or give up?
+  "attempted":     "search 'EU AI Act 2026 fines'", ← don't repeat the same query
+  "partial":       ["3 of 5 sources found"],       ← keep what worked
+  "alternatives":  ["try the official EUR-Lex site"] }  ← next move</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">"Search failed."</span><small>Coordinator cannot tell retry vs reroute. Throws away partial work.</small></div>
+<div class="b r"><span class="big">Full stack trace + logs</span><small>Too much noise. Hides the decision-relevant facts.</small></div>
+<div class="b g"><span class="big">The 4 fields</span><small>Exactly what the coordinator needs to choose: retry, reroute, or report the gap.</small></div>
+</div>`,
+ gap:["<b>The guide lists the 4 fields (5.3):</b> failure type, attempted query, partial results, alternative approaches.",
+      "<b>The purpose is a DECISION:</b> retry, try another way, or report a gap. Each field feeds that choice.",
+      "<b>Partial results matter:</b> a failure should not erase what already worked.",
+      "<b>Related (2.2):</b> MCP tools use isError + category + isRetryable for the same reason."],
+ ok:"Right answer. Your “not too much, not too little” instinct fits; anchor it on the 4 fields.",
+ trap:"A bare “failed” message, or a generic status code only, or dumping full logs.",
+ retry:["Name the 4 fields.","What decision do they support?","Why keep partial results?"]}
 ];
 
 // Priority + subdomain per entry. high = named in an official guide task statement. low = practice-site detail not in the guide.
@@ -843,12 +863,12 @@ const META={
 "Test-driven iteration (missed)":["3.5","high"],"Interacting vs independent issues (missed)":["3.5","high"],
 "-p (--print)":["3.6","high"],"--output-format json + --json-schema":["3.6","high"],
 "XML tags to separate examples from the real request (new topic, missed)":["4.2","low"],
-"JSON schema (tool input)":["4.3","high"],"Small lookup: no subagent (right, felt wrong)":["5.4","high"],"Categorical criteria vs confidence (missed)":["4.1","high"],"detected_pattern field (context guess)":["4.4","high"],
+"JSON schema (tool input)":["4.3","high"],"Subagent error payload (right, reasoning off)":["5.3","high"],"Small lookup: no subagent (right, felt wrong)":["5.4","high"],"Categorical criteria vs confidence (missed)":["4.1","high"],"detected_pattern field (context guess)":["4.4","high"],
 "Message Batches API":["4.5","high"],"Batch custom_id rules (guessed right)":["4.5","low"]};
 const SD={"1.1":"Agentic loops","1.2":"Multi-agent orchestration","1.3":"Subagent config + spawning","1.5":"Hooks","1.7":"Sessions: resume / fork",
 "2.1":"Tool descriptions","2.4":"MCP servers in Claude Code","2.5":"Built-in tools",
 "3.1":"CLAUDE.md hierarchy","3.2":"Commands + skills","3.3":"Path-specific rules (globs)","3.5":"Iterative refinement","3.6":"CI/CD (-p, JSON)",
-"4.1":"Explicit criteria","4.2":"Few-shot prompting","4.3":"Structured output / schemas","4.4":"Validation + feedback loops","4.5":"Batch processing","5.4":"Large codebase exploration"};
+"4.1":"Explicit criteria","4.2":"Few-shot prompting","4.3":"Structured output / schemas","4.4":"Validation + feedback loops","4.5":"Batch processing","5.3":"Error propagation","5.4":"Large codebase exploration"};
 const DOM={"1":"D1 Agentic architecture · 27%","2":"D2 Tools + MCP · 18%","3":"D3 Claude Code config · 20%","4":"D4 Prompts + output · 20%","5":"D5 Context + reliability · 15%"};
 M.forEach(m=>{const x=META[m.n]||["?","high"];m.sd=x[0];m.p=x[1]});
 let f="all",V=[],i=0;

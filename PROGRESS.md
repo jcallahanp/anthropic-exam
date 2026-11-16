@@ -89,6 +89,7 @@
 - MISSED (4.1): categorical criteria = name WHAT KIND of issue counts (in/out list); confidence thresholds (incl. numbers) are not categorical.
 - XML tags per category criteria: right by memory, still unclear. Rewrote XML screen: tag = labeled box; 2 uses (examples vs request, per-category criteria). 2nd XML question on practice site.
 - Small lookup → Grep directly, no subagent (5.4): right but felt wrong. Proportionality: subagents only for big noisy exploration.
+- Subagent error payload (5.3): right, reasoning off (context size). Correct: failure type, attempted, partial results, alternatives → recovery decision.
 
 ## Scope check: Cert Safari questions vs official guide (v0.2 text)
 Explicitly out of scope: NONE of the pasted questions.
