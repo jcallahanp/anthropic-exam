@@ -465,7 +465,22 @@ return allow</pre></div>
       "<b>The deny reason goes to Claude</b> so it can adapt, for example escalate to a human."],
  ok:"Linked: this is PreToolUse + Pattern 1. You passed both teach-backs; this adds the matcher vs body split.",
  trap:"A clever matcher regex that includes “category”. WRONG. Matchers match tool names only.",
- retry:["What does the matcher check?","Where does the hook read amount and category from?","Why not PostToolUse?"]}
+ retry:["What does the matcher check?","Where does the hook read amount and category from?","Why not PostToolUse?"]},
+{n:"Resume twice vs fork (missed)",
+ you:"Picked the context-rot / compaction answer. It sounded logical.",
+ wrong:"The concern is context size.",
+ rule:'Resume CONTINUES one line. The 2nd resume already holds the 1st exploration. Not independent. <span class="arrow">→</span> fork_session',
+ pic:`<div class="b r"><span class="sec">Resume twice: ONE line of history</span></div>
+<div class="flow"><div class="b">Analysis</div><span class="ar">→</span><div class="b">resume: caching work</div><span class="ar">→</span><div class="b r">resume: queueing work<small>Claude still sees the caching work. Biased.</small></div></div>
+<div class="b g"><span class="sec">fork_session: TWO copies from the same point</span></div>
+<div class="flow"><div class="b">Analysis</div><span class="ar">→</span><div class="cols"><div class="b g">Fork A: caching<small>sees analysis only</small></div><div class="b g">Fork B: queueing<small>sees analysis only</small></div></div></div>`,
+ gap:["<b>The question's key word is “independent”.</b> The answer must explain why the plan is NOT independent.",
+      "<b>Resume appends to the same session.</b> Run 2 sees run 1. So run 2 is shaped by run 1.",
+      "<b>Context rot is true in general,</b> but it is not what “resume vs fork” is about. True-but-not-the-point answer.",
+      "<b>Save game:</b> resume = keep playing ONE save. Fork = copy the save twice."],
+ ok:"You passed the fork_session teach-back. The miss was picking a true-sounding generic concern over the tool's mechanism.",
+ trap:"A generic best-practice answer (context rot, compaction, cost). Ask: does it answer the EXACT word in the question?",
+ retry:["What does the 2nd resume contain?","Why does that break “independent”?","Which tool gives two clean branches?"]}
 ];
 
 let i=0;

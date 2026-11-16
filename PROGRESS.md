@@ -63,6 +63,7 @@
 - Subagents vs agent teams: memorized, not understood (quiz-1 Q1 topic; appears on practice exams, so not low priority). On misconceptions page.
 - AgentDefinition fields: right but unfamiliar with model field (per-subagent model; omit = inherit). On misconceptions page.
 - MISSED: hook matcher vs hook code. Matcher = tool name only; argument checks (amount, category) go in hook body via tool_input. On misconceptions page.
+- MISSED: resume twice vs fork. Picked generic context-rot answer. Correct: 2nd resume sees 1st exploration → not independent → fork_session. Meta-pattern: answer the question's key word with the tool's mechanism; reject true-but-generic answers.
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.
