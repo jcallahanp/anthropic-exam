@@ -154,7 +154,23 @@ const M=[
       "<b>Match requests to answers with custom_id.</b> Results can come back in any order."],
  ok:"Right: no latency guarantee, and one request is one call. Your instinct that it is latency was close. The missing piece is that the latency multiplies.",
  trap:"“Use Batches to save 50% on the pre-merge check developers wait for.” WRONG. Someone is blocked. Use Batches only when no one waits.",
- retry:["What does one batch request return when Claude wants a tool?","What must you do to continue?","Why does that kill an agent with 10 tool calls?"]}
+ retry:["What does one batch request return when Claude wants a tool?","What must you do to continue?","Why does that kill an agent with 10 tool calls?"]},
+{n:"MCP resource",
+ you:"A resource is like a clearer tool description. It shows the schema so Claude knows what the tool returns.",
+ wrong:"A resource is a better description of a tool.",
+ rule:'Resource = the CATALOG you read. Tool = the LIBRARIAN who acts.',
+ pic:`<div class="cols">
+<div class="b a"><span class="big">Resource = card catalog</span><small>Read-only. Shows WHAT EXISTS: table list, DB schema, doc tree, issue list. No action happens.</small></div>
+<div class="b"><span class="big">Tool = librarian</span><small>Does something: fetches one book, checks it out, writes a record. Can change things.</small></div>
+</div>
+<div class="flow"><div class="b r">No catalog<small>Agent asks the librarian 10 times: “Do you have X? Y? Z?”</small></div><span class="ar">vs</span><div class="b g">Catalog as a resource<small>Agent reads it once, then makes ONE correct tool call.</small></div></div>`,
+ gap:["<b>A resource is CONTENT, not a description.</b> It is data Claude reads. A tool description stays on the tool.",
+      "<b>Read-only vs action.</b> Resources never do anything. Tools act and can have side effects.",
+      "<b>The bug a resource fixes:</b> many exploratory tool calls to find out what exists.",
+      "<b>Your schema example was a correct resource.</b> Your framing was wrong: it is not a clearer tool description. It is a catalog Claude reads before it acts."],
+ ok:"Right: exposing a DB schema up front helps Claude pick the right call. That is a real resource use.",
+ trap:"“Paste the whole catalog into the system prompt.” WRONG. Expose it as an MCP resource.",
+ retry:["In the library, what is the resource and what is the tool?","Which one can change things?","Which bug does a resource fix?"]}
 ];
 
 let i=0;
