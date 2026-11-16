@@ -68,6 +68,7 @@
 - MISSED: run tests → Bash. Avoided Bash because "dangerous". Only Bash executes; guard it with hooks. Bash wrong only when Read/Glob/Grep fit.
 - Grep across split lines: right but nearly fell for a distractor. Still Grep; multiline pattern or shorter fragment then Read.
 - MISSED: tool description vs similar tool. Feared naming the other tool. Correct: purpose + input format + examples + edge cases + explicit boundary ("use X instead when").
+- Path-specific rules for 300-line CLAUDE.md: right but shaky. Added REFRESH screen: frontmatter labeled, file tree, load timeline, @import vs paths.
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.

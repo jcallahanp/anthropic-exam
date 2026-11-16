@@ -553,7 +553,38 @@ assistant: "config.py sets the port to 8080..."</pre></div>
       "<b>If two tools still blur,</b> rename them to be specific, or split one generic tool into narrower ones."],
  ok:"You knew the description is the lever. You passed the MCP tool teach-back on this.",
  trap:"“Few-shot examples in the system prompt” or “a routing layer” or “a shorter name”. Fix the descriptions first (lightest fix at the cause).",
- retry:["List the 5 parts of a strong description.","Why name the similar tool?","What if two tools still overlap?"]}
+ retry:["List the 5 parts of a strong description.","Why name the similar tool?","What if two tools still overlap?"]},
+{n:"REFRESH: frontmatter, @import, rules, when files load",
+ you:"Got it right, but could have been confused. The word “frontmatter” trips me up. Refresh imports, where rules go, and how loading works.",
+ wrong:"Shaky: the names, and WHEN each file loads.",
+ rule:'Frontmatter = the settings block between <code>---</code> lines at the TOP of a file. Nothing more.',
+ pic:`<div class="b a"><span class="sec">1. Frontmatter, labeled</span><pre class="code">---                              ← frontmatter starts
+paths: ["src/graphql/**"]        ← a KEY (paths) and its value
+---                              ← frontmatter ends
+Resolvers must return DataLoader batches.   ← the rule text (body)</pre><small>Same idea in SKILL.md (context, allowed-tools, argument-hint). Settings on top, content below.</small></div>
+<div class="b"><span class="sec">2. Where the files go</span><pre class="code">repo/
+├─ CLAUDE.md                  ← short, always-true project rules
+│    @docs/style.md           ← @import: pulls style.md IN, always
+└─ .claude/
+   └─ rules/
+      ├─ graphql.md           paths: ["src/graphql/**"]
+      ├─ migrations.md        paths: ["db/migrations/**"]
+      └─ css.md               paths: ["**/*.module.css"]</pre></div>
+<div class="b"><span class="sec">3. When each one loads</span></div>
+<div class="flow"><div class="b a">Session starts<small>CLAUDE.md + its @imports + rule files with NO paths</small></div><span class="ar">→</span><div class="b g">Claude reads src/graphql/user.ts<small>graphql.md loads now</small></div><span class="ar">→</span><div class="b g">Claude edits Button.module.css<small>css.md loads now</small></div></div>
+<div class="cols">
+<div class="b r"><span class="big">300-line CLAUDE.md</span><small>All of it loads every session. Context climbs. Rules get lost in the middle.</small></div>
+<div class="b g"><span class="big">Split into rules/ + paths</span><small>Each topic loads only when Claude touches matching files.</small></div>
+<div class="b"><span class="big">@import</span><small>Splits the FILE, but still loads at start. Organizes, does not save context.</small></div>
+</div>`,
+ gap:["<b>Frontmatter</b> = settings block at the top, between two <code>---</code> lines. A <b>key</b> = one setting name before a colon.",
+      "<b>@import</b> = a line in CLAUDE.md that pulls another file in. It loads WITH that CLAUDE.md, at start.",
+      "<b>.claude/rules/*.md with paths:</b> loads ONLY when Claude reads or edits a matching file.",
+      "<b>.claude/rules/*.md without paths:</b> loads at start, like CLAUDE.md.",
+      "<b>This question's answer:</b> move each topic to its own rules file with a paths: glob. Context drops; each rule appears only when relevant."],
+ ok:"You chose right: path-specific rules for topic-specific conventions.",
+ trap:"“Split it with @imports.” Tidier, but everything still loads at start. Context does not drop.",
+ retry:["What is frontmatter?","When does a rule file with paths: load?","Why does @import not fix the context problem?"]}
 ];
 
 let i=0;
