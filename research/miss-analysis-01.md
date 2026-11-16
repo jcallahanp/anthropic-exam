@@ -16,13 +16,13 @@ Source: user's practice quiz. Answer options were not pasted. Correct answers ar
 
 Cause codes: K = knowledge gap (a doc fact), H = heuristic gap (picked "true but not best").
 
-| Q | Sub | Topic | Cause | Expected answer (pending verification) | Pattern |
+| Q | Sub | Topic | Cause | Answer (verified) | Pattern |
 |---|---|---|---|---|---|
 | 1 | 1.2 | Agents message each other, shared tasks, long session | K | Agent teams (not subagents) | Feature map |
-| 5 | 3.1 | Personal per-repo config, never committed | K | `CLAUDE.local.md` (gitignored) | Scope ladder |
+| 5 | 3.1 | Personal per-repo config, never committed | K | `CLAUDE.local.md` (add to `.gitignore`) | Scope ladder |
 | 9 | 1.5 | PreToolUse `deny` + reason | K | Tool call blocked; reason goes to Claude so it can adapt | Mechanism |
 | 10 | 3.6 | CI reviews need team test rules every run | K/H | Project `CLAUDE.md` in repo | Scope ladder |
-| 16 | 1.2 | Subagent cut off by overload error | K | See verification | Feature map |
+| 16 | 1.2 | Subagent cut off by overload error | K | Partial text + note that it was cut off | Feature map |
 | 17 | 2.3 | Router agent calls `process_refund` | H | Remove extra tools; keep only `route_ticket` | Mechanism |
 | 19 | 4.2 | Invoice layouts vary; model invents values | H | Few-shot examples of varied layouts, incl. absent → null | Show, not tell |
 | 22 | 4.3 | Date formats vary; must be deterministic + testable | H | Extract raw string; normalize in code | Mechanism |
@@ -42,4 +42,8 @@ Cause codes: K = knowledge gap (a doc fact), H = heuristic gap (picked "true but
 
 ## Verification
 
-Pending: independent agent checks each expected answer against official docs.
+An independent agent checked each answer against official docs (code.claude.com, platform.claude.com):
+- Q1, 9, 10, 17, 19, 22, 23: correct.
+- Q5: correct file (`CLAUDE.local.md`, not deprecated). The user adds it to `.gitignore`.
+- Q16: docs, sub-agents page, "API errors in subagents": partial output plus a cut-off note. No text means "Agent terminated early due to an API error".
+- Q23 caveat: with manual extended thinking, only `auto` and `none` work. The exam answer is still `any`.

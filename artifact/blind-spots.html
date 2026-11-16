@@ -1,0 +1,296 @@
+<title>Architect Blind Spots</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow column, two tabs (Map, Drill). Map = one screen of rules; Drill = one card at a time. */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#18202c; --muted:#5b6575; --line:#d9dee6;
+  --accent:#0f6e7a; --accent-soft:#dff0f1; --good:#1d7a3e; --good-soft:#e2f3e7;
+  --bad:#b4372b; --bad-soft:#f8e3e0; --warn:#a2650a; --warn-soft:#f8eddb;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --surface:#18202b; --ink:#e6ebf2; --muted:#9aa5b5; --line:#2b3644;
+  --accent:#4fc0cc; --accent-soft:#163238; --good:#5fcf86; --good-soft:#163222;
+  --bad:#f08072; --bad-soft:#3a1d1a; --warn:#e8b25a; --warn-soft:#382912; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --surface:#18202b; --ink:#e6ebf2; --muted:#9aa5b5; --line:#2b3644;
+  --accent:#4fc0cc; --accent-soft:#163238; --good:#5fcf86; --good-soft:#163222;
+  --bad:#f08072; --bad-soft:#3a1d1a; --warn:#e8b25a; --warn-soft:#382912; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body)}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.2}
+h1{font-size:1.7rem} h2{font-size:1.2rem} h3{font-size:1rem}
+p{margin:0}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.muted{color:var(--muted)}
+.label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tabs{display:flex;gap:8px}
+.tab{font:600 .95rem var(--body);padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+section{display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+/* domain bars */
+.dom{display:grid;grid-template-columns:minmax(0,1fr) 120px 48px;gap:10px;align-items:center;font-size:.92rem}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%}
+.num{font-variant-numeric:tabular-nums;text-align:right;font-family:var(--mono);font-size:.85rem}
+/* rule */
+.rule{border:2px solid var(--accent);background:var(--accent-soft)}
+.rule .big{font-family:var(--display);font-size:1.25rem;font-weight:700}
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fork>div{background:var(--surface);border-radius:10px;padding:12px;border:1px solid var(--line);min-width:0}
+.trig{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 .78rem var(--mono);padding:2px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.ladder{display:flex;flex-direction:column;gap:4px;font-size:.88rem}
+.ladder div{display:flex;justify-content:space-between;gap:8px;padding:5px 8px;border-radius:6px}
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+td code{white-space:nowrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid2>.panel{min-width:0}
+.k{font-weight:600}
+/* drill */
+.prog{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.88rem}
+.pbar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.tag{font:600 .72rem var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.stem{font-size:1.02rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;font:inherit;color:inherit;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;gap:10px}
+.opt b{font-family:var(--mono);color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:600 .92rem var(--body);padding:10px 16px;border-radius:10px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.35;cursor:default}
+.fb{border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--good-soft)} .fb.no{background:var(--bad-soft)}
+.fb .trap{font-size:.9rem}
+.done{text-align:center;align-items:center}
+@media (max-width:560px){.fork,.grid2{grid-template-columns:1fr}.dom{grid-template-columns:minmax(0,1fr) 70px 44px}}
+@media (prefers-reduced-motion:reduce){.pbar i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <span class="label">Claude Certified Architect – Foundations · quiz 1 review</span>
+    <h1>Your blind spots</h1>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="t-map" aria-selected="true">Map</button>
+      <button class="tab" role="tab" id="t-drill" aria-selected="false">Drill (15 min)</button>
+    </div>
+  </header>
+
+  <!-- ============ MAP ============ -->
+  <main id="map" style="display:flex;flex-direction:column;gap:22px">
+
+    <section>
+      <h2>Where to spend time</h2>
+      <div class="panel" id="doms"></div>
+      <p class="muted" style="font-size:.88rem">Bar = your score. Number = share of the real exam. D1 is your largest gap and the largest domain.</p>
+    </section>
+
+    <section>
+      <h2>The one rule (explains 5 of 9 misses)</h2>
+      <div class="panel rule">
+        <p class="big">Hard rule → mechanism. Judgment call → better words or examples.</p>
+        <div class="fork">
+          <div>
+            <h3>Hard rule</h3>
+            <div class="trig"><span class="chip">always</span><span class="chip">never</span><span class="chip">must</span><span class="chip">every</span><span class="chip">deterministic</span><span class="chip">testable</span><span class="chip">guarantee</span></div>
+            <p style="font-size:.9rem;margin-top:8px">Pick the answer that makes the wrong action <b>impossible</b>: a hook, code, a gate, <code>tool_choice</code>, or removing the tool. Reject "add it to the prompt."</p>
+          </div>
+          <div>
+            <h3>Judgment call</h3>
+            <div class="trig"><span class="chip">varied inputs</span><span class="chip">ambiguous</span><span class="chip">wrong tool picked</span><span class="chip">inconsistent</span></div>
+            <p style="font-size:.9rem;margin-top:8px">Pick the <b>lightest fix at the root cause</b>: clearer tool descriptions, explicit criteria, few-shot examples. Reject a bigger model or new infrastructure.</p>
+          </div>
+        </div>
+        <div class="ladder" aria-label="Enforcement strength ladder">
+          <div style="background:var(--surface)"><span>Remove the tool · code gate · hook <code>deny</code></span><span class="mono">strongest</span></div>
+          <div style="background:var(--surface)"><span><code>tool_choice</code> · JSON schema · post-process in code</span><span class="mono">strong</span></div>
+          <div style="background:var(--surface)"><span>Few-shot examples · explicit criteria</span><span class="mono">probabilistic</span></div>
+          <div style="background:var(--surface)"><span>"Please never…" in the prompt</span><span class="mono">weakest</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Scope ladder: where does it go?</h2>
+      <p class="muted" style="font-size:.9rem">Ask two things: who needs it, and does it go in git? Pick the narrowest documented place.</p>
+      <div class="panel tbl">
+        <table>
+          <thead><tr><th>Who needs it</th><th>Instructions</th><th>MCP server</th><th>Settings</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Team, this repo (in git)</td><td><code>./CLAUDE.md</code></td><td><code>.mcp.json</code></td><td><code>.claude/settings.json</code></td></tr>
+            <tr><td class="k">Only me, this repo (not in git)</td><td id="local-md"><code>CLAUDE.local.md</code> (you add it to <code>.gitignore</code>)</td><td>local scope in <code>~/.claude.json</code></td><td><code>.claude/settings.local.json</code></td></tr>
+            <tr><td class="k">Only me, all repos</td><td><code>~/.claude/CLAUDE.md</code></td><td>user scope in <code>~/.claude.json</code></td><td><code>~/.claude/settings.json</code></td></tr>
+            <tr><td class="k">Team, only some files</td><td><code>.claude/rules/*.md</code> with <code>paths:</code> globs</td><td class="muted">–</td><td class="muted">–</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="font-size:.88rem">CI runs (<code>claude -p</code>) check out the repo, so they load the team row. A CI runner has no personal <code>~/.claude</code> files.</p>
+    </section>
+
+    <section>
+      <h2>Look-alikes you mixed up</h2>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Subagents vs agent teams</h3>
+          <table>
+            <tr><th></th><th>Subagents</th><th>Agent teams</th></tr>
+            <tr><td class="k">Talk to</td><td>Caller only</td><td>Each other, directly</td></tr>
+            <tr><td class="k">Tasks</td><td>One-shot</td><td>Shared task list</td></tr>
+            <tr><td class="k">Returns</td><td>Final message only</td><td>Ongoing work</td></tr>
+            <tr><td class="k">Cost</td><td>Lower</td><td>Higher (many sessions)</td></tr>
+            <tr><td class="k">Status</td><td>Standard</td><td>Experimental flag</td></tr>
+          </table>
+        </div>
+        <div class="panel">
+          <h3><code>tool_choice</code></h3>
+          <table>
+            <tr><th>Value</th><th>Effect</th></tr>
+            <tr><td><code>auto</code></td><td>May answer without a tool (default)</td></tr>
+            <tr><td><code>any</code></td><td>Must call <b>some</b> tool; Claude picks</td></tr>
+            <tr><td><code>tool</code> + name</td><td>Must call <b>that</b> tool</td></tr>
+            <tr><td><code>none</code></td><td>No tools</td></tr>
+          </table>
+        </div>
+        <div class="panel">
+          <h3>PreToolUse <code>permissionDecision</code></h3>
+          <table>
+            <tr><th>Value</th><th>Effect</th><th>Reason goes to</th></tr>
+            <tr><td><code>allow</code></td><td>Runs, skips prompt</td><td>User</td></tr>
+            <tr><td><code>deny</code></td><td>Blocked</td><td><b>Claude</b> (it adapts)</td></tr>
+            <tr><td><code>ask</code></td><td>User confirms</td><td>User</td></tr>
+          </table>
+          <p class="muted" style="font-size:.85rem">PostToolUse runs <b>after</b> the tool. It cannot stop a call that already ran.</p>
+        </div>
+        <div class="panel">
+          <h3>Varied input formats</h3>
+          <table>
+            <tr><th>Goal</th><th>Pick</th></tr>
+            <tr><td>Stop invented values</td><td>Few-shot examples, incl. missing field → <code>null</code></td></tr>
+            <tr><td>Exact, testable conversion</td><td>Extract raw text; convert in code</td></tr>
+            <tr><td>Valid shape</td><td>Tool use + JSON schema</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="panel" id="q16-card">
+        <h3>Subagent cut off by an error</h3>
+        <p id="q16-text">Foreground subagent with some text written: the coordinator gets <b>the partial text plus a note that it was cut off</b>. Claude Code first prompts it to continue. With no text (or only tool calls), it fails with "Agent terminated early due to an API error". In the background, it is marked failed with its last output.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ DRILL ============ -->
+  <main id="drill" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="prog"><span id="pcount" class="mono"></span><div class="pbar"><i id="pfill" style="width:0"></i></div><span id="pscore" class="mono"></span></div>
+    <div class="panel" id="card"></div>
+  </main>
+</div>
+
+<script>
+const DOMS=[["D1 Agentic architecture",3,6,27],["D2 Tool design & MCP",2,4,18],["D3 Claude Code config",4,6,20],["D4 Prompts & structured output",3,5,20],["D5 Context & reliability",4,4,15]];
+document.getElementById('doms').innerHTML=DOMS.map(([n,s,t,w])=>{const p=Math.round(100*s/t);const c=p<60?'var(--bad)':p<80?'var(--warn)':'var(--good)';return `<div class="dom"><span>${n}</span><div class="bar"><i style="width:${p}%;background:${c}"></i></div><span class="num">${w}%</span></div>`}).join('');
+
+const Q=[
+{tag:"D1 · agent teams",stem:"A coordinator runs three research subagents. The team now wants the researchers to challenge each other's findings directly and to claim work from one shared list during a long session. Which change fits?",
+ o:["Use agent teams: teammates with a shared task list who message each other directly","Give each subagent the Agent tool so it can start the others","Have the coordinator paste each summary into the next subagent's prompt","Run all three in one session and use /compact between turns"],a:0,
+ why:"Subagents report only a final result to their caller. Agent teams add direct messages and a shared task list.",trap:"B and C keep the hub-and-spoke shape. Subagents also cannot start other subagents."},
+{tag:"D1 · subagent errors",stem:"A foreground subagent writes three paragraphs. Then an API overload error cuts it off mid-response. What does the coordinator get as the Agent tool result?",
+ o:["The partial text, plus a note that the subagent was cut off and did not finish","Only the error \"Agent terminated early due to an API error\", with no text","Nothing until the subagent restarts from scratch","A crash of the whole coordinator session"],a:0,
+ why:"Docs: partial output is returned with a cut-off note. Claude Code first prompts the subagent to continue.",trap:"B happens only when the subagent wrote no text, or only tool calls."},
+{tag:"D3 · scope ladder",stem:"A developer wants Claude Code to know their personal sandbox URL and favorite debug flags in one repo only. It must never go into git. Where?",
+ o:["./CLAUDE.md under a \"Personal\" heading","~/.claude/CLAUDE.md","CLAUDE.local.md in the repo root","A slash command in .claude/commands/"],a:2,
+ why:"Only me + this repo + not in git = CLAUDE.local.md.",trap:"~/.claude/CLAUDE.md is only me, but it loads in every repo."},
+{tag:"D1 · hooks",stem:"You must block a dangerous Bash call before it runs and tell Claude why, so it can pick a safer command. Which output does that?",
+ o:["PreToolUse with permissionDecision \"deny\" and a permissionDecisionReason","PostToolUse with decision \"block\"","PreToolUse with permissionDecision \"ask\"","A system-prompt line: \"Never run rm -rf\""],a:0,
+ why:"deny blocks the call. Its reason goes to Claude, so Claude can adapt.",trap:"PostToolUse runs after the call. \"ask\" sends the choice to the user. A prompt line is probabilistic."},
+{tag:"D3 · CI",stem:"A team runs claude -p in GitHub Actions for PR review. Every run must apply the team's API-naming rules. They do not want to edit each workflow file. Where do the rules go?",
+ o:["In the repo's CLAUDE.md","In each engineer's ~/.claude/CLAUDE.md","In the prompt string inside each workflow YAML","In a PR comment template"],a:0,
+ why:"The CI job checks out the repo. Project CLAUDE.md loads automatically on every run.",trap:"The CI runner has no personal ~/.claude files. Prompt strings must be repeated in each workflow."},
+{tag:"D2 · least privilege",stem:"A read-only billing Q&A agent has get_invoice, issue_credit and delete_account. Logs show it sometimes issues credits during simple questions. Best fix?",
+ o:["Add \"NEVER issue credits\" to the system prompt","Remove issue_credit and delete_account from this agent; send those actions to a separate agent","Set tool_choice to auto","Add few-shot examples of good Q&A answers"],a:1,
+ why:"A tool the agent does not have cannot be misused. Give each agent only the tools its role needs.",trap:"Prompt text and examples lower the rate but cannot make it zero."},
+{tag:"D4 · few-shot",stem:"A resume parser gets PDFs in very different layouts. Detailed field rules already exist. When \"years of experience\" is missing, the model guesses a number. Best next step?",
+ o:["Write more detailed rules for each field","Add a few examples of varied layouts, including one where the field is absent and the output is null","Switch to a larger model","Set temperature to 0"],a:1,
+ why:"Rules already failed on varied inputs. Examples show the model what to do, including what \"absent\" looks like.",trap:"More rules repeat the same failure. A bigger model is not the root cause."},
+{tag:"D4 · deterministic",stem:"Prices arrive as \"$1,200.50\", \"1.200,50 €\" and \"USD 1200.5\". The system needs integer cents. The conversion must be deterministic and unit-tested. Best design?",
+ o:["Give Claude a detailed conversion table in the prompt","Add a regex pattern on price_cents in the JSON schema","Have Claude extract the raw price text and currency; convert to cents in application code","Ask Claude to double-check its own conversion"],a:2,
+ why:"\"Deterministic\" and \"unit-tested\" mean code. Claude extracts; code converts.",trap:"A schema pattern checks format but does not convert. It only makes failures louder."},
+{tag:"D2 · tool_choice",stem:"An assistant has get_orders, get_stock and create_ticket. Every turn must call a tool, but Claude should pick which one. Which tool_choice?",
+ o:["{\"type\": \"auto\"}","{\"type\": \"any\"}","{\"type\": \"tool\", \"name\": \"get_orders\"}","{\"type\": \"none\"}"],a:1,
+ why:"any = must call some tool, Claude picks which one.",trap:"auto lets Claude answer from memory. tool forces one named tool."},
+{tag:"D2 · tool_choice",stem:"An extraction step must always return its result through the record_invoice tool, every time. Which tool_choice?",
+ o:["{\"type\": \"auto\"}","{\"type\": \"any\"}","{\"type\": \"tool\", \"name\": \"record_invoice\"}","No tool_choice; describe the format in the prompt"],a:2,
+ why:"One specific tool, every time = tool + name.",trap:"any would let Claude pick a different tool if one exists."},
+{tag:"D1 · enforcement",stem:"A support agent must verify identity before any refund. Logs show it skips verification in 8% of refunds. Best fix?",
+ o:["Make the instruction bold and repeat it at the end of the prompt","Add a code gate: the refund tool rejects the call unless identity was verified in this session","Add few-shot examples that verify first","Move to a larger model"],a:1,
+ why:"A must-always rule needs a mechanism. A prerequisite gate makes the skip impossible.",trap:"Prompt and examples are probabilistic. 8% becomes 2%, not 0%."},
+{tag:"D2 · scope ladder",stem:"A team wants a project MCP server available to everyone who clones the repo. Where is it configured?",
+ o:[".mcp.json in the repo root","User scope in ~/.claude.json",".claude/settings.local.json","A note in CLAUDE.md telling Claude to connect"],a:0,
+ why:"Team + this repo + in git = .mcp.json.",trap:"~/.claude.json is personal. settings.local.json is not committed."},
+{tag:"D3 · path rules",stem:"A large repo has test files in many folders. The team's test conventions should load only when Claude edits test files. Where?",
+ o:["The root CLAUDE.md","A CLAUDE.md in every test folder","A .claude/rules/testing.md file with paths: globs such as **/*.test.ts","~/.claude/CLAUDE.md"],a:2,
+ why:"Path-scoped rules load only for matching files, wherever they are.",trap:"Root CLAUDE.md always loads and wastes context. One file per folder is hard to maintain."}
+];
+
+/* tabs */
+const tabs={map:document.getElementById('t-map'),drill:document.getElementById('t-drill')};
+function show(v){for(const k in tabs){tabs[k].setAttribute('aria-selected',k===v);document.getElementById(k).hidden=k!==v}}
+tabs.map.onclick=()=>{show('map');history.replaceState(null,'','#map')};
+tabs.drill.onclick=()=>{show('drill');history.replaceState(null,'','#drill')};
+function route(){show(location.hash==='#drill'?'drill':'map')}
+addEventListener('hashchange',route);route();
+
+/* drill: answer + confidence first, then feedback; misses and unsure items come back at the end */
+let queue=Q.map((_,i)=>i),pos=0,pick=null,firstTry={},right=0;
+const card=document.getElementById('card');
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function render(){
+  document.getElementById('pcount').textContent=`${Math.min(pos+1,queue.length)} / ${queue.length}`;
+  document.getElementById('pfill').style.width=`${100*pos/queue.length}%`;
+  document.getElementById('pscore').textContent=`${right} right`;
+  if(pos>=queue.length){return finish()}
+  const q=Q[queue[pos]];pick=null;
+  card.innerHTML=`<span class="tag">${q.tag}${pos>=Q.length?' · retry':''}</span><p class="stem">${esc(q.stem)}</p>
+  <div class="opts">${q.o.map((t,i)=>`<button class="opt" id="o${i}" aria-pressed="false"><b>${'ABCD'[i]}</b><span>${esc(t)}</span></button>`).join('')}</div>
+  <div class="row"><button class="btn" id="sure" disabled>Lock in · sure</button><button class="btn alt" id="unsure" disabled>Lock in · unsure</button></div><div id="fb"></div>`;
+  q.o.forEach((_,i)=>document.getElementById('o'+i).onclick=()=>{pick=i;q.o.forEach((_,j)=>document.getElementById('o'+j).setAttribute('aria-pressed',j===i));document.getElementById('sure').disabled=false;document.getElementById('unsure').disabled=false});
+  document.getElementById('sure').onclick=()=>lock(q,true);
+  document.getElementById('unsure').onclick=()=>lock(q,false);
+}
+function lock(q,sure){
+  const ok=pick===q.a,idx=queue[pos];
+  q.o.forEach((_,j)=>{const b=document.getElementById('o'+j);b.disabled=true;if(j===q.a)b.classList.add('right');else if(j===pick)b.classList.add('wrong')});
+  document.getElementById('sure').remove();document.getElementById('unsure').remove();
+  if(ok)right++;
+  if(!(idx in firstTry))firstTry[idx]={ok,sure};
+  if(!ok||!sure)queue.push(idx);
+  const label=ok?(sure?'Right.':'Right, but you were unsure. It comes back at the end.'):(sure?'Wrong, and you were sure. This is a real blind spot. It comes back at the end.':'Wrong. It comes back at the end.');
+  document.getElementById('fb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><b>${label}</b><p>${esc(q.why)}</p><p class="trap"><b>Trap:</b> ${esc(q.trap)}</p><div class="row"><button class="btn" id="next">Next</button></div></div>`;
+  const n=document.getElementById('next');n.onclick=()=>{pos++;render()};n.focus();
+}
+function finish(){
+  const blind=Object.entries(firstTry).filter(([,v])=>!v.ok&&v.sure).map(([i])=>Q[i].tag);
+  const firstOk=Object.values(firstTry).filter(v=>v.ok).length;
+  card.className='panel done';
+  card.innerHTML=`<h2>Drill done</h2><p>First try: <b>${firstOk} / ${Q.length}</b></p>
+  <p>${blind.length?'Sure but wrong (review these on the Map): <b>'+blind.join(', ')+'</b>':'No confident misses.'}</p>
+  <p class="muted">Take a 3–5 minute break away from the screen. Then take the next practice quiz.</p>
+  <div class="row"><button class="btn" id="again">Drill again</button></div>`;
+  document.getElementById('again').onclick=()=>{queue=Q.map((_,i)=>i);pos=0;firstTry={};right=0;card.className='panel';render()};
+}
+render();
+</script>
