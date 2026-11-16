@@ -250,7 +250,21 @@ src/pay/Checkout.tsx    src/pay/Checkout.test.tsx
       "<b>The main win is reach,</b> not only context: one file covers scattered files that folders cannot."],
  ok:"Right: a glob rule loads only when relevant, so it saves context.",
  trap:"“Put a CLAUDE.md in each test folder” or “make it a skill”. WRONG. A skill needs someone to call it. Use the glob rule.",
- retry:["Where do the test files live?","Why can't a folder CLAUDE.md cover them?","What does **/*.test.tsx match?"]}
+ retry:["Where do the test files live?","Why can't a folder CLAUDE.md cover them?","What does **/*.test.tsx match?"]},
+{n:"/memory",
+ you:"Check their memory. Maybe the rules live in session memory, or a learned memory overrides them.",
+ wrong:"/memory shows session memory or things Claude has learned.",
+ rule:'/memory = the LIST of CLAUDE.md files loaded right now.',
+ pic:`<div class="flow"><div class="b">Teammate runs <code>/memory</code></div><span class="ar">→</span><div class="b a">Loaded files:<small>~/.claude/CLAUDE.md (theirs)<br>./CLAUDE.md (project)</small></div></div>
+<div class="flow"><div class="b r">The team rules are NOT in ./CLAUDE.md</div><span class="ar">→</span><div class="b r">They are in YOUR ~/.claude/CLAUDE.md<small>only your machine has them</small></div></div>
+<div class="flow"><span class="ar">↓</span><div class="b g">Fix: move the rules into ./CLAUDE.md and commit</div></div>`,
+ gap:["<b>“Memory” in Claude Code = the CLAUDE.md files.</b> Not chat history. Not learned behavior.",
+      "<b>/memory shows which CLAUDE.md files loaded,</b> and lets you open and edit them.",
+      "<b>The usual cause:</b> the rules sit at user level (~/.claude/CLAUDE.md), so only the author's Claude sees them.",
+      "<b>The fix:</b> move them to project level (./CLAUDE.md) and commit. Now teammates and CI get them."],
+ ok:"Right: rules must live in a shared, persistent place. That instinct is the answer.",
+ trap:"“Tell the teammate to repeat the rules in each prompt.” WRONG. Run /memory, then move the rules to ./CLAUDE.md.",
+ retry:["What does /memory show?","Where are the rules probably sitting?","What is the fix?"]}
 ];
 
 let i=0;

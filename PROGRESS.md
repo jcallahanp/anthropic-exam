@@ -40,6 +40,7 @@
 - CLAUDE.md (3 levels) | retry (on misconceptions page) | Thought user level applies only inside home folder. Missing: user level = you, all projects; project = team + CI; dir = loads when Claude works on files there.
 - @import vs .claude/rules/ | retry (on misconceptions page) | Thought rules trigger by tool/scenario; did not explain @import; thought standards/*.md were rules. Missing: @import pulls file into CLAUDE.md; rules load by paths: glob match.
 - .claude/rules/ + paths | retry (on misconceptions page) | Thought folder CLAUDE.md loads everywhere; unclear on "file type". Missing: tests are scattered; folder file covers one folder; **/*.test.tsx covers all.
+- /memory | retry (on misconceptions page) | Thought /memory = session/learned memory. Missing: /memory lists loaded CLAUDE.md files; cause = rules at user level; fix = move to ./CLAUDE.md + commit. (Quiz-1 Q10 area.)
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
