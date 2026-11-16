@@ -55,6 +55,7 @@
 - Write vs Edit | retry (on misconceptions page) | Thought Write wins for many changes; did not know what makes Edit fail. Missing: Edit needs unique exact old text; repeated/mismatched text → fail → Read + Write.
 - Edit | pass | Not unique → cannot know which one. (Learned from Write vs Edit screen.)
 - Bash | pass | Most powerful/destructive → PreToolUse hooks guard it. Add: hook inspects the command string (e.g. deny rm -rf on prod); prefer Read/Glob over cat/ls.
+- Grep vs Glob | pass | Definitions right. Glob example muddled ("look for a function in a file"); Glob only lists files by name pattern, e.g. **/*.tf.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
