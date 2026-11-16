@@ -1,0 +1,500 @@
+<title>Exam Patterns</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one pattern per screen, huge type, one picture, then why / example / trap / teach. Big Prev-Next buttons. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#141b26; --muted:#4f5a6b; --line:#cfd6e0;
+  --accent:#0d6c78; --accent-soft:#dcf0f2; --good:#17773a; --good-soft:#e1f3e7; --bad:#b3332a; --bad-soft:#fbe3e0;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#14301f; --bad:#f2857a; --bad-soft:#3a1e1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#14301f; --bad:#f2857a; --bad-soft:#3a1e1b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:20px/1.45 var(--body)}
+.wrap{max-width:820px;margin:0 auto;padding-block:16px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+p{margin:0}
+code{font-family:var(--mono);font-size:.85em;background:var(--accent-soft);padding:0 5px;border-radius:5px;overflow-wrap:anywhere}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.8rem;color:var(--muted)}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dots button{width:14px;height:14px;border-radius:50%;border:0;background:var(--line);padding:0;cursor:pointer}
+.dots button.on{background:var(--accent)}
+.chip{font:700 .8rem var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.rule{font:700 clamp(1.7rem,5.4vw,2.6rem)/1.12 var(--display);text-wrap:balance;margin:0}
+.rule .arrow{color:var(--accent)}
+.pic{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;overflow-x:auto}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.b{border:3px solid var(--line);border-radius:12px;padding:10px 14px;font:700 1.05rem var(--display);text-align:center;background:var(--bg)}
+.b small{display:block;font:400 .8rem var(--body);color:var(--muted)}
+.b.g{border-color:var(--good);background:var(--good-soft)}
+.b.r{border-color:var(--bad);background:var(--bad-soft)}
+.b.a{border-color:var(--accent);background:var(--accent-soft)}
+.ar{font:700 1.6rem var(--display);color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.cols>.b{display:flex;flex-direction:column;gap:4px;justify-content:center}
+.big{font:700 1.3rem var(--display)}
+.why{font-size:1.15rem;border-left:6px solid var(--accent);padding:4px 0 4px 14px}
+.why b{color:var(--accent)}
+.ex{display:grid;grid-template-columns:1fr;gap:8px}
+.ex .q{font-size:1rem;color:var(--muted)}
+.ex .ans{font:700 1.15rem var(--display);color:var(--good)}
+.trap{background:var(--bad-soft);border-radius:12px;padding:12px 14px;font-size:1.02rem}
+.trap b{color:var(--bad)}
+.teach{border:3px dashed var(--accent);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.teach .t{font:700 1.1rem var(--display)}
+.teach p{font-size:1.05rem}
+.btn{font:700 1.05rem var(--body);padding:12px 18px;border-radius:12px;border:2px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn:focus-visible,.dots button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:2px solid var(--line);display:flex;justify-content:space-between;gap:10px;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.nav .btn{flex:1;max-width:260px}
+.sec{font:700 .78rem var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <div class="topbar"><div style="display:flex;gap:8px"><button class="btn deckbtn" id="d-patterns" type="button">Patterns</button><button class="btn alt deckbtn" id="d-tools" type="button">Tools</button></div><span id="count"></span></div>
+  <div class="dots" id="dots"></div>
+  <main id="slide" style="display:flex;flex-direction:column;gap:18px"></main>
+</div>
+<nav class="nav"><button class="btn alt" id="prev" type="button">← Back</button><button class="btn" id="next" type="button">Next →</button></nav>
+
+<script>
+const S=[
+{d:"Read this first · all domains",r:"The exam asks one question: <span class='arrow'>what is the most reliable fix at the real cause?</span>",
+ pic:`<div class="cols"><div class="b a"><span class="big">1 · Find the cause</span><small>Read the logs in the question</small></div><div class="b a"><span class="big">2 · Hard rule or judgment?</span><small>Decides mechanism vs words</small></div><div class="b a"><span class="big">3 · Smallest real fix</span><small>No new infrastructure</small></div></div>`,
+ why:"Every answer choice is plausible. The right one <b>targets the actual cause</b> with the <b>least extra machinery</b>. The wrong ones fix a symptom, over-build, or trust the model to behave.",
+ ex:["Every subagent did its job, but the report misses half the topic.","The coordinator split the topic too narrowly. Fix the split."],
+ trap:"<b>Trap:</b> blaming the part that is working fine.",
+ teach:"In your own words: what 3 questions do you ask before picking an answer? Then name one example of a 'symptom fix' answer."},
+
+{d:"Pattern 1 · D1 D2 D4",r:"Must <u>always</u> happen? <span class='arrow'>→ Code. Not the prompt.</span>",
+ pic:`<div class="flow"><div class="b r">Prompt rule<small>works 95%</small></div><span class="ar">→</span><div class="b r">Few-shot<small>works 98%</small></div><span class="ar">→</span><div class="b g">Hook / gate / code<small>works 100%</small></div></div><p style="text-align:center;font-size:1rem">Trigger words: <b>always · never · must · guarantee · deterministic · testable</b></p>`,
+ why:"A model follows instructions <b>most</b> of the time. Money, identity, and compliance need <b>every</b> time. Only code can make the wrong action impossible.",
+ ex:["Agent skips identity check in 12% of refunds.","Block the refund tool until get_customer returns a verified ID."],
+ trap:"<b>Trap:</b> 'make the prompt stronger' or 'add few-shot examples'. Lower rate, never zero.",
+ teach:"Explain to me why a bold, repeated prompt rule still loses to a code gate. Then: a hospital agent must never show test results before checking patient ID. What do you build?"},
+
+{d:"Pattern 2 · D2 D4 D5",r:"Judgment problem? <span class='arrow'>→ Lightest fix at the cause.</span>",
+ pic:`<div class="cols"><div class="b">Wrong tool picked<span class="big" style="color:var(--good)">Better tool descriptions</span></div><div class="b">Bad escalation calls<span class="big" style="color:var(--good)">Explicit criteria + examples</span></div><div class="b">Too many false alarms<span class="big" style="color:var(--good)">Explicit report / skip categories</span></div></div>`,
+ why:"When the model is <b>confused</b>, not disobedient, give it <b>clearer information</b>. That is the cheapest change that touches the cause. Classifiers and routing layers are 'over-engineered' for a <b>first step</b>.",
+ ex:["get_customer and lookup_order both say 'retrieves info'. Agent mixes them up.","Rewrite both descriptions: inputs, examples, when to use which."],
+ trap:"<b>Trap:</b> routing layer, trained classifier, bigger model, merging tools as the first step.",
+ teach:"Tell me how you decide between Pattern 1 (code) and Pattern 2 (better words). Use one example of each."},
+
+{d:"Pattern 3 · D1",r:"Agent loop: <span class='arrow'>read <code>stop_reason</code>. Nothing else.</span>",
+ pic:`<div class="flow"><div class="b a">Call Claude</div><span class="ar">→</span><div class="b">stop_reason?</div></div><div class="cols"><div class="b g"><span class="big">tool_use</span><small>run tool → add result to messages → call again</small></div><div class="b r"><span class="big">end_turn</span><small>done → stop</small></div></div>`,
+ why:"Claude <b>tells you</b> whether it wants a tool. Text in the reply, phrases like 'done', or a turn counter are guesses. <code>stop_reason</code> is the signal.",
+ ex:["Loop stops early whenever Claude writes text beside a tool call.","Bug: it checks for text. Loop while stop_reason is tool_use."],
+ trap:"<b>Trap:</b> 'stop after 10 turns' as the main rule, or parsing 'I'm finished'.",
+ teach:"Explain the loop to me like I'm a new engineer: what happens with a tool result, and why a turn cap is a bad main stop rule."},
+
+{d:"Pattern 4 · D1",r:"Subagents are <span class='arrow'>sealed boxes.</span> Hand them everything.",
+ pic:`<div class="flow"><div class="b">Search</div><span class="ar">⇄</span><div class="b a" style="font-size:1.3rem">Coordinator<small>splits · routes · merges</small></div><span class="ar">⇄</span><div class="b">Synthesis</div></div><div class="cols"><div class="b g">Context goes <b>in the prompt</b></div><div class="b g">Parallel = many Task calls in <b>one</b> reply</div><div class="b g">All traffic through the hub</div></div>`,
+ why:"A subagent starts <b>blank</b>: no history, no shared memory. The coordinator is the only one who sees everything, so it splits the work, passes the facts, and owns errors.",
+ ex:["Report covers only visual arts. Every subagent did its job.","The coordinator's split was too narrow."],
+ trap:"<b>Trap:</b> assuming a subagent 'knows' earlier findings, or blaming the subagents. Also: coordinator needs <code>\"Task\"</code> in allowedTools to spawn anything.",
+ teach:"Explain why a subagent's output lost its citations, and how you fix it. Then: how do you make 3 independent subagents run at the same time?"},
+
+{d:"Pattern 5 · D1",r:"Hooks: <span class='arrow'>Pre = bouncer. Post = cleaner.</span>",
+ pic:`<div class="flow"><div class="b a">PreToolUse<small>before the call</small></div><span class="ar">→</span><div class="b">Tool runs</div><span class="ar">→</span><div class="b a">PostToolUse<small>after the call</small></div></div><div class="cols"><div class="b g">Pre: <b>block</b> refund > $500, send to human. <code>deny</code> reason goes to Claude.</div><div class="b g">Post: <b>normalize</b> dates / formats before Claude reads them.</div></div>`,
+ why:"Hooks are code, so they are Pattern 1. Pick by <b>timing</b>: to stop something, you must act <b>before</b> it runs. To clean data, act <b>after</b>.",
+ ex:["Three tools return dates as Unix time, ISO, and MM/DD.","PostToolUse hook normalizes them."],
+ trap:"<b>Trap:</b> using PostToolUse to 'block' (the money already moved).",
+ teach:"Explain Pre vs Post with a nightclub analogy. Then: which hook stops deleting production files, and what does Claude see when it is denied?"},
+
+{d:"Pattern 6 · D2",r:"Give each agent <span class='arrow'>only its own tools.</span>",
+ pic:`<div class="cols"><div class="b r"><span class="big">18 tools</span><small>"just in case" → wrong picks, misuse</small></div><div class="b g"><span class="big">4–5 tools</span><small>the role's job only</small></div><div class="b a"><span class="big">+1 scoped tool</span><small>for the frequent case (verify_fact); rare cases go via coordinator</small></div></div>`,
+ why:"Every extra tool is another wrong choice the model can make. A tool it does not have <b>cannot be misused</b>. That is least privilege, and it is also Pattern 1 (remove, don't instruct).",
+ ex:["Router agent has process_refund and sometimes refunds instead of routing.","Remove it. Router keeps route_ticket only."],
+ trap:"<b>Trap:</b> 'NEVER call process_refund' in the prompt, or giving the agent ALL tools to save round trips.",
+ teach:"Synthesis needs quick fact checks 85% of the time and deep research 15%. Explain what tools you give it and why."},
+
+{d:"Pattern 7 · D2 D4",r:"<code>tool_choice</code>: <span class='arrow'>auto · any · tool</span>",
+ pic:`<div class="cols"><div class="b"><span class="big">auto</span><small>may skip tools and just talk (default)</small></div><div class="b g"><span class="big">any</span><small>must call <b>some</b> tool, Claude picks</small></div><div class="b a"><span class="big">tool + name</span><small>must call <b>that</b> tool</small></div></div>`,
+ why:"Ask: <b>may it answer in plain text?</b> Yes → auto. No, but it can choose → any. No, and it must be this one → tool.",
+ ex:["Document type unknown; 3 extraction tools; must get structured output.","any."],
+ trap:"<b>Trap:</b> auto when the stem says 'never answer directly'. tool when the model should choose.",
+ teach:"Give me one real situation for each of auto, any, and tool, and say why the other two would be wrong there."},
+
+{d:"Pattern 8 · D2 D5",r:"Errors: <span class='arrow'>say what broke. Never hide. Never kill everything.</span>",
+ pic:`<div class="cols"><div class="b"><span class="big">Transient</span><small>timeout → retry locally</small></div><div class="b"><span class="big">Validation</span><small>bad input → fix input</small></div><div class="b"><span class="big">Business</span><small>policy → explain to customer, no retry</small></div><div class="b"><span class="big">Permission</span><small>access → escalate</small></div></div><div class="b g">Return: <code>isError</code> + category + <code>isRetryable</code> + partial results + what was tried</div><div class="b a">Empty result = success with zero hits. Not an error.</div>`,
+ why:"The coordinator can only recover if it knows <b>what kind</b> of failure happened. 'Operation failed' hides that. Fake success hides the failure. Crashing everything wastes the work that succeeded.",
+ ex:["Web search subagent times out.","Return failure type, query tried, partial results, alternatives."],
+ trap:"<b>Trap:</b> generic 'search unavailable', empty-as-success, or ending the whole workflow.",
+ teach:"Explain the difference between 'no results found' and 'search timed out', and why the coordinator must know which one happened."},
+
+{d:"Pattern 9 · D3 D2",r:"Where does config go? <span class='arrow'>Who needs it? Is it in git?</span>",
+ pic:`<div class="cols"><div class="b g"><span class="big">Team · in git</span><small><code>CLAUDE.md</code> · <code>.claude/commands/</code> · <code>.claude/skills/</code> · <code>.mcp.json</code> (secrets as <code>\${TOKEN}</code>)</small></div><div class="b a"><span class="big">Only me</span><small><code>~/.claude/CLAUDE.md</code> · <code>~/.claude/commands/</code> · <code>~/.claude.json</code></small></div><div class="b"><span class="big">Only some files</span><small><code>.claude/rules/*.md</code> with <code>paths:</code> globs (e.g. <code>**/*.test.tsx</code>)</small></div></div>`,
+ why:"Files in git reach every teammate and every CI run. Files in your home folder reach <b>only you</b>. Globs follow file <b>types</b> across any folder; a folder's CLAUDE.md cannot.",
+ ex:["New teammate's Claude ignores team standards. Yours follows them.","They are in your ~/.claude/CLAUDE.md. Move them to the repo CLAUDE.md. Check with /memory."],
+ trap:"<b>Trap:</b> made-up files like <code>.claude/config.json</code>. Personal files for team needs.",
+ teach:"Walk me through where you put: a team /review command, a personal GitHub server, test rules for tests spread everywhere, and a shared token."},
+
+{d:"Pattern 10 · D3",r:"Skills: <span class='arrow'>on demand.</span> CLAUDE.md: <span class='arrow'>always on.</span>",
+ pic:`<div class="cols"><div class="b a"><span class="big">context: fork</span><small>run in a side room; noisy output stays out</small></div><div class="b a"><span class="big">allowed-tools</span><small>limit what the skill can touch</small></div><div class="b a"><span class="big">argument-hint</span><small>ask for the missing input</small></div></div>`,
+ why:"Universal rules must load every time → CLAUDE.md. A task you run sometimes → a skill. The three SKILL.md settings each fix one problem: noise, danger, missing input.",
+ ex:["A codebase-analysis skill floods the main chat.","context: fork."],
+ trap:"<b>Trap:</b> skills for conventions that must apply automatically (use rules/CLAUDE.md).",
+ teach:"Map each SKILL.md setting to the problem it solves, in one sentence each."},
+
+{d:"Pattern 11 · D3",r:"Plan mode when <span class='arrow'>the hard part is deciding.</span>",
+ pic:`<div class="cols"><div class="b g"><span class="big">Plan mode</span><small>many files · architecture · several valid approaches · complexity stated up front</small></div><div class="b"><span class="big">Direct</span><small>one file · clear cause (stack trace) · small check</small></div><div class="b a"><span class="big">Explore subagent</span><small>noisy discovery → returns a summary</small></div></div>`,
+ why:"Planning is cheap; rework across 45 files is expensive. If the question <b>already says</b> it is big or architectural, plan first. Do not 'start direct and switch later'.",
+ ex:["Monolith to microservices.","Plan mode, then direct execution to implement the plan."],
+ trap:"<b>Trap:</b> 'start direct, switch if it gets complex' when complexity is already known.",
+ teach:"Give me two tasks from your own work: one for plan mode and one for direct. Say why for each."},
+
+{d:"Pattern 12 · D3",r:"CI: <span class='arrow'><code>-p</code> + JSON + repo CLAUDE.md + fresh reviewer.</span>",
+ pic:`<div class="flow"><div class="b a"><code>claude -p</code><small>no waiting for input</small></div><span class="ar">+</span><div class="b a"><code>--output-format json</code><br><code>--json-schema</code><small>machine-readable</small></div><span class="ar">+</span><div class="b a">repo <code>CLAUDE.md</code><small>team standards, every run</small></div></div><div class="b g">Re-run after new commits: send prior findings, report only new ones.</div>`,
+ why:"CI has no human to answer prompts, no personal files, and needs parseable output. The <b>same session</b> that wrote code is a weak reviewer: it remembers its own reasoning.",
+ ex:["CI job hangs waiting for input.","Add -p."],
+ trap:"<b>Trap:</b> fake options like <code>CLAUDE_HEADLESS</code> or <code>--batch</code>.",
+ teach:"Explain why a CI run cannot see your ~/.claude files, and why a fresh Claude instance reviews better than the author session."},
+
+{d:"Pattern 13 · D4",r:"Schema fixes <span class='arrow'>shape</span>, not <span class='arrow'>truth.</span>",
+ pic:`<div class="flow"><div class="b g">tool_use + JSON schema<small>no syntax errors</small></div><span class="ar">→</span><div class="b a">Validate meaning<small>totals add up?</small></div><span class="ar">→</span><div class="b">Retry with the error<small>doc + bad output + error</small></div></div><div class="cols"><div class="b g">Field may be missing → <b>nullable</b> (stops invented values)</div><div class="b g">New categories → enum + <b>"other"</b> + detail</div><div class="b r">Info not in the document → <b>retry is useless</b></div></div>`,
+ why:"A schema checks <b>form</b>. It cannot know the total is wrong. A required field <b>forces</b> the model to invent something. Retries fix formatting, not missing facts.",
+ ex:["Valid JSON, but line items do not sum to the total.","Semantic error: compare calculated_total vs stated_total, retry with that error."],
+ trap:"<b>Trap:</b> 'turn on strict mode' for a math problem. 'Retry 5 more times' when the data is in another file.",
+ teach:"Explain syntax errors vs semantic errors with a tax-form analogy. Then: why does making a field required cause hallucination?"},
+
+{d:"Pattern 14 · D4 D1",r:"Exact conversion? <span class='arrow'>Claude extracts. Code converts.</span>",
+ pic:`<div class="flow"><div class="b">"03/14/2026"<br>"14-Mar-2026"</div><span class="ar">→</span><div class="b a">Claude: copy raw text</div><span class="ar">→</span><div class="b g">Code: → 2026-03-14<small>deterministic · unit-tested</small></div></div>`,
+ why:"This is Pattern 1 again. The words <b>deterministic</b> and <b>unit-testable</b> mean code. Claude reads messy text well; code does exact math the same way every time.",
+ ex:["Prices like '$1,200.50' and '1.200,50 €' must become integer cents.","Extract raw text + currency; convert in code."],
+ trap:"<b>Trap:</b> a conversion table in the prompt, or a regex pattern in the schema (it rejects, it does not convert).",
+ teach:"Explain why 'put the conversion rules in the prompt' fails a 'unit-testable' requirement."},
+
+{d:"Pattern 15 · D4",r:"Inconsistent output? <span class='arrow'>Show 2–4 examples.</span>",
+ pic:`<div class="cols"><div class="b r"><span class="big">More rules</span><small>already failed on varied input</small></div><div class="b g"><span class="big">2–4 examples</span><small>varied layouts · the tricky case · a missing field → null · why this choice</small></div></div><div class="b a">Prose instructions applied inconsistently → give input/output pairs</div>`,
+ why:"Rules describe; examples <b>demonstrate</b>. When the inputs vary a lot, the model generalizes from examples far better, especially if each example shows <b>why</b> it was handled that way.",
+ ex:["Invoices in many layouts; detailed rules; model still invents values.","Few-shot examples of varied layouts, one with a missing field → null."],
+ trap:"<b>Trap:</b> writing longer rules, a bigger model, temperature 0.",
+ teach:"Explain why examples beat more rules for messy documents. When would explicit categories beat examples?"},
+
+{d:"Pattern 16 · D4",r:"Is someone waiting? <span class='arrow'>Yes → live API. No → Batches.</span>",
+ pic:`<div class="cols"><div class="b g"><span class="big">Batches API</span><small>50% cheaper · up to 24 h · no speed promise · <code>custom_id</code> matches results · no multi-turn tools</small></div><div class="b r"><span class="big">Not for</span><small>pre-merge checks · anything blocking a person</small></div></div><div class="b a">Some items failed → resubmit only those, by custom_id (chunk the oversized ones)</div>`,
+ why:"Batches trade <b>time</b> for <b>money</b>. Fine overnight, useless when a developer waits to merge.",
+ ex:["Pre-merge check + overnight debt report. Manager wants both on Batches.","Batch the overnight report only."],
+ trap:"<b>Trap:</b> 'batch both with a timeout fallback', or 'results come back unordered' (custom_id solves that).",
+ teach:"Explain to my manager, in two sentences, which jobs go on Batches and why."},
+
+{d:"Pattern 17 · D4 D1",r:"Big review? <span class='arrow'>Split it. Then a fresh reviewer.</span>",
+ pic:`<div class="flow"><div class="b">file 1</div><div class="b">file 2</div><div class="b">…</div><div class="b">file 14</div><span class="ar">→</span><div class="b a">Integration pass<small>cross-file data flow</small></div></div><div class="b g">Reviewer = separate instance, without the author's reasoning</div>`,
+ why:"Attention <b>dilutes</b> over many files: uneven depth, contradictions. A bigger context window does not fix attention. The author session defends its own choices.",
+ ex:["14-file PR: deep on some files, shallow on others, contradicts itself.","Per-file passes + one integration pass."],
+ trap:"<b>Trap:</b> bigger model, '3 runs and vote', or making developers split PRs.",
+ teach:"Explain 'attention dilution' and why voting across 3 runs would hide real bugs."},
+
+{d:"Pattern 18 · D5",r:"Long context: <span class='arrow'>pin facts, trim junk, key points first.</span>",
+ pic:`<div class="cols"><div class="b g"><span class="big">Case facts block</span><small>amounts, dates, IDs pinned in every prompt</small></div><div class="b g"><span class="big">Trim tool output</span><small>40 fields → the 5 you need</small></div><div class="b g"><span class="big">Summary at top</span><small>beats "lost in the middle"</small></div><div class="b g"><span class="big">Scratchpad files</span><small>long exploration; subagents; /compact</small></div></div>`,
+ why:"Summaries <b>blur</b> numbers. Junk crowds out signal. Models read the <b>start and end</b> best. Long sessions drift into 'typical patterns'. Each tool fixes one of these.",
+ ex:["After summarizing, the agent forgets the refund amount.","Persistent case-facts block outside the summary."],
+ trap:"<b>Trap:</b> 'use a bigger context window' or 'summarize more often'.",
+ teach:"Explain lost-in-the-middle and the fix. Then: why should exact amounts never pass through a summary?"},
+
+{d:"Pattern 19 · D5",r:"Escalate on <span class='arrow'>request · policy gap · no progress.</span>",
+ pic:`<div class="cols"><div class="b g">Customer asks for a human → <b>now</b>, no investigating first</div><div class="b g">Policy silent or unclear → escalate</div><div class="b g">Several matching customers → <b>ask for another ID</b></div><div class="b r">Sentiment score / self-rated confidence → <b>not</b> signals</div></div>`,
+ why:"Escalate when the agent <b>may not</b> or <b>cannot</b> decide, not when the customer is upset or the model 'feels unsure'. Model confidence is poorly calibrated; frustration does not equal complexity.",
+ ex:["Customer wants a competitor price match; policy covers only our own prices.","Escalate: policy gap."],
+ trap:"<b>Trap:</b> confidence-score routing, sentiment thresholds, guessing between matches.",
+ teach:"Explain why 'escalate when confidence < 7' fails, and list the 3 real triggers."},
+
+{d:"Pattern 20 · D5",r:"Trust needs <span class='arrow'>sources, dates, and per-segment checks.</span>",
+ pic:`<div class="cols"><div class="b g">Claim → source mapping kept through every hand-off</div><div class="b g">Sources disagree → keep both, label, add dates</div><div class="b g">97% overall → check by doc type and field; stratified samples</div></div>`,
+ why:"Averages hide a weak segment. Summaries drop citations. Two numbers from different years are not a contradiction. Keep the evidence so a human can judge.",
+ ex:["Two credible sources give different market sizes.","Report both with sources and dates; mark as contested."],
+ trap:"<b>Trap:</b> picking one value, averaging them, or cutting human review because overall accuracy looks high.",
+ teach:"Explain why 97% overall accuracy is not enough to stop human review."},
+
+{d:"Pattern 21 · D1",r:"Sessions: <span class='arrow'>resume · fork · fresh.</span>",
+ pic:`<div class="cols"><div class="b g"><span class="big">--resume name</span><small>context still good; tell it what changed</small></div><div class="b a"><span class="big">fork_session</span><small>try 2 approaches from one baseline</small></div><div class="b"><span class="big">Fresh + summary</span><small>old tool results are stale</small></div></div>`,
+ why:"Stale tool results <b>mislead</b> more than no context. Forking keeps two experiments from mixing.",
+ ex:["Compare two refactoring strategies from the same analysis.","fork_session."],
+ trap:"<b>Trap:</b> resuming on stale results, or re-exploring everything after a small change.",
+ teach:"Tell me which of the three you would use after a teammate rewrote half the files you analyzed, and why."},
+
+{d:"Pattern 22 · D2",r:"MCP: <span class='arrow'>resources = menu. Tools = actions.</span>",
+ pic:`<div class="cols"><div class="b a"><span class="big">Resource</span><small>catalog: issue list, doc tree, DB schema → fewer exploring calls</small></div><div class="b a"><span class="big">Tool</span><small>does something</small></div><div class="b g"><span class="big">Standard system</span><small>Jira → community server, not custom</small></div></div><div class="b">Grep = search contents · Glob = find files by name · Edit fails (not unique) → Read + Write</div>`,
+ why:"A menu lets the agent see what exists <b>without</b> guessing calls. All servers' tools load at once, so <b>descriptions</b> decide whether Claude uses your MCP tool or falls back to Grep.",
+ ex:["Agent wastes calls discovering which docs exist.","Expose the doc hierarchy as an MCP resource."],
+ trap:"<b>Trap:</b> building a custom server for a standard tool, or a giant list in the system prompt.",
+ teach:"Explain resource vs tool with a restaurant analogy. Then: Grep or Glob to find every *.test.tsx file?"},
+
+{d:"Done",r:"You have the <span class='arrow'>22 patterns.</span> Now teach them back.",
+ pic:`<div class="cols"><div class="b a"><span class="big">1 · Teach</span><small>Copy a prompt; type your answer to Claude in chat</small></div><div class="b a"><span class="big">2 · Drill</span><small>Cram Station: Official 12, then weak domains</small></div><div class="b a"><span class="big">3 · Practice exam</span><small>Ask Claude for a fresh mock on your weak patterns</small></div></div>`,
+ why:"Seeing builds the map. <b>Explaining</b> proves you can use it. Drilling locks it in.",
+ ex:["Stuck on a question in the exam?","Ask: what is the cause? Hard rule or judgment? Smallest real fix?"],
+ trap:"<b>Trap:</b> rereading slides instead of explaining them.",
+ teach:"Pick the 3 patterns you feel least sure about. Explain all 3 to me in one message."}
+];
+
+/* Tools deck: one screen per tool. n=name, k=where/kind, w=what it is, pic, h=how it works + why, u=[scenario, answer], t=trap, q=teach-back */
+const T=[
+{n:"stop_reason",k:"Claude API · D1",w:"The field on every Claude response that says <b>why Claude stopped</b>.",
+ pic:`<div class="cols"><div class="b g"><span class="big">tool_use</span><small>wants a tool → run it, send the result, call again</small></div><div class="b r"><span class="big">end_turn</span><small>finished → stop the loop</small></div><div class="b"><span class="big">max_tokens</span><small>hit the length limit → answer was cut off</small></div></div>`,
+ h:"The API is <b>stateless</b>: it answers once and stops. Your code runs the loop. <code>stop_reason</code> is the only reliable signal of what Claude wants next, so your loop branches on it.",
+ u:["Your loop ends whenever Claude writes a sentence before its tool call.","Branch on stop_reason, not on 'has text'."],
+ t:"<b>Trap:</b> iteration caps, 'done' phrases, or 'reply has text' as the stop rule.",
+ q:"Explain why the API needs YOUR code to loop, and what your code does for each stop_reason."},
+{n:"tool_use → tool_result",k:"Claude API · D1",w:"The pair of message blocks for one tool call: Claude asks (<code>tool_use</code>), you answer (<code>tool_result</code>).",
+ pic:`<div class="flow"><div class="b a">Claude: tool_use<small>name + input + id</small></div><span class="ar">→</span><div class="b">Your code runs it</div><span class="ar">→</span><div class="b g">You append tool_result<small>same id, to the message history</small></div><span class="ar">→</span><div class="b a">Call Claude again</div></div>`,
+ h:"Claude remembers nothing between calls. It only 'knows' a result if you <b>append it to the conversation</b> and send the whole history again. That is how it reasons about the next step.",
+ u:["Claude keeps calling the same tool again and again.","Its result is probably not appended to the history, so it never sees it."],
+ t:"<b>Trap:</b> sending only the newest message; Claude loses all earlier context.",
+ q:"Explain to a beginner why a tool result must go back into the message history."},
+{n:"Task tool + allowedTools",k:"Agent SDK · D1",w:"<b>Task</b> = the tool a coordinator calls to start a subagent. <b>allowedTools</b> = the list of tools an agent may use.",
+ pic:`<div class="flow"><div class="b a">Coordinator<small>allowedTools: ["Task", …]</small></div><span class="ar">→ Task →</span><div class="b">Subagent<small>fresh, empty context</small></div></div><div class="cols"><div class="b g">Several Task calls in <b>one</b> reply = parallel</div><div class="b r">No "Task" in allowedTools = cannot spawn</div></div>`,
+ h:"Spawning is just another tool call, so the normal tool permission list applies. Parallel works because the SDK runs every tool call in one reply together; calls in later turns wait for earlier ones.",
+ u:["Coordinator never starts any subagent.","Add \"Task\" to its allowedTools."],
+ t:"<b>Trap:</b> thinking the subagent inherits the coordinator's history. It gets only its prompt.",
+ q:"Explain how you run three research subagents at the same time, and why spreading them across turns is slow."},
+{n:"AgentDefinition",k:"Agent SDK · D1",w:"The config for one subagent type: <b>description</b>, <b>system prompt</b>, <b>tool restrictions</b>.",
+ pic:`<div class="cols"><div class="b a"><span class="big">description</span><small>tells the coordinator WHEN to use this agent</small></div><div class="b a"><span class="big">prompt</span><small>its role and rules</small></div><div class="b a"><span class="big">tools</span><small>only what the role needs</small></div></div>`,
+ h:"The coordinator picks subagents the same way Claude picks tools: by <b>reading descriptions</b>. Tool limits enforce least privilege per role.",
+ u:["Coordinator sends web searches to the synthesis agent.","Sharpen each AgentDefinition description; remove search tools from synthesis."],
+ t:"<b>Trap:</b> giving every subagent every tool.",
+ q:"Explain what each of the 3 parts does and which bug each one prevents."},
+{n:"PreToolUse hook",k:"Agent SDK / Claude Code · D1",w:"Your code that runs <b>before</b> a tool call and can allow, deny, or ask.",
+ pic:`<div class="flow"><div class="b a">Claude wants: process_refund($800)</div><span class="ar">→</span><div class="b g">PreToolUse<small>rule: > $500?</small></div><span class="ar">→</span><div class="b r">deny + reason<small>"Escalate to a human"</small></div></div><div class="cols"><div class="b"><code>deny</code> → blocked; reason shown <b>to Claude</b></div><div class="b"><code>ask</code> → user confirms</div><div class="b"><code>allow</code> → runs, skips the prompt</div></div>`,
+ h:"It is code, so it fires <b>every time</b> (Pattern 1). The deny reason goes to Claude so it can <b>change course</b> (use the safe wrapper, escalate) instead of failing blindly.",
+ u:["Refunds over $500 must never run without a human.","PreToolUse: deny over $500, redirect to escalation."],
+ t:"<b>Trap:</b> PostToolUse for blocking; a prompt rule for guaranteed compliance.",
+ q:"Explain why the deny reason goes to Claude and not only to the user. What does Claude do with it?"},
+{n:"PostToolUse hook",k:"Agent SDK / Claude Code · D1",w:"Your code that runs <b>after</b> a tool returns, before Claude reasons on the result.",
+ pic:`<div class="flow"><div class="b">Tool A: 1710374400<br>Tool B: 03/14/2026</div><span class="ar">→</span><div class="b g">PostToolUse<small>normalize</small></div><span class="ar">→</span><div class="b a">Claude sees: 2026-03-14</div></div>`,
+ h:"Claude reasons better on <b>clean, uniform</b> data. Fixing formats in code is deterministic; asking Claude to interpret 5 formats is not. It also can trim noisy fields.",
+ u:["MCP tools return Unix times, ISO dates, and numeric status codes.","PostToolUse hook converts them all to one format."],
+ t:"<b>Trap:</b> using it to stop a call. The call already happened.",
+ q:"Give me two jobs for PostToolUse and one job it can never do."},
+{n:"--resume",k:"Claude Code / SDK sessions · D1",w:"Continue a <b>named earlier session</b> with its full history.",
+ pic:`<div class="flow"><div class="b">Monday: session "auth-audit"</div><span class="ar">→</span><div class="b g"><code>--resume auth-audit</code><small>+ "files X and Y changed"</small></div></div>`,
+ h:"Resuming saves re-exploring. But old tool results are a <b>snapshot</b>: if code changed, Claude trusts stale facts unless you tell it what changed.",
+ u:["You return to an investigation; 2 files changed since.","Resume and name the 2 changed files for targeted re-analysis."],
+ t:"<b>Trap:</b> resuming when most results are stale. Then start fresh with a summary.",
+ q:"Explain when resuming is worse than starting fresh."},
+{n:"fork_session",k:"Agent SDK · D1",w:"Make an <b>independent copy</b> of a session to try a different path.",
+ pic:`<div class="flow"><div class="b a">Shared analysis</div><span class="ar">→</span><div class="cols" style="flex:1"><div class="b g">Fork A: strategy 1</div><div class="b g">Fork B: strategy 2</div></div></div>`,
+ h:"Both branches start from the <b>same baseline</b> without repeating the analysis, and neither pollutes the other.",
+ u:["Compare two testing strategies after one codebase analysis.","fork_session twice."],
+ t:"<b>Trap:</b> trying both in one session; the second attempt is biased by the first.",
+ q:"Explain fork vs resume with a 'save game' analogy."},
+{n:"tool_choice",k:"Claude API · D2 D4",w:"Controls whether Claude <b>must</b> call a tool, and which.",
+ pic:`<div class="cols"><div class="b"><span class="big">auto</span><small>may answer in text</small></div><div class="b g"><span class="big">any</span><small>must call some tool; Claude picks</small></div><div class="b a"><span class="big">{type:"tool", name}</span><small>must call that tool</small></div><div class="b"><span class="big">none</span><small>no tools</small></div></div>`,
+ h:"By default (auto) Claude may decide a tool is not needed. When text answers are <b>not allowed</b>, you remove that option in the API, not in the prompt (Pattern 1).",
+ u:["extract_metadata must run before enrichment.","Force {type:'tool', name:'extract_metadata'} on the first call; later steps in follow-up turns."],
+ t:"<b>Trap:</b> 'any' when one specific tool must run; 'auto' when text answers are forbidden.",
+ q:"Explain each value with a restaurant-order analogy."},
+{n:"JSON schema (tool input)",k:"Claude API · D4",w:"The schema you give a tool. Claude's tool call must fit it, so you get structured output.",
+ pic:`<div class="cols"><div class="b g"><span class="big">strict</span><small>no syntax errors</small></div><div class="b g"><span class="big">nullable</span><small>may say "not found" → no invented values</small></div><div class="b g"><span class="big">enum + "other"</span><small>+ detail string; "unclear" for ambiguous</small></div><div class="b r"><span class="big">Does NOT</span><small>check meaning (sums, wrong field)</small></div></div>`,
+ h:"Extraction through a tool call guarantees <b>shape</b>. A <b>required</b> field forces a value, so when the document lacks it, the model invents one. Nullable gives it an honest exit.",
+ u:["Model invents due dates for invoices that have none.","Make due_date nullable."],
+ t:"<b>Trap:</b> thinking strict mode catches wrong numbers.",
+ q:"Explain why 'required' causes hallucination and how nullable fixes it."},
+{n:"Message Batches API",k:"Claude API · D4",w:"Send many requests at once for <b>50% off</b>; results arrive within <b>24 hours</b>.",
+ pic:`<div class="flow"><div class="b a">Submit 1,000 requests<small>each with custom_id</small></div><span class="ar">→</span><div class="b">Poll status</div><span class="ar">→</span><div class="b g">Results<small>match by custom_id</small></div></div><div class="cols"><div class="b r">No speed promise</div><div class="b r">No tool loop inside a request</div><div class="b g">Failed? Resubmit only those custom_ids</div></div>`,
+ h:"Cheap because Anthropic runs it <b>when capacity is free</b>, so there is no latency guarantee. Each request is one call, so Claude cannot call a tool and continue mid-request.",
+ u:["Nightly test generation for 300 files.","Batches. Resubmit failed custom_ids, chunking oversized files."],
+ t:"<b>Trap:</b> batches for blocking pre-merge checks; 'results are unordered' (custom_id fixes it).",
+ q:"Explain why Batches cannot run an agent that needs tools mid-task."},
+{n:"Validation-retry loop (Pydantic)",k:"Pattern · D4",w:"Validate the extraction in code; on failure, send it back with the <b>specific error</b>.",
+ pic:`<div class="flow"><div class="b">Extract</div><span class="ar">→</span><div class="b a">Pydantic validate</div><span class="ar">→ fail →</span><div class="b g">Retry: document + bad output + exact error</div></div><div class="b r">Data not in the document → stop; retry cannot create it</div>`,
+ h:"A specific error tells the model <b>what</b> to fix. Retries fix <b>format and structure</b>; they cannot add facts that are absent.",
+ u:["Retry keeps failing: the date lives in an appendix you did not send.","Stop retrying. Send the appendix or return null."],
+ t:"<b>Trap:</b> 'retry 5 more times' or a generic 'try again'.",
+ q:"Explain which errors a retry can fix and which it never can."},
+{n:"MCP tool",k:"MCP · D2",w:"An <b>action</b> a server offers Claude: name, description, input schema.",
+ pic:`<div class="flow"><div class="b">Server A tools</div><div class="b">Server B tools</div><div class="b">Built-ins (Grep…)</div><span class="ar">→ all at once →</span><div class="b a">Claude picks by description</div></div>`,
+ h:"All configured servers' tools are discovered at connection time and offered <b>together</b>. Claude chooses by reading descriptions, so a vague MCP description loses to a familiar built-in like Grep.",
+ u:["Agent uses Grep instead of your richer code-search MCP tool.","Improve the MCP tool's description: what it finds, what it returns."],
+ t:"<b>Trap:</b> overlapping names/descriptions; one generic 'analyze' tool instead of specific ones.",
+ q:"Explain why a good MCP tool can be ignored, and the fix."},
+{n:"MCP resource",k:"MCP · D2",w:"Read-only <b>content</b> a server exposes: a catalog Claude can look at.",
+ pic:`<div class="cols"><div class="b a"><span class="big">Resource</span><small>issue list · doc tree · DB schema</small></div><div class="b"><span class="big">Tool</span><small>do something / fetch one item</small></div></div>`,
+ h:"Without a catalog, the agent must <b>guess</b> with exploratory tool calls. A resource shows what exists up front.",
+ u:["Agent makes 10 calls to discover which tables exist.","Expose the DB schema as a resource."],
+ t:"<b>Trap:</b> pasting the catalog into the system prompt.",
+ q:"Explain resource vs tool with a library analogy."},
+{n:"isError + structured errors",k:"MCP · D2 D5",w:"<code>isError: true</code> is MCP's failure flag. You add <b>category</b>, <b>isRetryable</b>, and a readable message.",
+ pic:`<div class="cols"><div class="b"><span class="big">transient</span><small>retry</small></div><div class="b"><span class="big">validation</span><small>fix input</small></div><div class="b"><span class="big">business</span><small>explain, no retry</small></div><div class="b"><span class="big">permission</span><small>escalate</small></div></div>`,
+ h:"Each category needs a <b>different</b> recovery. Without metadata, the agent retries things that can never work, or gives up on things that would.",
+ u:["Refund blocked by policy; agent retries 4 times.","Return business error, isRetryable false, customer-friendly explanation."],
+ t:"<b>Trap:</b> generic 'Operation failed'; treating 'no results' as an error.",
+ q:"Explain how the agent should react to each of the 4 categories."},
+{n:".mcp.json",k:"Claude Code · project scope · D2",w:"MCP server config in the <b>repo root</b>, committed to git.",
+ pic:`<div class="flow"><div class="b a">repo/.mcp.json<small>"token": "\${GITHUB_TOKEN}"</small></div><span class="ar">→ git →</span><div class="b g">Every teammate gets the server</div></div><div class="b g">Each person's own token comes from their environment</div>`,
+ h:"Git spreads the file to everyone, so it is the <b>team</b> scope. <code>\${VAR}</code> expansion means the file holds a <b>placeholder</b>, so secrets never enter git.",
+ u:["Whole team needs the GitHub MCP server.","Add it to .mcp.json with ${GITHUB_TOKEN}."],
+ t:"<b>Trap:</b> pasting the real token; putting a team server in personal config.",
+ q:"Explain why env-var expansion lets a file be shared but the secret stay private."},
+{n:"~/.claude.json",k:"Claude Code · user scope · D2",w:"MCP config in <b>your home folder</b>: personal and experimental servers.",
+ pic:`<div class="cols"><div class="b a"><span class="big">~/.claude.json</span><small>only on your machine</small></div><div class="b g"><span class="big">Both load</span><small>project + personal servers work together</small></div></div>`,
+ h:"Your home folder is not in the repo, so nothing there reaches teammates or CI. Good for trying a server without forcing it on the team.",
+ u:["You want to test a new MCP server alone.","Add it to ~/.claude.json."],
+ t:"<b>Trap:</b> expecting teammates or CI to see it.",
+ q:"Explain why CI never sees your ~/.claude.json servers."},
+{n:"CLAUDE.md (3 levels)",k:"Claude Code · D3",w:"Instruction files Claude Code loads automatically.",
+ pic:`<div class="cols"><div class="b a"><span class="big">~/.claude/CLAUDE.md</span><small>user: you, every project</small></div><div class="b g"><span class="big">./CLAUDE.md</span><small>project: whole team via git (or .claude/CLAUDE.md)</small></div><div class="b"><span class="big">src/api/CLAUDE.md</span><small>directory: when working in that folder</small></div></div>`,
+ h:"WHERE the file sits decides WHO gets it: home folder = only you; repo = everyone who clones, plus CI; subfolder = only that area. It is always loaded, so keep it to universal rules.",
+ u:["Teammate does not get your standards.","They sit in ~/.claude/CLAUDE.md. Move them to ./CLAUDE.md."],
+ t:"<b>Trap:</b> team rules in the user file; a giant file instead of @import or rules/.",
+ q:"Explain why the same sentence behaves differently in ~/.claude/CLAUDE.md vs ./CLAUDE.md."},
+{n:"@import",k:"Claude Code · D3",w:"A line in CLAUDE.md like <code>@docs/api-standards.md</code> that pulls in another file.",
+ pic:`<div class="flow"><div class="b a">packages/billing/CLAUDE.md</div><span class="ar">@</span><div class="b g">standards/payments.md</div><div class="b g">standards/testing.md</div></div>`,
+ h:"Keeps CLAUDE.md <b>small and modular</b>. Each package imports only the standards that apply to it.",
+ u:["Each package needs different standards files.","Each package's CLAUDE.md @imports its relevant ones."],
+ t:"<b>Trap:</b> one huge CLAUDE.md for everything.",
+ q:"Explain @import vs .claude/rules/ and when you would use each."},
+{n:".claude/rules/ + paths",k:"Claude Code · D3",w:"Topic rule files. With <code>paths:</code> globs in YAML frontmatter, they load <b>only for matching files</b>.",
+ pic:`<div class="flow"><div class="b a">.claude/rules/testing.md<small>paths: ["**/*.test.tsx"]</small></div><span class="ar">→</span><div class="b g">Loads when editing Button.test.tsx in ANY folder</div></div>`,
+ h:"Globs match by <b>file type</b>, not folder. Tests spread everywhere still get one rule. Loading only when relevant saves context and tokens.",
+ u:["Test files live next to the code in 40 folders.","One rules file with **/*.test.tsx."],
+ t:"<b>Trap:</b> a CLAUDE.md per folder (cannot follow scattered files), or a skill (needs invocation).",
+ q:"Explain why a glob rule beats a folder CLAUDE.md for test files."},
+{n:"/memory",k:"Claude Code command · D3",w:"Shows which memory (CLAUDE.md) files are loaded, and opens them to edit.",
+ pic:`<div class="flow"><div class="b">"Claude behaves differently on my laptop"</div><span class="ar">→</span><div class="b g">/memory<small>see the loaded files</small></div></div>`,
+ h:"Inconsistent behavior is usually a <b>hierarchy</b> problem. /memory shows the truth instead of guessing.",
+ u:["Instructions apply in one session but not another.","Run /memory to see which files loaded."],
+ t:"<b>Trap:</b> rewriting instructions before checking where they live.",
+ q:"Explain how you would debug 'my teammate's Claude ignores our rules'."},
+{n:".claude/commands/",k:"Claude Code · D3",w:"Custom slash commands. <code>review.md</code> becomes <code>/review</code>.",
+ pic:`<div class="cols"><div class="b g"><span class="big">.claude/commands/</span><small>project: in git, every developer</small></div><div class="b a"><span class="big">~/.claude/commands/</span><small>personal: only you</small></div></div>`,
+ h:"Same rule as everything else: the repo folder travels with git; the home folder does not.",
+ u:["Everyone must get /review after git pull.","Put review.md in .claude/commands/."],
+ t:"<b>Trap:</b> a 'commands array in .claude/config.json' (does not exist).",
+ q:"Explain where a team command lives and why."},
+{n:"Skills (SKILL.md)",k:"Claude Code · D3",w:"A folder in <code>.claude/skills/</code> with a SKILL.md: an <b>on-demand</b> workflow.",
+ pic:`<div class="cols"><div class="b a"><span class="big">Skill</span><small>task-specific, runs when invoked</small></div><div class="b g"><span class="big">CLAUDE.md</span><small>universal, always loaded</small></div><div class="b"><span class="big">~/.claude/skills/</span><small>personal variant, different name</small></div></div>`,
+ h:"Skills keep task workflows <b>out of context</b> until needed. A personal copy with a different name avoids changing the team's version.",
+ u:["You want your own tweak of the team's deploy skill.","Copy it to ~/.claude/skills/ under a new name."],
+ t:"<b>Trap:</b> skills for rules that must apply automatically.",
+ q:"Explain skill vs CLAUDE.md with a 'recipe vs house rules' analogy."},
+{n:"context: fork",k:"SKILL.md frontmatter · D3",w:"Runs the skill in an <b>isolated sub-agent context</b>.",
+ pic:`<div class="flow"><div class="b">Main chat</div><span class="ar">→</span><div class="b a">Forked room<small>500 lines of analysis</small></div><span class="ar">→</span><div class="b g">Only the result returns</div></div>`,
+ h:"Verbose or exploratory output would <b>pollute</b> the main conversation and burn context. Forking keeps the mess in a side room.",
+ u:["Codebase-analysis skill floods the chat.","context: fork."],
+ t:"<b>Trap:</b> /compact after the damage instead of preventing it.",
+ q:"Explain what problem context: fork solves and give a second example."},
+{n:"allowed-tools",k:"SKILL.md frontmatter · D3",w:"Limits which tools a skill may use while it runs.",
+ pic:`<div class="flow"><div class="b a">skill: write-docs<small>allowed-tools: Read, Write</small></div><span class="ar">→</span><div class="b r">Bash, delete: not available</div></div>`,
+ h:"Least privilege for skills: a docs skill has no reason to run shell commands, so remove the risk. (Exam guide wording: restricts tools.)",
+ u:["A skill must only write files, never run destructive commands.","allowed-tools with file-write tools only."],
+ t:"<b>Trap:</b> a prompt line 'do not run commands'.",
+ q:"Explain why allowed-tools is Pattern 1 applied to skills."},
+{n:"argument-hint",k:"SKILL.md frontmatter · D3",w:"Tells the developer what argument the skill expects.",
+ pic:`<div class="flow"><div class="b">/migrate</div><span class="ar">→</span><div class="b g">hint: &lt;table-name&gt;</div></div>`,
+ h:"Prompts people for the <b>required parameter</b> instead of the skill running with missing input.",
+ u:["People run /migrate without a table name.","Add argument-hint."],
+ t:"<b>Trap:</b> confusing it with allowed-tools.",
+ q:"Match each frontmatter key (context, allowed-tools, argument-hint) to its problem."},
+{n:"Plan mode",k:"Claude Code · D3",w:"Claude explores <b>read-only</b> and proposes a plan before changing anything.",
+ pic:`<div class="flow"><div class="b a">Plan mode<small>read, explore, design</small></div><span class="ar">→ approve →</span><div class="b g">Direct execution<small>implement the plan</small></div></div>`,
+ h:"Read-only exploration is <b>safe</b> and finds dependencies before you commit to an approach. Rework on 45 files costs far more than planning.",
+ u:["Library migration touching 45+ files.","Plan mode, then direct execution."],
+ t:"<b>Trap:</b> 'start direct, switch later' when the stem already says it is big.",
+ q:"Explain why plan mode prevents rework."},
+{n:"Explore subagent",k:"Claude Code · D3 D5",w:"A built-in subagent for <b>noisy discovery</b> that returns a short summary.",
+ pic:`<div class="flow"><div class="b a">Explore<small>reads 80 files</small></div><span class="ar">→</span><div class="b g">Main chat gets a summary</div></div>`,
+ h:"Discovery output is huge. Doing it in a subagent keeps the <b>main context</b> free for decisions in later phases.",
+ u:["Multi-phase task runs out of context during discovery.","Use the Explore subagent for discovery."],
+ t:"<b>Trap:</b> doing all exploration in the main session.",
+ q:"Explain how Explore protects the main context."},
+{n:"/compact",k:"Claude Code command · D5",w:"Summarizes the conversation to free context.",
+ pic:`<div class="flow"><div class="b">Context 90% full of discovery logs</div><span class="ar">→</span><div class="b g">/compact</div></div>`,
+ h:"Frees space in long sessions. But summaries <b>blur</b> exact numbers, so pin critical facts separately (case facts, scratchpad).",
+ u:["Long exploration fills the context.","/compact, with key findings saved in a scratchpad file."],
+ t:"<b>Trap:</b> relying on compaction to keep exact amounts and IDs.",
+ q:"Explain what /compact is good for and what it can lose."},
+{n:"-p (--print)",k:"Claude Code CLI · D3",w:"Non-interactive mode: run the prompt, print the result, exit.",
+ pic:`<div class="flow"><div class="b r">claude "Review…"<small>waits for a human → CI hangs</small></div><div class="b g">claude -p "Review…"<small>prints, exits</small></div></div>`,
+ h:"CI has <b>no human</b> to answer. Without -p, Claude Code starts an interactive session and waits forever.",
+ u:["Pipeline job hangs.","Add -p."],
+ t:"<b>Trap:</b> CLAUDE_HEADLESS=true, --batch, &lt; /dev/null (fake or hacks).",
+ q:"Explain why the job hung and what -p changes."},
+{n:"--output-format json + --json-schema",k:"Claude Code CLI · D3",w:"Make CI output <b>machine-readable</b> and shaped to your schema.",
+ pic:`<div class="flow"><div class="b a">claude -p … --output-format json --json-schema review.json</div><span class="ar">→</span><div class="b g">Script posts inline PR comments</div></div>`,
+ h:"Scripts cannot reliably parse prose. A fixed JSON shape lets automation <b>post findings</b> (file, line, issue) without guessing.",
+ u:["Findings must become inline PR comments automatically.","--output-format json with --json-schema."],
+ t:"<b>Trap:</b> parsing plain text output with regex.",
+ q:"Explain why CI needs a schema and not just JSON."},
+{n:"Read",k:"Built-in tool · D2",w:"Loads a file's contents.",
+ pic:`<div class="flow"><div class="b a">Grep finds entry point</div><span class="ar">→</span><div class="b g">Read that file, follow imports</div></div>`,
+ h:"Read is expensive in context. Read <b>what search pointed to</b>, not every file up front.",
+ u:["Understand a refund flow in a big repo.","Grep for the entry point, then Read and follow imports."],
+ t:"<b>Trap:</b> reading all files first.",
+ q:"Explain the Grep → Read exploration order and why."},
+{n:"Write",k:"Built-in tool · D2",w:"Writes a <b>whole file</b> (create or replace).",
+ pic:`<div class="flow"><div class="b r">Edit fails: text not unique</div><span class="ar">→</span><div class="b a">Read full file</div><span class="ar">→</span><div class="b g">Write full new version</div></div>`,
+ h:"Replacing the whole file does not need a unique anchor, so it is the <b>reliable fallback</b> when Edit cannot match.",
+ u:["Edit keeps failing on a repeated line.","Read + Write."],
+ t:"<b>Trap:</b> using Write for every small change (wasteful, risky).",
+ q:"Explain when Write beats Edit."},
+{n:"Edit",k:"Built-in tool · D2",w:"Targeted change: replace an <b>exact, unique</b> piece of text.",
+ pic:`<div class="flow"><div class="b a">old text (must appear once)</div><span class="ar">→</span><div class="b g">new text</div></div>`,
+ h:"Exact matching keeps changes <b>small and safe</b>. If the text appears several times, Edit cannot know which one you mean, so it fails.",
+ u:["Change one validation check in one function.","Edit."],
+ t:"<b>Trap:</b> retrying the same non-unique Edit.",
+ q:"Explain why Edit needs unique text."},
+{n:"Bash",k:"Built-in tool · D2",w:"Runs shell commands: tests, builds, git.",
+ pic:`<div class="cols"><div class="b g">Run tests, build, git status</div><div class="b r">Destructive power → guard with hooks / allowed-tools</div></div>`,
+ h:"Most powerful built-in, so most <b>dangerous</b>. That is why PreToolUse hooks often match on Bash.",
+ u:["Block rm -rf on production paths.","PreToolUse hook on Bash with deny."],
+ t:"<b>Trap:</b> using Bash ls/cat when Glob/Read fit.",
+ q:"Explain why Bash is the usual target of PreToolUse hooks."},
+{n:"Grep",k:"Built-in tool · D2",w:"Searches <b>inside files</b> for text or patterns.",
+ pic:`<div class="flow"><div class="b a">Grep "calculateTax("</div><span class="ar">→</span><div class="b g">every caller, every file</div></div>`,
+ h:"Finds <b>content</b>: function callers, error messages, imports. To trace wrappers: find exported names first, then Grep each name.",
+ u:["Find every place an error message is thrown.","Grep."],
+ t:"<b>Trap:</b> Glob (it only matches file names).",
+ q:"Explain Grep vs Glob in one sentence each, with an example."},
+{n:"Glob",k:"Built-in tool · D2",w:"Finds <b>files by name pattern</b>.",
+ pic:`<div class="flow"><div class="b a">Glob "**/*.test.tsx"</div><span class="ar">→</span><div class="b g">all test files, any folder</div></div>`,
+ h:"Matches <b>paths</b>, not contents. Fast way to list files by type or name.",
+ u:["List every test file.","Glob **/*.test.tsx."],
+ t:"<b>Trap:</b> Grep for file names.",
+ q:"You need all Terraform files, then every one that mentions 'prod'. Explain which tool for each step."}
+];
+/* index slide */
+T.unshift({idx:true});
+
+let deck="patterns",i=0;
+const slide=document.getElementById("slide"),dots=document.getElementById("dots");
+function D(){return deck==="patterns"?S:T}
+function setDeck(dk,k){deck=dk;document.getElementById("d-patterns").className="btn deckbtn"+(dk==="patterns"?"":" alt");document.getElementById("d-tools").className="btn deckbtn"+(dk==="tools"?"":" alt");
+  dots.innerHTML=D().map((_,n)=>`<button type="button" aria-label="Screen ${n+1}" data-k="${n}"></button>`).join("");
+  dots.querySelectorAll("button").forEach(b=>b.onclick=()=>go(+b.dataset.k));go(k||0)}
+document.getElementById("d-patterns").onclick=()=>setDeck("patterns");
+document.getElementById("d-tools").onclick=()=>setDeck("tools");
+function go(k){const A=D();i=Math.max(0,Math.min(A.length-1,k));render();try{history.replaceState(null,"","#"+(deck==="patterns"?"p":"t")+i)}catch(e){}window.scrollTo(0,0)}
+function teachBox(label,q){return `<div class="teach"><span class="t">Teach it back</span><p>${q}</p><div><button class="btn" id="copy" type="button">Copy prompt for chat</button> <span id="copied" class="sec"></span></div></div>`}
+function wireCopy(label,q){const b=document.getElementById("copy");if(!b)return;b.onclick=()=>{const txt=`Teach-back, ${label}: ${q.replace(/<[^>]+>/g,"")}\nMy answer: `;const m=document.getElementById("copied");
+  navigator.clipboard.writeText(txt).then(()=>m.textContent="Copied. Paste in chat and add your answer.").catch(()=>m.textContent="Copy blocked. Type the name in chat with your answer.")}}
+function render(){
+  const A=D(),s=A[i];
+  document.getElementById("count").textContent=`${i+1} / ${A.length}`;
+  dots.querySelectorAll("button").forEach((b,k)=>b.classList.toggle("on",k===i));
+  if(deck==="patterns"){
+    slide.innerHTML=`<span class="chip">${s.d}</span><h1 class="rule">${s.r}</h1><div class="pic">${s.pic}</div><p class="why">${s.why}</p>
+    <div class="ex"><span class="sec">Example</span><p class="q">${s.ex[0]}</p><p class="ans">→ ${s.ex[1]}</p></div><p class="trap">${s.trap}</p>${teachBox(s.d,s.teach)}`;
+    wireCopy(s.d.split(" · ")[0],s.teach);
+  }else if(s.idx){
+    slide.innerHTML=`<span class="chip">Tools deck</span><h1 class="rule">Every tool on the exam. <span class="arrow">One screen each.</span></h1>
+    <div class="pic"><div class="cols">${T.slice(1).map((t,n)=>`<button class="b" type="button" style="cursor:pointer;color:inherit;font:inherit" data-j="${n+1}"><span class="big">${t.n}</span><small>${t.k}</small></button>`).join("")}</div></div>`;
+    slide.querySelectorAll("[data-j]").forEach(b=>b.onclick=()=>go(+b.dataset.j));
+  }else{
+    slide.innerHTML=`<span class="chip">${s.k}</span><h1 class="rule">${s.n}</h1><p style="font-size:1.2rem">${s.w}</p><div class="pic">${s.pic}</div>
+    <p class="why"><b>How it works and why:</b> ${s.h}</p>
+    <div class="ex"><span class="sec">Use it when</span><p class="q">${s.u[0]}</p><p class="ans">→ ${s.u[1]}</p></div><p class="trap">${s.t}</p>${teachBox(s.n,s.q)}`;
+    wireCopy(s.n,s.q);
+  }
+  document.getElementById("prev").disabled=i===0;document.getElementById("next").disabled=i===A.length-1;
+}
+document.getElementById("prev").onclick=()=>go(i-1);
+document.getElementById("next").onclick=()=>go(i+1);
+addEventListener("keydown",e=>{if(e.key==="ArrowRight")go(i+1);if(e.key==="ArrowLeft")go(i-1)});
+const h=location.hash.match(/^#([pt])(\d+)$/);setDeck(h&&h[1]==="t"?"tools":"patterns",h?+h[2]:0);
+</script>
