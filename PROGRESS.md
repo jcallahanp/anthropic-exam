@@ -41,6 +41,7 @@
 - @import vs .claude/rules/ | retry (on misconceptions page) | Thought rules trigger by tool/scenario; did not explain @import; thought standards/*.md were rules. Missing: @import pulls file into CLAUDE.md; rules load by paths: glob match.
 - .claude/rules/ + paths | retry (on misconceptions page) | Thought folder CLAUDE.md loads everywhere; unclear on "file type". Missing: tests are scattered; folder file covers one folder; **/*.test.tsx covers all.
 - /memory | retry (on misconceptions page) | Thought /memory = session/learned memory. Missing: /memory lists loaded CLAUDE.md files; cause = rules at user level; fix = move to ./CLAUDE.md + commit. (Quiz-1 Q10 area.)
+- .claude/commands/ | pass | Project .claude/commands/ is committed → whole team. Personal path garbled; correct = ~/.claude/commands/.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
