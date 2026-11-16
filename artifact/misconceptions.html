@@ -322,7 +322,36 @@ Read every package file. Report risky deps.</pre></div>
       "<b>For CI that reads the output:</b> add --output-format json and --json-schema."],
  ok:"Right instinct: something was waiting on a human. That human was the chat input, not a review.",
  trap:"“Set a longer CI timeout” or “add a ‘do not ask questions’ line to the prompt”. WRONG. Use -p.",
- retry:["Why does plain claude hang in CI?","What exactly does -p do?","Which two flags make the output usable by the next CI step?"]}
+ retry:["Why does plain claude hang in CI?","What exactly does -p do?","Which two flags make the output usable by the next CI step?"]},
+{n:"--output-format json + --json-schema",
+ you:"I know JSON is machine-readable. I don't know prose vs JSON vs JSON + schema, or what “post findings” means.",
+ wrong:"Knowledge gap: JSON alone seems reliable enough.",
+ rule:'JSON = a format. Schema = the EXACT keys and types. Scripts need the exact keys.',
+ pic:`<div class="b r"><span class="sec">1. Prose (plain claude -p): a script cannot read this</span><pre class="code">I found a bug in auth.ts around line 42.
+The token is never checked. Also maybe line 90?</pre></div>
+<div class="b r"><span class="sec">2. JSON, no schema: the shape changes every run</span><pre class="code">Run 1: {"issues":   [{"file":"auth.ts", "line":42,   "problem":"..."}]}
+Run 2: {"findings": [{"path":"auth.ts", "lineNo":"42", "desc":"..."}]}</pre><small>Run 2 renamed every key and made the line a string. The script looks for "issues" and crashes.</small></div>
+<div class="b a"><span class="sec">3. The schema: a file you write once (review.json)</span><pre class="code">{ "type": "object",
+  "required": ["findings"],
+  "properties": { "findings": { "type": "array", "items": {
+      "type": "object",
+      "required": ["file", "line", "severity", "issue"],
+      "properties": {
+        "file":     { "type": "string" },
+        "line":     { "type": "integer" },
+        "severity": { "enum": ["high", "medium", "low"] },
+        "issue":    { "type": "string" } } } } } }</pre></div>
+<div class="b g"><span class="sec">4. JSON + schema: the SAME shape every run</span><pre class="code">{"findings":[{"file":"auth.ts","line":42,"severity":"high","issue":"token not checked"}]}</pre></div>
+<div class="flow"><div class="b">CI script reads findings[]</div><span class="ar">→</span><div class="b g">“Post findings”<small>for each one, post a GitHub comment on that file, that line</small></div></div>
+<div class="b a"><span class="sec">Your pass/fail checks, same idea</span><pre class="code">"result": { "enum": ["pass", "fail"] }</pre><small>Without it, Claude may write "PASS", "passed" or "ok", and your check breaks.</small></div>`,
+ gap:["<b>JSON is only a FORMAT</b> (braces, keys, values). It does not fix WHICH keys appear.",
+      "<b>The schema fixes the shape:</b> key names, types (integer vs string), allowed values (enum), required keys.",
+      "<b>“Post findings”</b> = a script turns each finding into an inline comment on the PR, at the right file and line.",
+      "<b>The command:</b> <code>claude -p \"review\" --output-format json --json-schema review.json</code>",
+      "<b>Same idea as tool input schemas</b> (screen 4): a form Claude must fill. Right shape, not right values."],
+ ok:"Right: machine-readable output is what makes automation reliable. Your pass/fail checks are a correct use.",
+ trap:"“Parse the text output with a regex” or “ask for JSON in the prompt”. WRONG. Use --json-schema.",
+ retry:["What does JSON alone NOT guarantee?","What does the schema add?","What does the CI script do with the findings?"]}
 ];
 
 let i=0;
