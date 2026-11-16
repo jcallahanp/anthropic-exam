@@ -702,7 +702,27 @@ packages/
       "<b>Do not overcorrect:</b> glob rules won the test-file questions because the tests were SCATTERED. Here nothing is scattered."],
  ok:"Both tools load on demand. The question's shape (one folder vs scattered type) picks the tool.",
  trap:"Root CLAUDE.md (loads everywhere) or ~/.claude/CLAUDE.md (only the maintainer's machine).",
- retry:["Folder or file type: which tool for each?","When does packages/api/CLAUDE.md load?","Why not the root CLAUDE.md?"]}
+ retry:["Folder or file type: which tool for each?","When does packages/api/CLAUDE.md load?","Why not the root CLAUDE.md?"]},
+{n:"Interacting vs independent issues (missed)",
+ you:"Missed how to send two bugs that touch the same locking code.",
+ wrong:"Thought: one issue at a time is always safer.",
+ rule:'Issues INTERACT (same code) <span class="arrow">→</span> send TOGETHER. Independent <span class="arrow">→</span> one at a time.',
+ pic:`<div class="b"><span class="sec">Both bugs live in the same critical section</span><pre class="code">lock(cache)
+  read value        ← stale-read bug (fix changes the locking)
+  write value       ← concurrency bug (also depends on the locking)
+unlock(cache)</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">One at a time</span><small>Fix 1 changes the lock. Fix 2 is then written against old assumptions, or breaks fix 1. Ping-pong cycles.</small></div>
+<div class="b g"><span class="big">Both in ONE message</span><small>Claude sees both constraints and designs one locking change that fixes both.</small></div>
+</div>
+<div class="flow"><div class="b">Independent issues<small>a typo in logs + a wrong HTTP status in another file</small></div><span class="ar">→</span><div class="b a">Fix one at a time<small>each change is small and easy to check</small></div></div>`,
+ gap:["<b>The test:</b> does fixing A change the code B depends on? Yes → interacting → together.",
+      "<b>Trigger words:</b> “same critical section”, “will change the behavior … also touches”, “same function”.",
+      "<b>Why together works:</b> one coherent design instead of two fixes that fight.",
+      "<b>Independent issues</b> → sequential, so each fix is small and verifiable."],
+ ok:"Your instinct (small steps) is right for INDEPENDENT issues. The question says they interact.",
+ trap:"“Fix the stale-read first, then report the concurrency bug” (sequential for interacting issues).",
+ retry:["How do you tell interacting from independent?","How do you send interacting issues?","How do you send independent ones?"]}
 ];
 
 let i=0;

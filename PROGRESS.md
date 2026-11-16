@@ -74,6 +74,7 @@
 - MISSED: test-driven iteration → write tests first, Claude implements until green. Picked plan mode (true-but-generic again; 2nd time this meta-pattern).
 - MISSED: terraform/**/* glob (3rd glob miss). * = one level; ** = any depth. HIGH PRIORITY. Added GLOB DECODER screen with match table.
 - MISSED: packages/api conventions → packages/api/CLAUDE.md (one folder). Decision rule: folder scope → folder CLAUDE.md; scattered file type → glob rule. Watch overcorrection toward globs.
+- MISSED: interacting issues (same critical section) → send together in one message; independent → sequential. (3.5)
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.
