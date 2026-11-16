@@ -1,0 +1,31 @@
+Question stem says ALWAYS / NEVER / MUST / deterministic. Which kind of answer wins?	A <b>mechanism</b> that makes the wrong action impossible: hook, code gate, schema, tool_choice, remove the tool.<br><i>Trap:</i> "add it to the prompt" (probabilistic).	rule
+Question is about varied, ambiguous, or inconsistent output (no hard rule). Which kind of answer wins?	The <b>lightest fix at the root cause</b>: clearer tool descriptions, explicit criteria, few-shot examples.<br><i>Trap:</i> bigger model, new infrastructure.	rule
+Agent skips a required step (e.g. verify identity before refund) in 8% of cases. Fix?	<b>Programmatic prerequisite gate</b>: the refund tool rejects unless verification succeeded.<br><i>Trap:</i> stronger prompt or few-shot (lowers rate, never 0).	rule D1
+Router agent has route_ticket + process_refund "just in case" and misuses refund. Fix?	<b>Remove the extra tools.</b> Give each agent only the tools its role needs.<br><i>Trap:</i> "NEVER call refund" in the prompt.	D2 least-privilege
+Data formats vary (dates, prices). Conversion must be deterministic + unit-testable. Design?	Claude <b>extracts the raw string</b>; <b>application code converts</b>.<br><i>Trap:</i> schema pattern or format: "date" (validates shape, Claude still converts).	D4
+Extraction from wildly varied layouts invents values; detailed rules did not help. Next step?	<b>Few-shot examples</b> of diverse layouts, incl. one where the field is absent → <code>null</code>. Make fields nullable.	D4 few-shot
+tool_choice: Claude must call <b>some</b> tool every turn, and picks which.	<code>{"type": "any"}</code>	D2 tool_choice
+tool_choice: Claude must call <b>one specific</b> tool every time.	<code>{"type": "tool", "name": "..."}</code>	D2 tool_choice
+tool_choice: default; Claude may answer without a tool.	<code>{"type": "auto"}</code>	D2 tool_choice
+Which tool_choice values work with manual extended thinking?	Only <code>auto</code> and <code>none</code>. <code>any</code>/<code>tool</code> give an error.	D2 tool_choice
+PreToolUse hook returns permissionDecision "deny" + reason. Effect?	Tool call is <b>blocked</b>. The reason is shown <b>to Claude</b>, so it can adapt (e.g. use the safe wrapper).	D1 hooks
+PreToolUse permissionDecision "allow" vs "ask": who sees the reason?	The <b>user</b>. allow = runs, skips the prompt. ask = user confirms.	D1 hooks
+Can a PostToolUse hook stop a dangerous call?	<b>No.</b> It runs after the tool already ran. Use <b>PreToolUse</b> to block. PostToolUse is for normalizing/checking results.	D1 hooks
+Agents must message each other directly and share a task list over a long session. Pattern?	<b>Agent teams</b> (experimental flag).<br>Subagents only return a final result to their caller.	D1 subagents
+Can a Claude Code subagent start other subagents?	<b>No.</b> Hub-and-spoke: the coordinator starts subagents.	D1 subagents
+Foreground subagent writes text, then an API error cuts it off. What does the coordinator get?	The <b>partial text + a note that it was cut off</b>. (Claude Code first prompts it to continue.)<br>No text at all → "Agent terminated early due to an API error".	D1 subagents
+How does a subagent get the context it needs?	<b>Explicitly in its prompt.</b> It does not see the coordinator's conversation.	D1 subagents
+Agentic loop: which stop_reason means "run the tool and continue"? Which means "done"?	<code>tool_use</code> → run the tool, send result, loop.<br><code>end_turn</code> → stop.	D1 loop
+Config for: only me, this repo, never in git.	<code>CLAUDE.local.md</code> in repo root (add it to <code>.gitignore</code>).	D3 scope
+Config for: team, this repo, in git.	<code>./CLAUDE.md</code> (or <code>.claude/CLAUDE.md</code>). Also what CI runs load.	D3 scope
+Config for: only me, every repo.	<code>~/.claude/CLAUDE.md</code>	D3 scope
+Conventions that apply only to some files (e.g. tests spread across folders).	<code>.claude/rules/*.md</code> with <code>paths:</code> glob frontmatter.<br><i>Trap:</i> root CLAUDE.md (always loads).	D3 scope
+Team-shared slash command for this repo.	<code>.claude/commands/</code> (committed). Personal: <code>~/.claude/commands/</code>.	D3 scope
+MCP server shared with everyone who clones the repo.	<code>.mcp.json</code> in repo root. Personal: <code>~/.claude.json</code>.	D2 D3 scope
+CI must apply team review rules on every run without editing each workflow. Where?	The repo's committed <b>CLAUDE.md</b>. CI runners have no personal <code>~/.claude</code>.	D3 CI
+Run Claude Code non-interactively in CI with machine-readable output.	<code>claude -p "..." --output-format json</code> (add <code>--json-schema</code> for a fixed shape).	D3 CI
+Plan mode vs direct execution?	<b>Plan mode</b>: large/multi-file or unclear change. <b>Direct</b>: small, well-defined change.	D3
+MCP tool fails. How should it report the error?	<b>Structured error</b>: <code>isError: true</code> + category + retryable. Never hide it; never end the whole workflow.	D2 errors
+Escalate to a human based on the model's self-reported confidence or customer sentiment?	<b>No</b>, unreliable signals. Use explicit escalation criteria.	D5
+When is the Message Batches API the right answer?	Only for <b>non-blocking</b> work (50% cheaper, up to 24 h). Never when a user is waiting.	D4
+Reviewing a large multi-file change for bugs. Best approach?	<b>Per-file passes + a separate cross-file integration pass.</b><br><i>Trap:</i> bigger model, majority vote.	D4
