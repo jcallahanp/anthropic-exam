@@ -61,11 +61,23 @@ code{font-family:var(--mono);font-size:.85em;background:var(--accent-soft);paddi
 .gap li b{color:var(--good)}
 .ok{background:var(--good-soft);border-radius:12px;padding:10px 14px;font-size:1rem}
 .code{font:500 .85rem/1.5 var(--mono);text-align:left;white-space:pre;overflow-x:auto;margin:0}
+.filt{display:flex;gap:6px;flex-wrap:wrap}.filt .btn{padding:8px 12px;font-size:.9rem}
+.pri{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;font:700 .85rem var(--body)}
+.pri .h{background:var(--bad);color:var(--bg);padding:3px 10px;border-radius:99px}
+.pri .l{background:var(--line);color:var(--ink);padding:3px 10px;border-radius:99px}
+.dom{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:4.2rem 1fr;gap:10px;align-items:start;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+.row.hot{border-color:var(--bad)}
+.row .sd{font:700 1.1rem var(--display)}
+.row .lbl{font-weight:700}
+.row .bar{color:var(--bad);letter-spacing:2px}
+.row .items{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.row .items button{font:400 .85rem var(--body);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:4px 8px;cursor:pointer;text-align:left}
 .empty{font-size:1.2rem;color:var(--muted)}
 </style>
 
 <div class="wrap">
-  <div class="topbar"><span class="chip">Round 2: fix my thinking</span><span id="count"></span></div>
+  <div class="topbar"><div class="filt" role="group" aria-label="Filter"><button class="btn" type="button" data-f="all">All</button><button class="btn alt" type="button" data-f="high">High priority</button><button class="btn alt" type="button" data-f="low">Low</button></div><span id="count"></span></div>
   <div class="dots" id="dots"></div>
   <main id="slide" style="display:flex;flex-direction:column;gap:18px"></main>
 </div>
@@ -764,15 +776,54 @@ doc-0042_fr (twice)  ✗  must be unique in the batch
  retry:["What causes the literal answer to sample data?","What is the fix?","Write the tag that holds the real request."]}
 ];
 
-let i=0;
+// Priority + subdomain per entry. high = named in an official guide task statement. low = practice-site detail not in the guide.
+const META={
+"stop_reason loop":["1.1","high"],"Repeated tool call in the loop (missed)":["1.1","high"],
+"Subagents vs agent teams (memorized, not understood)":["1.2","low"],
+"Task tool + allowedTools":["1.3","high"],"AgentDefinition fields (right, but unfamiliar)":["1.3","low"],
+"Hook matcher vs hook code (missed)":["1.5","high"],"Hook matcher for MCP tools (guessed right)":["1.5","low"],
+"Resume twice vs fork (missed)":["1.7","high"],
+"Tool description that separates similar tools (missed)":["2.1","high"],
+"MCP resource":["2.4","high"],".mcp.json":["2.4","high"],
+"Write vs Edit":["2.5","high"],"Bash to run tests (missed)":["2.5","high"],"Grep across split lines (nearly missed)":["2.5","high"],
+"CLAUDE.md (3 levels)":["3.1","high"],"/memory":["3.1","high"],"Folder CLAUDE.md vs glob rule: WHICH ONE? (missed)":["3.1","high"],
+"context: fork":["3.2","high"],"allowed-tools":["3.2","high"],"Bash(…*) permission wildcard (lucky guess)":["3.2","low"],
+"@import vs .claude/rules/":["3.3","high"],".claude/rules/ + paths (tests)":["3.3","high"],"REFRESH: frontmatter, @import, rules, when files load":["3.3","high"],
+"Scattered test files, AGAIN (missed twice)":["3.3","high"],"GLOB DECODER: * vs ** (missed, 3rd glob miss)":["3.3","high"],
+"Test-driven iteration (missed)":["3.5","high"],"Interacting vs independent issues (missed)":["3.5","high"],
+"-p (--print)":["3.6","high"],"--output-format json + --json-schema":["3.6","high"],
+"XML tags to separate examples from the real request (new topic, missed)":["4.2","low"],
+"JSON schema (tool input)":["4.3","high"],
+"Message Batches API":["4.5","high"],"Batch custom_id rules (guessed right)":["4.5","low"]};
+const SD={"1.1":"Agentic loops","1.2":"Multi-agent orchestration","1.3":"Subagent config + spawning","1.5":"Hooks","1.7":"Sessions: resume / fork",
+"2.1":"Tool descriptions","2.4":"MCP servers in Claude Code","2.5":"Built-in tools",
+"3.1":"CLAUDE.md hierarchy","3.2":"Commands + skills","3.3":"Path-specific rules (globs)","3.5":"Iterative refinement","3.6":"CI/CD (-p, JSON)",
+"4.2":"Few-shot prompting","4.3":"Structured output / schemas","4.5":"Batch processing"};
+const DOM={"1":"D1 Agentic architecture · 27%","2":"D2 Tools + MCP · 18%","3":"D3 Claude Code config · 20%","4":"D4 Prompts + output · 20%","5":"D5 Context + reliability · 15%"};
+M.forEach(m=>{const x=META[m.n]||["?","high"];m.sd=x[0];m.p=x[1]});
+let f="all",V=[],i=0;
 const $=id=>document.getElementById(id);
-function render(){
-  $("count").textContent=M.length?`${i+1} / ${M.length}`:"";
-  $("dots").innerHTML=M.map((_,k)=>`<button type="button" aria-label="Item ${k+1}" class="${k===i?"on":""}" data-k="${k}"></button>`).join("");
-  $("dots").querySelectorAll("button").forEach(b=>b.onclick=()=>go(+b.dataset.k));
-  if(!M.length){$("slide").innerHTML='<p class="empty">No misconceptions logged yet.</p>';return}
-  const m=M[i];
-  $("slide").innerHTML=`<span class="chip">${m.n}</span>
+function view(){V=["map",...M.filter(m=>f==="all"||m.p===f)]}
+function mapHTML(){
+  const hi=M.filter(m=>m.p==="high"),by={};hi.forEach(m=>(by[m.sd]=by[m.sd]||[]).push(m));
+  let h=`<span class="chip">Priority map</span><h1 class="rule">Weakest first. <span class="arrow">Red = 2+ high-priority misses.</span></h1>
+<p class="ok"><b>High</b> = named in the official guide. Study these first. <b>Low</b> = practice-site detail not in the guide. Skim only.</p>`;
+  Object.keys(DOM).forEach(d=>{
+    const sds=Object.keys(by).filter(k=>k[0]===d).sort((a,b)=>by[b].length-by[a].length);
+    const n=sds.reduce((t,k)=>t+by[k].length,0);
+    h+=`<span class="sec">${DOM[d]} · ${n} high-priority miss${n===1?"":"es"}</span><div class="dom">`;
+    if(!sds.length)h+=`<div class="row"><span class="sd">—</span><span>No misses logged here yet. The Patterns deck covers it.</span></div>`;
+    sds.forEach(k=>{h+=`<div class="row${by[k].length>1?" hot":""}"><span class="sd">${k}</span><div><span class="lbl">${SD[k]||""}</span> <span class="bar">${"■".repeat(by[k].length)}</span><div class="items">${by[k].map(m=>`<button type="button" data-n="${encodeURIComponent(m.n)}">${m.n}</button>`).join("")}</div></div></div>`});
+    h+=`</div>`});
+  const lo=M.filter(m=>m.p==="low");
+  h+=`<span class="sec">Low priority · not in the guide · ${lo.length}</span><div class="dom"><div class="row"><span class="sd">skim</span><div class="items">${lo.map(m=>`<button type="button" data-n="${encodeURIComponent(m.n)}">${m.n}</button>`).join("")}</div></div></div>`;
+  h+=`<span class="sec">Repeat mistakes (highest yield)</span><ul class="gap">
+<li><b>Globs, 3 misses.</b> * = one level, ** = any depth. Folder scope → folder CLAUDE.md. Scattered file type → glob rule.</li>
+<li><b>True-but-generic answers, 2 misses.</b> Find the key word (“independent”, “test-driven”). Pick the answer that explains THAT word.</li>
+<li><b>Who runs what, 2 slips.</b> Claude only ASKS for tools; your code runs them and appends tool_result.</li>
+<li><b>Subagents are not chats, 2 slips.</b> context: fork and Explore run alone and return a summary.</li></ul>`;
+  return h}
+function entryHTML(m){return `<div class="pri"><span class="${m.p==="high"?"h":"l"}">${m.p==="high"?"HIGH":"LOW"}</span><span>${m.sd} · ${SD[m.sd]||""}</span></div><span class="chip">${m.n}</span>
 <div class="you"><span class="sec">You thought</span><span class="big">${m.wrong}</span><q>${m.you}</q></div>
 <span class="sec">Actually</span>
 <h1 class="rule">${m.rule}</h1>
@@ -781,12 +832,21 @@ function render(){
 <ul class="gap">${m.gap.map(g=>`<li>${g}</li>`).join("")}</ul>
 <p class="ok">${m.ok}</p>
 <p class="trap"><b>Exam trap:</b> ${m.trap}</p>
-<div class="teach"><span class="t">Try again</span><p>Answer in 3 short sentences:</p><ol>${m.retry.map(r=>`<li>${r}</li>`).join("")}</ol><div><button class="btn" id="copy" type="button">Copy prompt for chat</button> <span id="copied" class="sec"></span></div></div>`;
+<div class="teach"><span class="t">Try again</span><p>Answer in 3 short sentences:</p><ol>${m.retry.map(r=>`<li>${r}</li>`).join("")}</ol><div><button class="btn" id="copy" type="button">Copy prompt for chat</button> <span id="copied" class="sec"></span></div></div>`}
+function render(){
+  document.querySelectorAll(".filt .btn").forEach(b=>b.className="btn"+(b.dataset.f===f?"":" alt"));
+  $("count").textContent=i===0?"Map":`${i} / ${V.length-1}`;
+  $("dots").innerHTML=V.map((v,k)=>`<button type="button" aria-label="${k?"Item "+k:"Map"}" class="${k===i?"on":""}" data-k="${k}"></button>`).join("");
+  $("dots").querySelectorAll("button").forEach(b=>b.onclick=()=>go(+b.dataset.k));
+  if(i===0){$("slide").innerHTML=mapHTML();
+    $("slide").querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{const n=decodeURIComponent(b.dataset.n);f="all";view();go(V.findIndex(v=>v!=="map"&&v.n===n))});return}
+  const m=V[i];$("slide").innerHTML=entryHTML(m);
   $("copy").onclick=()=>{const t=`Teach-back round 2, ${m.n}: ${m.retry.join(" ")}\nMy answer: `,c=$("copied");
     navigator.clipboard.writeText(t).then(()=>c.textContent="Copied. Paste in chat and add your answer.").catch(()=>c.textContent="Copy blocked. Type the topic name in chat with your answer.")};
 }
-function go(k){i=Math.max(0,Math.min(M.length-1,k));render();try{history.replaceState(null,"","#m"+i)}catch(e){}window.scrollTo(0,0)}
+function go(k){i=Math.max(0,Math.min(V.length-1,k));render();try{history.replaceState(null,"","#m"+i)}catch(e){}window.scrollTo(0,0)}
+document.querySelectorAll(".filt .btn").forEach(b=>b.onclick=()=>{f=b.dataset.f;view();go(f==="all"?0:1)});
 $("prev").onclick=()=>go(i-1);$("next").onclick=()=>go(i+1);
 addEventListener("keydown",e=>{if(e.key==="ArrowRight")go(i+1);if(e.key==="ArrowLeft")go(i-1)});
-const h=location.hash.match(/^#m(\d+)$/);go(h?+h[1]:0);
+view();const h=location.hash.match(/^#m(\d+)$/);go(h?+h[1]:0);
 </script>
