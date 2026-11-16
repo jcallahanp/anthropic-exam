@@ -101,6 +101,10 @@
 - No first-hand report of agent teams, CLAUDE.local.md, matcher/permission syntax, XML → keep LOW.
 - Dec 7 2026 content update does NOT include Architect – Foundations (Pearson page, verified).
 
+## Retake policy (official guide v1.0 + Partner Academy FAQ)
+- Wait 14 days after 1st fail, 30 after 2nd, 90 after 3rd. Max 4 attempts per rolling 12 months. Full fee ($125) each attempt (partner discount applies).
+- Score report shows % correct per section → use it to target the retake.
+
 ## Scope check: Cert Safari questions vs official guide (v0.2 text)
 Explicitly out of scope: NONE of the pasted questions.
 Core (named in guide task statements) -> HIGH priority:
