@@ -351,7 +351,32 @@ Run 2: {"findings": [{"path":"auth.ts", "lineNo":"42", "desc":"..."}]}</pre><sma
       "<b>Same idea as tool input schemas</b> (screen 4): a form Claude must fill. Right shape, not right values."],
  ok:"Right: machine-readable output is what makes automation reliable. Your pass/fail checks are a correct use.",
  trap:"“Parse the text output with a regex” or “ask for JSON in the prompt”. WRONG. Use --json-schema.",
- retry:["What does JSON alone NOT guarantee?","What does the schema add?","What does the CI script do with the findings?"]}
+ retry:["What does JSON alone NOT guarantee?","What does the schema add?","What does the CI script do with the findings?"]},
+{n:"Write vs Edit",
+ you:"Maybe with a lot of changes, Write is more reliable. I don't know what makes Edit fail.",
+ wrong:"Write wins when there are MANY changes.",
+ rule:'Edit needs old text that appears EXACTLY ONCE. Not unique <span class="arrow">→</span> Edit fails <span class="arrow">→</span> Read + Write.',
+ pic:`<div class="b"><span class="sec">The file: config.py</span><pre class="code">def load_user():
+    if not data:
+        return None      ← here
+def load_order():
+    if not data:
+        return None      ← and here
+def load_cart():
+    if not data:
+        return None      ← and here</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">Edit</span><small>old_str: "return None" → appears 3 times. Edit cannot know which one. It FAILS. Retrying the same Edit fails again.</small></div>
+<div class="b g"><span class="big">Read + Write</span><small>Read the whole file. Write the whole new version. No anchor to match, so nothing to fail on.</small></div>
+</div>
+<div class="flow"><div class="b">Edit also fails if</div><span class="ar">→</span><div class="b r">old text does not match EXACTLY<small>different spaces, tabs, or a line that changed</small></div></div>`,
+ gap:["<b>How Edit works:</b> find this exact old text, replace it with new text. The old text must appear exactly once.",
+      "<b>Why it fails:</b> the text appears several times (which one?), or it does not match exactly.",
+      "<b>Why Write fixes it:</b> Write replaces the WHOLE file. There is no text to find, so no match can fail.",
+      "<b>The count of changes is not the reason.</b> Default to Edit for small, safe changes. Write is the fallback."],
+ ok:"Right: Read the file first, then write the whole new version. That is the fallback.",
+ trap:"“Retry the same Edit” or “Write every time”. WRONG. Edit first; Read + Write only when the anchor is not unique.",
+ retry:["What must be true of Edit's old text?","Give one case where Edit fails.","Why can Write not fail that way?"]}
 ];
 
 let i=0;
