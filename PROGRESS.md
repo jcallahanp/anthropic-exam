@@ -51,6 +51,7 @@
 - /compact | pass | Frees context; loses exact facts in summary; keep facts in files. Exam names: case-facts block, scratchpad file.
 - -p (--print) | retry (on misconceptions page) | Thought -p defers a question for human review. Missing: no -p = interactive chat waits for input → CI hangs; -p = run once, print answer, exit.
 - --output-format json + --json-schema | retry (knowledge gap, on misconceptions page) | Asked for visuals: prose vs JSON vs JSON+schema, and what "post findings" means. Added 4-step picture.
+- Read (Grep → Read order) | pass | Grep first to find files, then Read only those. Missing "why": Read costs context; follow imports from the entry point. Grep has its own card (searches contents; Glob = names).
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
