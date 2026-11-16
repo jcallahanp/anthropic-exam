@@ -2,6 +2,7 @@
 
 ## Published pages (update with Artifact `url` = link below; source file = path)
 - LEARN (start here): `artifact/patterns.html` → https://claude.ai/artifact/Q2qBxYYfjwEr9hD6gHkVjx
+- TEN-MINUTE SHEET (final scan before exam; cue → pick → decoy rows): `artifact/ten-minute.html` → https://claude.ai/artifact/314NMcfo1XpawuS6D1GW7q
 - SPEED RUN (fast lookup during practice tests, one tab per domain): `artifact/speedrun.html` → https://claude.ai/artifact/6JeTiUPbvF9MZYwVzRgw6p
 - MISCONCEPTIONS (round 2, thorough backup): `artifact/misconceptions.html` → https://claude.ai/artifact/MvD3BKyQ82zYiy9PPxzwn6
 - DRILL: `artifact/cram-station.html` → https://claude.ai/artifact/MfxEtU3WyoXCDkA46HrfZt

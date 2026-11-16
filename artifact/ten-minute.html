@@ -1,0 +1,170 @@
+<title>Ten-Minute Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one scroll page. Sticky jump bar. Each family = rows of: QUESTION SAYS → PICK (what it does) / NOT (what that one does instead). */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#141b26; --muted:#4f5a6b; --line:#d5dbe4;
+  --accent:#0d6c78; --accent-soft:#dcf0f2; --good:#17773a; --good-soft:#e3f4e8; --bad:#b3332a; --bad-soft:#fbe6e3;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#132b1c; --bad:#f2857a; --bad-soft:#371c19; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#132b1c; --bad:#f2857a; --bad-soft:#371c19; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:18px/1.4 var(--body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+p{margin:0}
+code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:0 4px;border-radius:5px;overflow-wrap:anywhere}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:2px solid var(--line)}
+.barin{max-width:1100px;margin:0 auto;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:6px;overflow-x:auto}
+.barin a{flex:0 0 auto;font:700 .85rem var(--display);color:var(--ink);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px}
+.barin a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding-block:16px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.how{background:var(--ink);color:var(--bg);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.how b{font-family:var(--display)}
+.how .h1{font:700 1.35rem/1.2 var(--display)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.9rem}
+.fam{display:flex;flex-direction:column;gap:8px;scroll-margin-top:70px}
+.fam h2{font:700 clamp(1.3rem,3.4vw,1.7rem)/1.15 var(--display);margin:0;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.fam h2 small{font:700 .78rem var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--bad)}
+.key{background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:.98rem}
+.key pre{font:500 .82rem/1.55 var(--mono);margin:6px 0 0;white-space:pre;overflow-x:auto}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(0,1.1fr);gap:0;background:var(--surface);border:2px solid var(--line);border-radius:12px;overflow:hidden}
+.row>div{padding:10px 12px;min-width:0}
+.cue{font-size:.95rem;color:var(--muted);border-right:2px solid var(--line)}
+.cue::before{content:"QUESTION SAYS";display:block;font:700 .66rem var(--body);letter-spacing:.07em;color:var(--muted);margin-bottom:2px}
+.cue q{font-style:italic;color:var(--ink)}
+.pick{background:var(--good-soft)}
+.pick .nm{font:700 1.08rem/1.25 var(--display);color:var(--good)}
+.pick .nm::before{content:"→ ";}
+.not{background:var(--bad-soft);border-left:2px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.not .x{font-size:.92rem}
+.not .x b{color:var(--bad);font-family:var(--display)}
+.not .x b::before{content:"✗ "}
+.does{font-size:.95rem}
+@media (max-width:760px){.row{grid-template-columns:1fr}.cue{border-right:0;border-bottom:2px solid var(--line)}.not{border-left:0;border-top:2px solid var(--line)}}
+</style>
+
+<nav class="bar" aria-label="Jump to"><div class="barin" id="nav"></div></nav>
+<main class="wrap" id="main">
+  <div class="how">
+    <span class="h1">Find the words in the question. Follow the arrow.</span>
+    <span><b>Green</b> = the answer and what it does. <b>Red</b> = the decoy and what it does instead.</span>
+    <span>Two answers both work? Pick the one that matches the question's key word, then the most Claude-native one. Must ALWAYS happen? Pick code or config, never “add it to the prompt”. Read “select N”.</span>
+  </div>
+</main>
+
+<script>
+/* fam: [id, title, misses-label, key-html, rows]. row: [cue-html, pick-name, pick-does, [[decoy, what it does instead], ...]] */
+const F=[
+["files","Where does the config go?","missed most · D3",
+`<b>~</b> = your home folder: only you, never in git. <b>Repo files</b> are committed: the team + CI get them.`,[
+[`<q>only me</q>, <q>personal</q>, <q>all my projects</q>`,"~/.claude/CLAUDE.md","Your rules. Load in every project on YOUR machine. Nobody else sees them.",[["./CLAUDE.md","Committed: the whole team and CI get it."]]],
+[`<q>team</q>, <q>CI</q>, <q>every developer</q>`,"./CLAUDE.md (repo root)","Committed. Loads at session start for everyone, CI included.",[["~/.claude/CLAUDE.md","Only on one person's machine. CI never sees it."]]],
+[`<q>only when working in packages/api</q> (ONE folder)`,"packages/api/CLAUDE.md","Loads when Claude reads or edits a file inside that folder.",[["root CLAUDE.md","Loads for every folder, all the time."]]],
+[`<q>*.test.ts scattered across</q> src/, lib/, e2e/ · <q>automatically</q> · <q>no duplicates</q>`,".claude/rules/testing.md + paths: [\"**/*.test.ts\"]","One file. Loads only when Claude touches a file matching the glob, in any folder.",[["CLAUDE.md in each folder","Duplicates the same text 40 times."],["a skill","Loads only when someone calls it. Not automatic."]]],
+[`<q>CLAUDE.md is 300 lines</q>, <q>context climbing</q>, topics for one part each`,"Split into .claude/rules/<topic>.md, each with paths:","Each topic loads only for matching files. Start-up context drops.",[["@import","Pulls files INTO CLAUDE.md. Tidier, but everything still loads at start."]]],
+[`<q>rules in subfolders</q> frontend/ backend/`,"Yes, still loaded","All .md under .claude/rules/ are found recursively. The folder name scopes nothing.",[["“frontend/ = frontend files only”","False. Only paths: limits when a rule loads."]]],
+[`<q>team slash command</q>`,".claude/commands/review.md","Committed. Everyone gets /review.",[["~/.claude/commands/","Personal commands, only you."]]],
+[`<q>step-by-step procedure</q>, <q>only when needed</q>`,"Skill: .claude/skills/x/SKILL.md","Loads when called (/x) or when Claude picks it by description.",[["CLAUDE.md","Always loaded, every session. For always-true rules."]]],
+[`<q>share an MCP server with the team</q>, <q>keep the token out of git</q>`,".mcp.json with \"${GITHUB_TOKEN}\"","Committed config holds only the placeholder text. Each machine fills in its own token from its environment.",[["~/.claude.json","Personal MCP servers. Not shared."],["commit the real token","Leaks the secret into git."]]],
+[`<q>teammate's Claude ignores our rules</q>`,"/memory","Lists which CLAUDE.md files loaded. Usual cause: rules sit in YOUR ~ file. Fix: move to ./CLAUDE.md, commit.",[["“repeat the rules in the prompt”","Treats the symptom. The file is in the wrong place."]]]]],
+
+["globs","Globs: * vs **","3 misses · D3",
+`<b>*</b> = one name, stops at the next /. <b>**</b> = any number of folders, any depth. Plain text must match exactly.
+<pre>terraform/main.tf            terraform/*  ✓   terraform/**/*  ✓   **/*.tf ✓
+terraform/prod/vpc/main.tf   terraform/*  ✗   terraform/**/*  ✓   **/*.tf ✓
+modules/old.tf               terraform/*  ✗   terraform/**/*  ✗   **/*.tf ✓</pre>`,[
+[`<q>under terraform/, any subfolder depth</q>`,"terraform/**/*","Starts at terraform/, goes any depth, any file.",[["terraform/*","Top level of terraform/ only."],["**/*.tf","Every .tf anywhere, even outside terraform/."]]],
+[`<q>every test file, anywhere</q>`,"**/*.test.ts","Any folder, any depth, name ends in .test.ts.",[["*.test.ts","Only test files sitting in the repo root."]]],
+[`<q>only .ts under src/api, any depth</q>`,"src/api/**/*.ts","src/api and all its subfolders, .ts only.",[["src/api/*.ts","Only .ts files directly in src/api."]]],
+[`<q>allow only npm run migrate</q>`,"Bash(npm run migrate)","Exact command only.",[["Bash(npm run migrate*)","Prefix match: also allows npm run migrate-cleanup."]]],
+[`<q>one hook for 3 money tools</q>, <q>not the read-only tools</q>`,"mcp__billing__(issue_refund|void_authorization|apply_credit)","MCP tool names are mcp__server__tool. The (a|b|c) group = exactly these 3.",[["mcp__billing__.*","Every tool on the server, read-only ones too."]]]]],
+
+["tools","Built-in tools","4 misses · D2",
+`Only <b>Bash</b> RUNS things. Grep looks INSIDE files. Glob matches file NAMES. Read opens. Edit changes. Write replaces.`,[
+[`<q>run the test suite</q>, <q>capture the stack trace</q>, build, git`,"Bash","Executes shell commands and shows the output. Guard it with hooks; do not avoid it.",[["Read / Grep / Glob","None of them can run anything."]]],
+[`<q>every place that calls</q>, <q>error message containing</q>`,"Grep","Searches file CONTENTS for text or a pattern.",[["Glob","Matches file names only; never looks inside."]]],
+[`<q>all Terraform files</q>, <q>every *.test.ts</q>`,"Glob","Lists files whose PATH matches a pattern.",[["Grep","Searches contents, not names."]]],
+[`<q>phrase split across two lines</q>`,"Grep with a multiline pattern (or Grep a fragment, then Read hits)","Still a content search. Only the pattern changes.",[["Read every file","Floods context."]]],
+[`<q>change one check in one function</q>`,"Edit","Replaces an exact old text that appears ONCE with new text.",[["Write","Rewrites the whole file. Overkill for a small change."]]],
+[`<q>Edit keeps failing</q>, text appears several times`,"Read, then Write the whole file","Write needs no anchor, so it cannot fail on duplicates.",[["retry the same Edit","Fails again: the text is still not unique."]]],
+[`<q>understand a flow in a big repo</q>`,"Grep for the entry point, then Read and follow imports","Reads only what the search pointed to.",[["Read all files first","Wastes context."]]],
+[`<q>find one function in a small module</q>, <q>overhead disproportionate</q>`,"Grep directly in the main session","One search, few lines of context.",[["Explore / subagent","Starts empty, needs a prompt, returns a summary. Too much for a tiny lookup."]]],
+[`<q>map a 200-file flow</q>, <q>verbose discovery</q>`,"Explore subagent","Read-only subagent Claude starts itself. Reads many files, returns a summary. You do not chat with it.",[["do it in the main session","Noise fills the main context."]]]]],
+
+["hooks","Hooks","2 misses · D1",
+`<b>Matcher</b> = WHICH TOOL (name only). <b>Hook code</b> = WHICH CALL (reads <code>tool_input</code>). <b>Must always</b> = hook, not prompt.`,[
+[`<q>must always</q>, <q>block</q>, <q>guarantee</q> before a tool runs`,"PreToolUse hook","Your code runs BEFORE the tool. deny = call blocked, and the reason goes to Claude so it can adapt.",[["rule in the system prompt","Usually obeyed. Not guaranteed."]]],
+[`<q>block refunds over $500 for category X</q> (field inside the arguments)`,"Check in the hook code: read tool_input.amount and tool_input.category","The matcher only picks the tool. The code decides about this specific call.",[["put category in the matcher","The matcher never sees arguments."],["PostToolUse","Runs after. The refund already happened."]]],
+[`<q>3 date formats from 3 tools</q>, <q>trim noisy output</q>`,"PostToolUse hook","Your code runs AFTER the tool, BEFORE Claude reads the result. Normalizes or trims it.",[["PreToolUse","Runs before; there is no result yet."]]]]],
+
+["loop","Agent loop + tool_choice","2 misses · D1",
+`Claude only ASKS for a tool. YOUR code runs it, appends the tool_use AND the tool_result, then resends the full history.`,[
+[`stop_reason = <q>tool_use</q>`,"Run the tool, append result, call again","The loop continues.",[["stop when the TEXT says done","Text is not a signal. Read stop_reason."]]],
+[`stop_reason = <q>end_turn</q>`,"Stop the loop","Claude is finished.",[["an iteration cap as the main stop","A safety net only, not the stop rule."]]],
+[`<q>calls the same tool again</q>, history <q>only appends text blocks</q>`,"Append tool_use + tool_result blocks","Claude never saw its own call or the result, so it asks again.",[["context full / randomness / “don't repeat” prompt","Not the cause. The history code is."]]],
+[`<q>must call a tool every turn</q>`,"tool_choice: {type: \"any\"}","Must call SOME tool. Claude picks which.",[["auto","May answer in plain text."]]],
+[`<q>this specific extraction must run first</q>`,"tool_choice: {type: \"tool\", name: \"extract_metadata\"}","Forces that ONE tool.",[["any","Any tool could be chosen."]]],
+[`<q>chat only, no tools</q>`,"tool_choice: none","Tools offered but cannot be called.",[]]]],
+
+["sess","Sessions","1 miss · D1",
+`<b>Resume</b> = continue ONE history. <b>Fork</b> = clean copies from the same point.`,[
+[`<q>two independent explorations</q> from one analysis`,"fork_session","Two branches. Each sees the shared analysis, not the other branch.",[["resume twice","Run 2 continues run 1's history. Not independent."]]],
+[`<q>continue the named session auth-audit</q>`,"--resume auth-audit","Picks up that exact session.",[["-c / --continue","Most recent session, whichever it was."]]],
+[`<q>files changed since last session</q>`,"Fresh session + structured summary (or resume and name the changed files)","Avoids trusting stale file reads.",[["plain resume","Claude trusts old tool results."]]],
+[`<q>exact numbers lost after a long session</q>`,"Case-facts block kept outside the summary","Amounts, IDs, dates re-sent every turn.",[["/compact or summary alone","Rounds or drops exact values."]]]]],
+
+["skill","Skill frontmatter","2 misses · D3",
+`<b>Frontmatter</b> = the settings block between the two <code>---</code> lines at the top of SKILL.md. A <b>key</b> = one setting name.`,[
+[`<q>skill output floods the main conversation</q>`,"context: fork","The skill runs in an isolated subagent. Only its summary comes back.",[["“be brief” in the prompt","Same noise, just asked nicely."]]],
+[`<q>skill must never run destructive commands</q>`,"allowed-tools: Read, Write","Config: the skill only gets these tools, every run.",[["a sentence in SKILL.md","Only asks."]]],
+[`<q>people run /migrate without the table name</q>`,"argument-hint: <table>","Shows what argument to pass.",[["allowed-tools","Limits tools; unrelated."]]]]],
+
+["ci","CI / CLI flags","2 misses · D3 · test-takers: hardest part",
+`Real flags: <code>-p</code> · <code>--output-format json</code> · <code>--json-schema</code> · <code>--resume</code> · <code>-c</code> · <code>--allowedTools</code> · <code>--permission-mode</code> · <code>--model</code> · <code>--max-turns</code>. Fake: <code>--batch</code>, <code>CLAUDE_HEADLESS</code>.`,[
+[`<q>job hangs</q>, <q>waiting for interactive input</q>`,"claude -p \"…\"","Non-interactive: run once, print the answer, exit.",[["--batch / CLAUDE_HEADLESS","Do not exist."],["longer timeout / < /dev/null","Workarounds; still the interactive mode."]]],
+[`<q>post findings as inline PR comments</q>, <q>machine-parseable</q>`,"--output-format json + --json-schema review.json","JSON with the SAME keys and types every run, so a script can post each finding on its file and line.",[["ask for JSON in the prompt","Keys can change between runs; the script breaks."]]],
+[`<q>re-run review after new commits</q>`,"Include prior findings; report only new or still-open issues","No duplicate comments.",[["fresh review each time","Repeats old comments."]]],
+[`<q>same session reviews its own code</q>`,"Independent review instance","No shared reasoning, so it questions the code.",[["self-review prompt","Same blind spots."]]]]],
+
+["agents","Subagents + workflow patterns","2 misses · D1",
+`Subagents start EMPTY. Put every fact they need in the Task prompt.`,[
+[`<q>coordinator never starts a subagent</q>`,"Add \"Task\" to allowedTools","Task is the tool that spawns subagents.",[["rewrite the coordinator prompt","Cannot call a tool it is not allowed."]]],
+[`<q>run 3 at the same time</q>`,"3 Task calls in ONE reply","They run in parallel. Time = the slowest one.",[["one per turn","Time = A + B + C."]]],
+[`<q>wrong subagent picked</q>`,"Sharpen the AgentDefinition description","The coordinator picks by description. Fields: description, prompt, tools, model.",[["routing rules in the prompt","Heavier than fixing the cause."]]],
+[`<q>stronger model for one subagent only</q>`,"model on that AgentDefinition","Only that subagent changes.",[["change the session model","Changes the coordinator too."]]],
+[`<q>always the same steps</q>, <q>none depends on another</q>`,"Parallel calls","Fixed, known, independent: run all at once.",[["orchestrator-workers","For steps that VARY per input. Its reason contradicts the stem."]]],
+[`<q>step 2 needs step 1's output</q>`,"Prompt chain","Fixed order, each step feeds the next.",[]],
+[`<q>steps differ per input</q>, <q>unknown in advance</q>`,"Orchestrator-workers","A model decides the subtasks at run time.",[]],
+[`<q>message each other directly</q>, <q>shared task list</q>, <q>long session</q>`,"Agent team","Teammates talk and share tasks.",[["subagents","One-shot, return a summary, never talk to each other."]]]]],
+
+["prompt","Prompts + structured output","4 misses · D4",
+`Fix the cause with the lightest tool: criteria, examples, tags, schema.`,[
+[`<q>only issues you are very sure about</q>, <q>false positives</q>`,"Categorical criteria","Name WHAT KIND counts: “runtime bugs only: null deref, off-by-one. Not style.”",[["confidence threshold (≥ 0.8, “very sure”)","Says HOW SURE. Self-rated confidence is not calibrated."]]],
+[`<q>inconsistent format</q>, <q>varied documents</q>`,"2–4 few-shot examples","Show the exact output, including tricky cases.",[["longer instructions","Already failing."]]],
+[`<q>treats a worked example as the real request</q>, <q>criteria bleed</q>`,"XML tags: <examples>, <request>, <security_criteria>","Labeled boxes: clear borders between parts.",[["remove the examples","Loses consistency."]]],
+[`<q>invents missing values</q>`,"Nullable field (type: [\"string\",\"null\"])","Claude can write null when the source lacks it.",[["required, not nullable","Forces Claude to fill something."]]],
+[`<q>new categories appear</q>`,"enum with \"other\" + a detail field","New cases fit without a wrong pick.",[]],
+[`<q>guaranteed structure</q>`,"Tool use + JSON schema","Right SHAPE every time. Values still need checks.",[["“return JSON” in the prompt","Shape can drift."]]],
+[`<q>end date before start date</q>, <q>totals don't sum</q>`,"Validate in code, retry with the exact error","Claude sees what to fix.",[["retry when data is absent","Pushes Claude to invent. Use null."]]],
+[`<q>analyze which findings get dismissed</q>`,"detected_pattern = the exact rule that fired","Dismissal counts show which rule is noisy.",[["broad category (“security”)","Cannot tell which rule."]]],
+[`<q>test-driven</q>, <q>fewer correction cycles</q>`,"Write tests first, Claude codes until green","Tests define “correct” exactly.",[["plan mode","Good habit, not test-driven."]]],
+[`<q>fix A changes the code bug B uses</q>, <q>same critical section</q>`,"Both in ONE message","One design fixes both.",[["one at a time","For INDEPENDENT issues only."]]],
+[`<q>overnight</q>, <q>no one waits</q>, cost`,"Message Batches API","50% cheaper, up to 24 h, match results by custom_id.",[["batch for a pre-merge check","Developers are blocked."],["batch for an agent with tools","Each tool call = a new batch, up to 24 h each."]]]]],
+
+["d5","Context + reliability (your strongest)","0 misses · D5",
+`Skim only.`,[
+[`<q>subagent error to coordinator</q>`,"failure type · what was attempted · partial results · alternatives","Lets the coordinator choose: retry, reroute, report.",[["“search failed”","Hides what to do next."],["empty result as error","Found nothing ≠ failed."]]],
+[`<q>when to escalate</q>`,"Customer asks for a human · policy gap · no progress","Clear triggers.",[["sentiment or self-rated confidence","Not reliable signals."]]],
+[`<q>two customers match</q>`,"Ask for another identifier","No guessing.",[["pick the most likely","Wrong account risk."]]],
+[`<q>big review misses things</q>`,"Per-file passes + one integration pass","No attention dilution.",[["one giant pass","Misses and contradicts."]]]]]
+];
+const esc=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+document.getElementById("nav").innerHTML=F.map(f=>`<a href="#${f.id}">${f[1].split(/[:+(]/)[0].trim()}</a>`).join("");
+document.getElementById("main").insertAdjacentHTML("beforeend",F.map(([id,t,m,k,rows])=>`<section class="fam" id="${id}"><h2>${t}<small>${m}</small></h2><div class="key">${k}</div>${rows.map(([cue,nm,does,nots])=>`<div class="row"><div class="cue">${cue}</div><div class="pick"><div class="nm">${esc(nm)}</div><p class="does">${does}</p></div>${nots.length?`<div class="not">${nots.map(([d,w])=>`<p class="x"><b>${esc(d)}</b> ${w}</p>`).join("")}</div>`:`<div class="not"><p class="x" style="color:var(--muted)">—</p></div>`}</div>`).join("")}</section>`).join(""));
+</script>
