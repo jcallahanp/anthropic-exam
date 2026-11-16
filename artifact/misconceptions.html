@@ -634,7 +634,24 @@ npm run build               ✗ not allowed</pre></div>
       "<b>Same family:</b> hook matcher regex (screen on mcp__billing__). Wide patterns catch things you did not mean."],
  ok:"Right answer. The cause is the trailing wildcard, not a bug in -p.",
  trap:"Blaming -p, blaming npm scripts, or “add ‘only run migrate’ to the prompt”. The pattern is too wide.",
- retry:["What does migrate* match?","Write a rule that allows only the exact migrate command.","What does a space before * change?"]}
+ retry:["What does migrate* match?","Write a rule that allows only the exact migrate command.","What does a space before * change?"]},
+{n:"Test-driven iteration (missed)",
+ you:"Planning first seemed smarter.",
+ wrong:"Plan mode is the answer to “fewer correction cycles”.",
+ rule:'“Test-driven” in the question <span class="arrow">→</span> write the TESTS first. Claude codes until they pass.',
+ pic:`<div class="flow"><div class="b a">1. You write tests<small>100 req/min allowed · 101st gets 429 · resets after 60 s · per-client limits</small></div><span class="ar">→</span><div class="b">2. Claude implements</div><span class="ar">→</span><div class="b">3. Run tests (Bash)</div><span class="ar">→</span><div class="b g">4. Failures go back to Claude<small>loop until green</small></div></div>
+<div class="cols">
+<div class="b r"><span class="big">Plan mode first</span><small>Good habit, but not “test-driven”. A plan does not say what “correct” means.</small></div>
+<div class="b r"><span class="big">Detailed prose spec</span><small>Words are vague. A test is exact and checkable.</small></div>
+<div class="b g"><span class="big">Tests first</span><small>Correct = tests pass. Each failure is a precise correction. Fewer cycles.</small></div>
+</div>`,
+ gap:["<b>The key word is “test-driven”.</b> The answer must start with tests.",
+      "<b>Why it cuts correction cycles:</b> tests define done exactly. Claude self-corrects from failures instead of from your vague feedback.",
+      "<b>Include edge cases in the tests:</b> limit boundary, reset time, separate clients.",
+      "<b>Same meta-pattern as resume vs fork:</b> plan mode is true in general, but it does not answer the question's key word."],
+ ok:"Your instinct to define things up front is right. Tests are the most exact way to define them.",
+ trap:"Plan mode, or a long description of the rate limiter. Both are good practice; neither is test-driven.",
+ retry:["What does Claude get first in test-driven iteration?","Why does that reduce correction cycles?","Name 2 edge cases to test for a rate limiter."]}
 ];
 
 let i=0;

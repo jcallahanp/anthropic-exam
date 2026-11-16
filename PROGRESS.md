@@ -71,6 +71,7 @@
 - Path-specific rules for 300-line CLAUDE.md: right but shaky. Added REFRESH screen: frontmatter labeled, file tree, load timeline, @import vs paths.
 - MISSED AGAIN (2nd time): scattered *.test.ts → .claude/rules/testing.md with paths: ["**/*.test.ts"]. HIGH PRIORITY for drill. Added glob-reading screen.
 - Bash(npm run migrate*) wildcard: lucky guess. Trailing * = prefix match → migrate-cleanup allowed. Fix: exact command, or space before *.
+- MISSED: test-driven iteration → write tests first, Claude implements until green. Picked plan mode (true-but-generic again; 2nd time this meta-pattern).
 
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.
