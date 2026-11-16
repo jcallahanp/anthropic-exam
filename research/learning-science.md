@@ -44,3 +44,8 @@
 6. **Body:** take caffeine once, early. Choose sleep (or a 20-60 min nap after the main drill) over a last hour of cramming. (1.3, 1.4, 1.5)
 7. **AI role:** Claude writes the questions and the feedback and never gives an answer before the learner has committed. (4.1-4.3)
 8. **Exam:** eliminate wrong options first and flag unsure items. When reviewing, change an answer if you find a concrete reason, especially for guesses. (5.1-5.3)
+
+## Addendum: rest when a nap will not come (checked 2026-11-16)
+- Quiet wakeful rest right after study helps memory a little: g = 0.45 over 37 studies, still g = 0.27 at 7 days. Eyes open or closed did not matter. ([meta-analysis, PMC12808189](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12808189/); smaller replication d = 0.38: [PMC6920145](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6920145/))
+- Yoga nidra / NSDR: no direct study shows it restores thinking after sleep loss. Evidence is for stress and sleep quality. Use it as a way to rest quietly, not as a sleep substitute.
+- Practical: 10-15 min, eyes closed, no phone, right after a study block. Falling asleep briefly is a bonus.
