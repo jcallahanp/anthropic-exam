@@ -480,7 +480,28 @@ return allow</pre></div>
       "<b>Save game:</b> resume = keep playing ONE save. Fork = copy the save twice."],
  ok:"You passed the fork_session teach-back. The miss was picking a true-sounding generic concern over the tool's mechanism.",
  trap:"A generic best-practice answer (context rot, compaction, cost). Ask: does it answer the EXACT word in the question?",
- retry:["What does the 2nd resume contain?","Why does that break “independent”?","Which tool gives two clean branches?"]}
+ retry:["What does the 2nd resume contain?","Why does that break “independent”?","Which tool gives two clean branches?"]},
+{n:"Repeated tool call in the loop (missed)",
+ you:"Not strong here. Missed the cause of the repeated file read.",
+ wrong:"Looked for a deeper cause than the one the question states.",
+ rule:'History has only TEXT <span class="arrow">→</span> Claude never sees it read the file <span class="arrow">→</span> it asks again.',
+ pic:`<div class="b r"><span class="sec">Broken history (text only)</span><pre class="code">user:      "Summarize config.py"
+assistant: "Let me read the file."          ← tool_use block DROPPED
+                                            ← tool_result DROPPED
+assistant: "Let me read the file."          ← asks AGAIN</pre></div>
+<div class="b g"><span class="sec">Correct history (full blocks)</span><pre class="code">user:      "Summarize config.py"
+assistant: [text "Let me read the file.",
+            tool_use id=t1 read_file("config.py")]
+user:      [tool_result tool_use_id=t1 "...file text..."]
+assistant: "config.py sets the port to 8080..."</pre></div>
+<div class="flow"><div class="b">Append the WHOLE assistant reply</div><span class="ar">+</span><div class="b">a user message with the tool_result</div><span class="ar">=</span><div class="b g">Claude sees what it did and what it got</div></div>`,
+ gap:["<b>The question TELLS you the cause:</b> “only appends text blocks, never tool_use or tool_result”. Pick the answer that names it.",
+      "<b>Claude only knows what is in the history you send.</b> No result in history = the read never happened, for Claude.",
+      "<b>Append the full assistant content,</b> tool_use blocks included, then the tool_result with the matching tool_use_id.",
+      "<b>Same idea as your passed teach-back</b> (tool_use → tool_result). The miss was applying it under exam wording."],
+ ok:"You explained this correctly in the teach-back: no append → Claude does not know → repeats.",
+ trap:"“Claude's context window is full” or “the model is non-deterministic” or “add ‘do not repeat calls’ to the prompt”. The history code is the cause.",
+ retry:["What is missing from the history?","Why does Claude call the tool again?","What must your code append after each tool call?"]}
 ];
 
 let i=0;
