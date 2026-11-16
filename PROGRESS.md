@@ -46,6 +46,7 @@
 - context: fork | retry (on misconceptions page) | Problem right (keep noise out of main). Mechanism wrong: thought it is an interactive side chat. Missing: SKILL.md frontmatter; skill runs in subagent; summary returns. Mixed up with fork_session / git fork.
 - allowed-tools | retry (on misconceptions page) | Least privilege right. Did not know "Pattern 1" = mechanism over prompt; missed config-vs-prompt link.
 - SKILL.md frontmatter keys | pass | context/allowed-tools/argument-hint matched to problems. Did not know the word "frontmatter"; definition added to patterns page.
+- Plan mode | pass | Explore + find dependencies before editing. Missing: plan mode is read-only (no edits); use for big multi-file/architecture change with several valid approaches; small clear fix = direct execution.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
