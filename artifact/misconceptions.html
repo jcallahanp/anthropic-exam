@@ -807,7 +807,23 @@ finding 3  regex:hardcoded_key     dismissed</pre><small>“regex:hardcoded_key 
       "<b>Guide example:</b> “flag comments only when claimed behavior contradicts actual code” beats “check that comments are accurate”."],
  ok:"Same family as Pattern 2: replace a vague judgment with explicit criteria.",
  trap:"A confidence threshold dressed up (“only ≥90% confidence”, “only critical, certain bugs”). Still HOW SURE, not WHAT KIND.",
- retry:["Confidence vs categorical in one line each?","Write one categorical rule for bugs.","Why does “above 0.8 confidence” not count?"]}
+ retry:["Confidence vs categorical in one line each?","Write one categorical rule for bugs.","Why does “above 0.8 confidence” not count?"]},
+{n:"Small lookup: no subagent (right, felt wrong)",
+ you:"Seems like bad practice, but it was the only one that followed the rules.",
+ wrong:"Thought: always protect the main context with a subagent.",
+ rule:'Match the tool to the SIZE of the job. One small lookup <span class="arrow">→</span> Grep directly in the main session.',
+ pic:`<div class="cols">
+<div class="b g"><span class="big">Small, targeted</span><small>“Find the one function that computes the discount rate in a small module.”<br>Grep "discount" → 1 hit → Read that part → Edit. A few lines of context.</small></div>
+<div class="b a"><span class="big">Big, noisy</span><small>“Map how payments flow through a 200-file codebase.”<br>Explore subagent: it reads many files and returns a summary.</small></div>
+</div>
+<div class="flow"><div class="b">Subagent cost</div><span class="ar">→</span><div class="b r">write a prompt, pass context, wait, read summary<small>overhead bigger than a 1-line search</small></div></div>`,
+ gap:["<b>Subagents protect context only when the work is noisy.</b> A 1-hit search adds almost no noise.",
+      "<b>Overhead is real:</b> a subagent starts empty, needs a full prompt, and returns a summary you then act on.",
+      "<b>The question tells you:</b> “coordination overhead disproportionate to the task”. That rules out the subagent.",
+      "<b>Same idea as plan mode:</b> use it for big multi-file changes, skip it for a small clear fix."],
+ ok:"Your answer was right. It is not bad practice; it is proportionate practice.",
+ trap:"Spawning Explore or a subagent “to keep context clean” for a one-function lookup.",
+ retry:["When does a subagent save context?","What should you do for a one-function lookup?","Name one other “match the tool to the job size” rule."]}
 ];
 
 // Priority + subdomain per entry. high = named in an official guide task statement. low = practice-site detail not in the guide.
@@ -827,12 +843,12 @@ const META={
 "Test-driven iteration (missed)":["3.5","high"],"Interacting vs independent issues (missed)":["3.5","high"],
 "-p (--print)":["3.6","high"],"--output-format json + --json-schema":["3.6","high"],
 "XML tags to separate examples from the real request (new topic, missed)":["4.2","low"],
-"JSON schema (tool input)":["4.3","high"],"Categorical criteria vs confidence (missed)":["4.1","high"],"detected_pattern field (context guess)":["4.4","high"],
+"JSON schema (tool input)":["4.3","high"],"Small lookup: no subagent (right, felt wrong)":["5.4","high"],"Categorical criteria vs confidence (missed)":["4.1","high"],"detected_pattern field (context guess)":["4.4","high"],
 "Message Batches API":["4.5","high"],"Batch custom_id rules (guessed right)":["4.5","low"]};
 const SD={"1.1":"Agentic loops","1.2":"Multi-agent orchestration","1.3":"Subagent config + spawning","1.5":"Hooks","1.7":"Sessions: resume / fork",
 "2.1":"Tool descriptions","2.4":"MCP servers in Claude Code","2.5":"Built-in tools",
 "3.1":"CLAUDE.md hierarchy","3.2":"Commands + skills","3.3":"Path-specific rules (globs)","3.5":"Iterative refinement","3.6":"CI/CD (-p, JSON)",
-"4.1":"Explicit criteria","4.2":"Few-shot prompting","4.3":"Structured output / schemas","4.4":"Validation + feedback loops","4.5":"Batch processing"};
+"4.1":"Explicit criteria","4.2":"Few-shot prompting","4.3":"Structured output / schemas","4.4":"Validation + feedback loops","4.5":"Batch processing","5.4":"Large codebase exploration"};
 const DOM={"1":"D1 Agentic architecture · 27%","2":"D2 Tools + MCP · 18%","3":"D3 Claude Code config · 20%","4":"D4 Prompts + output · 20%","5":"D5 Context + reliability · 15%"};
 M.forEach(m=>{const x=META[m.n]||["?","high"];m.sd=x[0];m.p=x[1]});
 let f="all",V=[],i=0;
