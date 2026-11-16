@@ -264,7 +264,32 @@ src/pay/Checkout.tsx    src/pay/Checkout.test.tsx
       "<b>The fix:</b> move them to project level (./CLAUDE.md) and commit. Now teammates and CI get them."],
  ok:"Right: rules must live in a shared, persistent place. That instinct is the answer.",
  trap:"“Tell the teammate to repeat the rules in each prompt.” WRONG. Run /memory, then move the rules to ./CLAUDE.md.",
- retry:["What does /memory show?","Where are the rules probably sitting?","What is the fix?"]}
+ retry:["What does /memory show?","Where are the rules probably sitting?","What is the fix?"]},
+{n:"context: fork",
+ you:"I fork, chat 20 times about one function, then carry the result back to main. How do I command it?",
+ wrong:"context: fork is an interactive side chat you start and steer.",
+ rule:'context: fork = a SKILL.md setting. The skill runs in a subagent. Only the SUMMARY comes back.',
+ pic:`<div class="b a"><span class="sec">You write it once, in the skill file</span><pre class="code"># .claude/skills/dep-audit/SKILL.md
+---
+name: dep-audit
+description: Audit all dependencies for risk
+context: fork
+allowed-tools: Read, Grep, Glob
+---
+Read every package file. Report risky deps.</pre></div>
+<div class="flow"><div class="b">Main session<small>you type /dep-audit</small></div><span class="ar">→</span><div class="b">Forked subagent<small>reads 200 files, all the noise stays here</small></div><span class="ar">→</span><div class="b g">Main gets ONLY<small>“3 risky deps: …”</small></div></div>
+<div class="cols">
+<div class="b"><span class="big">git fork</span><small>Copy of a REPO. Not on this exam.</small></div>
+<div class="b"><span class="big">fork_session</span><small>SDK: copy a SESSION to try another path. Save-game copy.</small></div>
+<div class="b a"><span class="big">context: fork</span><small>SKILL.md: run the SKILL isolated. Return a summary.</small></div>
+</div>`,
+ gap:["<b>You do not start it by hand.</b> You put <code>context: fork</code> in the SKILL.md. Every run of that skill is then isolated.",
+      "<b>It is not a back-and-forth chat.</b> The skill does its job in the subagent and hands back the result.",
+      "<b>Your example is a different tool:</b> a long side discussion fits fork_session, or a separate session.",
+      "<b>Second example:</b> a /brainstorm skill that writes 30 ideas in the fork and returns the top 3."],
+ ok:"Right: the PROBLEM is that noisy work fills the main context. Only the output should return. That is exactly what it solves.",
+ trap:"“Skill output floods the main chat.” Fix: <code>context: fork</code> in SKILL.md. Not: tell Claude to be brief.",
+ retry:["Where do you write context: fork?","What stays in the fork and what comes back?","Give one example skill that needs it."]}
 ];
 
 let i=0;
