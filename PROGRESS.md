@@ -82,7 +82,8 @@
 - D3 = 14: 3.3 globs/rules 5 · 3.1 CLAUDE.md 3 · 3.2 skills 2 · 3.5 refinement 2 · 3.6 CI 2
 - D2 = 6: 2.5 built-in tools 3 · 2.4 MCP config 2 · 2.1 descriptions 1
 - D1 = 5: 1.1 loop 2 · 1.3, 1.5, 1.7 one each
-- D4 = 2: 4.3, 4.5 | D5 = 0 (untested in teach-backs; Patterns deck covers it)
+- D4 = 3: 4.1, 4.3, 4.5 (+4.4 guesses)
+- D5: practice-site domain quiz = 0 misses. Reasoning slips only (5.3 error payload, 5.4 small lookup). D5 is STRONG; lowest study priority.
 - Vendor-contract end<start question: right (4.4).
 - detected_pattern granularity: context guess, right (4.4, named in guide). Specific construct → dismissal analysis per rule.
 - Batch SLA math (30h SLA − 24h window = submit every 6h): right, confident (4.5).
