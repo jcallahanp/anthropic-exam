@@ -1,12 +1,20 @@
 # Plan
 
-Workflow (user choice): the user takes quizzes on an external practice site, then pastes misses here. Claude builds a visual gap review. No Q&A in chat.
+Goal: pass Claude Certified Architect – Foundations in ~4-5 hours of study. User is tired, has ADHD, learns by seeing + teaching, pattern-matches fast. Big text, one idea per screen, show the WHY.
+
+Workflow:
+1. LEARN: user reads `artifact/patterns.html` (25 patterns + 36 tools).
+2. TEACH BACK: user pastes "Teach-back, <name>: <prompt> My answer: …" in chat. Claude grades on 3 points (mechanism, causal why, misconception), quotes what is missing, gives one fix, allows a retry. Log weak items in PROGRESS.md.
+3. DRILL: `artifact/cram-station.html` (62 cards, 66 MCQs incl. official 12).
+4. PRACTICE EXAM: Claude writes a fresh mock (single-answer, scenario style, weighted D1 27 / D2 18 / D3 20 / D4 20 / D5 15, extra weight on weak items). Grade, then drill the misses.
+5. Repeat 2-4 until confident.
 
 | # | Task | Check | Status |
 |---|---|---|---|
-| 1 | Learning-science research | File exists; each rule cites a finding | done |
-| 2 | Official exam guide facts | Domains + weights from official PDF | done |
-| 3 | Miss analysis, quiz 1 | Every miss has cause + pattern label | done |
-| 4 | Verify expected answers vs docs | Independent agent table with doc links | done |
-| 5 | Gap-review artifact (map + drill) | Published; covers all 9 misses; drill asks before it shows answers | done |
-| 6 | Next quiz: re-run tasks 3-5 | Score on weak domains goes up | todo |
+| 1 | Learning-science research | Rules cite findings | done |
+| 2 | Official exam guide facts (Drive v0.2) | Domains, samples, scope lists captured | done |
+| 3 | Quiz 1 miss analysis | Every miss labeled; answers verified vs docs | done |
+| 4 | Cram station (cards + drill) | Independent grader: 137 items, 1 fix applied | done |
+| 5 | Visual patterns + tools page | Independent grader: 3 fixes + 3 screens added | done |
+| 6 | Teach-backs on all patterns/tools | Each graded pass; weak list in PROGRESS.md | todo |
+| 7 | Practice exam 2 (fresh) | Score; misses mapped to patterns | todo |

@@ -1,13 +1,23 @@
 # Progress
 
-- Quiz 1: 16/25 (64%). Misses: Q1, 5, 9, 10, 16, 17, 19, 22, 23. Analysis (verified): `research/miss-analysis-01.md`.
-- Official guide v0.2 from user's Google Drive (file id `16EIKI1oY7XnmdKkIg-fzW8r27Do9xMfE`), local copy in `source/` (gitignored). Notes: `research/exam-guide.md`.
-- Finding: 6 in-scope misses = 3 ideas (mechanism over prompt, least privilege, tool_choice). Q1, Q5, Q16 are not in the guide → low priority.
-- MAIN PAGE: `artifact/cram-station.html` (Plan, Weak spots, 9 rules, 62 cards, 66 MCQs, mastery in localStorage). Published privately.
-- Older pages: `artifact/blind-spots.html`, `artifact/d1-d2-field-guide.html`.
-- Anki deck: `anki/cards.tsv` → `anki/deck.apkg` + `anki/paste.txt` via `python3 anki/build.py`.
-- Cram bank graded by independent agent vs guide v0.2: 137 items, 1 fix applied (q22 trap note). Note: guide says skill allowed-tools "restricts"; current docs say "pre-approves". Exam keys to the guide.
-- LEARN PAGE (start here): `artifact/patterns.html`. Patterns deck (25 screens) + Tools deck (36 tools + index). Flow: see → teach back in chat → drill (cram station) → new practice exam.
-- Teach-back grading happens in chat: user pastes "Teach-back, <name>: … My answer: …". Grade on mechanism, causal why, misconception; quote what is missing; one fix; allow retry.
-- Research: `research/visual-teachback.md` (design rules for the pages).
-- patterns.html fact-checked by independent agent vs guide: 3 fixes applied (P12, P19, P20) + 3 screens added (P23 decomposition, P24 iterative refinement, P25 crash-recovery manifests). Now 25 patterns + 36 tools.
+## Published pages (update with Artifact `url` = link below; source file = path)
+- LEARN (start here): `artifact/patterns.html` → https://claude.ai/artifact/Q2qBxYYfjwEr9hD6gHkVjx
+- DRILL: `artifact/cram-station.html` → https://claude.ai/artifact/MfxEtU3WyoXCDkA46HrfZt
+- Older: `artifact/blind-spots.html` → https://claude.ai/artifact/ViK8SiURGoiFjWSi3Y9oEa ; `artifact/d1-d2-field-guide.html` → https://claude.ai/artifact/3keyF35TbDuZWYHgRxQq3S
+- Anki: `anki/cards.tsv` → `anki/deck.apkg` + `anki/paste.txt` via `python3 anki/build.py` (needs `pip install genanki`).
+
+## Sources
+- Official guide v0.2 (user's Google Drive, file id `16EIKI1oY7XnmdKkIg-fzW8r27Do9xMfE`). Local copy `source/` is gitignored: re-download with the Google Drive connector, extract with pypdf.
+- Notes: `research/exam-guide.md`. Answer keys live in the two HTML pages (graded vs the guide).
+- Exam keys to the guide where the product differs: skill `allowed-tools` = "restricts"; subagent spawn tool = "Task".
+
+## Results
+- Quiz 1: 16/25 (64%). Misses Q1, 5, 9, 10, 16, 17, 19, 22, 23 (`research/miss-analysis-01.md`).
+- 6 in-scope misses = 3 ideas: mechanism over prompt, least privilege, tool_choice. Q1, Q5, Q16 are outside the guide → low priority.
+- Priority: D1 > D2 > D4 > D3 > D5.
+
+## Teach-back log
+(none yet; add: pattern/tool | pass/retry | what was missing)
+
+## Next step
+User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
