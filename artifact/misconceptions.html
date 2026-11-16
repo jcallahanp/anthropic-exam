@@ -231,7 +231,26 @@ Use React Testing Library. No snapshots.</pre><small>Loads ONLY when Claude work
       "<b>A rule file with no paths:</b> loads every session, like CLAUDE.md."],
  ok:"Right: keep CLAUDE.md short and general. Put specific detail in separate files.",
  trap:"“A CLAUDE.md in each of 40 test folders.” WRONG. One .claude/rules/ file with <code>**/*.test.tsx</code>.",
- retry:["What does an @import line do?","What decides when a .claude/rules/ file loads?","Tests live in 40 folders. Which one do you use?"]}
+ retry:["What does an @import line do?","What decides when a .claude/rules/ file loads?","Tests live in 40 folders. Which one do you use?"]},
+{n:".claude/rules/ + paths (tests)",
+ you:"A folder CLAUDE.md loads in any folder and wastes context. What does “file type” mean?",
+ wrong:"A folder CLAUDE.md loads everywhere. The win is only saved context.",
+ rule:'Tests are SCATTERED. A folder file cannot follow them. A glob can.',
+ pic:`<div class="b"><span class="sec">The repo: tests live next to their code</span><pre class="code">src/cart/Cart.tsx       src/cart/Cart.test.tsx
+src/user/Login.tsx      src/user/Login.test.tsx
+src/pay/Checkout.tsx    src/pay/Checkout.test.tsx
+... 40 folders like this</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">Folder CLAUDE.md</span><small>Loads only for ITS folder. You need 40 copies. And it also loads for Cart.tsx, which is not a test.</small></div>
+<div class="b g"><span class="big">ONE glob rule</span><small><code>paths: ["**/*.test.tsx"]</code> matches every test file in every folder. Nothing else.</small></div>
+</div>`,
+ gap:["<b>A folder CLAUDE.md does NOT load everywhere.</b> It loads only when Claude works on files in that folder.",
+      "<b>“File type” = a file-name pattern.</b> For example *.test.tsx (tests), *.sql (queries), *.tf (Terraform).",
+      "<b>** means “any folder, any depth”.</b> So **/*.test.tsx finds tests wherever they are.",
+      "<b>The main win is reach,</b> not only context: one file covers scattered files that folders cannot."],
+ ok:"Right: a glob rule loads only when relevant, so it saves context.",
+ trap:"“Put a CLAUDE.md in each test folder” or “make it a skill”. WRONG. A skill needs someone to call it. Use the glob rule.",
+ retry:["Where do the test files live?","Why can't a folder CLAUDE.md cover them?","What does **/*.test.tsx match?"]}
 ];
 
 let i=0;
