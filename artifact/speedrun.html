@@ -140,6 +140,14 @@ Resolvers must batch with DataLoader.   ← rule text</pre>
  c:["300 lines","context climbing","relevant only to one part","path-specific"],
  x:"“Split CLAUDE.md with @imports” to cut session-start context. Tidier, same load.",
  a:["CLAUDE.md is 300 lines of GraphQL, migration and CSS rules. Start-up context is high. Fix?","Move each topic to .claude/rules/<topic>.md with a paths: glob."]},
+{d:"d3",tag:"miss",t:"Subfolders inside .claude/rules/",
+ r:"Yes, they load: every .md is found recursively. But the FOLDER name scopes nothing. Only paths: does.",
+ v:`<pre class="code">.claude/rules/
+├─ frontend/react.md   no paths:  → loads EVERY session ✗ not frontend-only
+└─ backend/api.md      paths: ["src/api/**/*"] → loads only for src/api files ✓</pre>`,
+ c:["subdirectories","organize","still discover","maintainability"],
+ x:"“Rules must sit flat in .claude/rules/” (false) or “frontend/ makes it apply only to frontend files” (false: use paths:).",
+ a:["backend/db.md has no paths: frontmatter. When does it load?","Every session, at launch, like CLAUDE.md. The folder name does not scope it."]},
 {d:"d3",tag:"miss",t:"Skill frontmatter keys",
  r:"context: fork = run isolated, return summary. allowed-tools = limit tools. argument-hint = prompt for input.",
  v:`<pre class="code">---

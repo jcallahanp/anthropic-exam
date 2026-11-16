@@ -93,6 +93,8 @@
 - Small lookup → Grep directly, no subagent (5.4): right but felt wrong. Proportionality: subagents only for big noisy exploration.
 - Subagent error payload (5.3): right, reasoning off (context size). Correct: failure type, attempted, partial results, alternatives → recovery decision.
 
+- MISSED (3.3 family, 6th): rules in .claude/rules/ subfolders ARE discovered recursively (docs: memory page). Folder name does not scope; only paths: does. Card added to speed run.
+
 ## Real-exam reports (research/exam-reports.md, spot-checked by main session)
 - Format matches guide (60 items, 120 min, 4 of 6 scenarios, 720). Guide v1.0 (Jul 2026) allows multiple-response items: read "select N". Same task statements as our v0.2.
 - Real exam harder than practice (typical: 950+ practice → 840-890 real). Do not trust practice scores.
