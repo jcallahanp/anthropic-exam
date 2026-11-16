@@ -408,7 +408,7 @@ const T=[
  h:"Prompts people for the <b>required parameter</b> instead of the skill running with missing input.",
  u:["People run /migrate without a table name.","Add argument-hint."],
  t:"<b>Trap:</b> confusing it with allowed-tools.",
- q:"Match each frontmatter key (context, allowed-tools, argument-hint) to its problem."},
+ q:"Frontmatter = the settings block between the two --- lines at the top of SKILL.md. A key = one setting name before the colon. Match each key (context, allowed-tools, argument-hint) to its problem."},
 {n:"Plan mode",k:"Claude Code · D3",w:"Claude explores <b>read-only</b> and proposes a plan before changing anything.",
  pic:`<div class="flow"><div class="b a">Plan mode<small>read, explore, design</small></div><span class="ar">→ approve →</span><div class="b g">Direct execution<small>implement the plan</small></div></div>`,
  h:"Read-only exploration is <b>safe</b> and finds dependencies before you commit to an approach. Rework on 45 files costs far more than planning.",

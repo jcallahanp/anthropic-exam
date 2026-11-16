@@ -45,6 +45,7 @@
 - Skills (SKILL.md) | pass | Strong analogy: CLAUDE.md = always-on house rules; skill = recipe loaded on demand. Not mentioned: context: fork, allowed-tools.
 - context: fork | retry (on misconceptions page) | Problem right (keep noise out of main). Mechanism wrong: thought it is an interactive side chat. Missing: SKILL.md frontmatter; skill runs in subagent; summary returns. Mixed up with fork_session / git fork.
 - allowed-tools | retry (on misconceptions page) | Least privilege right. Did not know "Pattern 1" = mechanism over prompt; missed config-vs-prompt link.
+- SKILL.md frontmatter keys | pass | context/allowed-tools/argument-hint matched to problems. Did not know the word "frontmatter"; definition added to patterns page.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
