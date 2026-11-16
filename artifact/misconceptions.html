@@ -170,7 +170,28 @@ const M=[
       "<b>Your schema example was a correct resource.</b> Your framing was wrong: it is not a clearer tool description. It is a catalog Claude reads before it acts."],
  ok:"Right: exposing a DB schema up front helps Claude pick the right call. That is a real resource use.",
  trap:"“Paste the whole catalog into the system prompt.” WRONG. Expose it as an MCP resource.",
- retry:["In the library, what is the resource and what is the tool?","Which one can change things?","Which bug does a resource fix?"]}
+ retry:["In the library, what is the resource and what is the tool?","Which one can change things?","Which bug does a resource fix?"]},
+{n:".mcp.json",
+ you:"The token function blurs the token out and puts a placeholder in. Which part shares it with everyone?",
+ wrong:"Something hides or blurs a real token in the file.",
+ rule:'The file holds only <code>${GITHUB_TOKEN}</code>. Each person\'s OWN machine fills it in.',
+ pic:`<div class="b a"><span class="sec">1. .mcp.json at the repo root, committed to git (SHARED)</span><pre class="code">{ "mcpServers": {
+    "github": {
+      "command": "github-mcp",
+      "env": { "GITHUB_TOKEN": "\${GITHUB_TOKEN}" } } } }</pre></div>
+<div class="flow"><span class="ar">↓</span><div class="b">git clone<small>every teammate gets the SAME file, with the placeholder only</small></div><span class="ar">↓</span></div>
+<div class="cols">
+<div class="b g"><span class="big">Ana's laptop</span><small>Her shell has GITHUB_TOKEN=ana_abc. Claude Code puts ana_abc in at startup.</small></div>
+<div class="b g"><span class="big">Ben's laptop</span><small>His shell has GITHUB_TOKEN=ben_xyz. Claude Code puts ben_xyz in at startup.</small></div>
+<div class="b r"><span class="big">Git</span><small>Never sees ana_abc or ben_xyz. The real token was never in the file.</small></div>
+</div>`,
+ gap:["<b>What shares it:</b> .mcp.json is a project-scope file. It is committed, so every clone gets the server config.",
+      "<b>What keeps it private:</b> the file has only the TEXT <code>${GITHUB_TOKEN}</code>. Nothing is blurred. The secret was never written there.",
+      "<b>Who fills it in:</b> Claude Code, at startup, from each person's own environment variables.",
+      "<b>Personal-only server?</b> Put it in <code>~/.claude.json</code> (user scope). It is not in the repo."],
+ ok:"Right: the placeholder is why the token stays private. Your guess that .mcp.json shares it was correct.",
+ trap:"“Commit the token in .mcp.json and make the repo private.” WRONG. Use <code>${ENV}</code> expansion.",
+ retry:["Which file shares the server with the team, and why?","What text is in the file instead of the token?","Where does the real token come from?"]}
 ];
 
 let i=0;

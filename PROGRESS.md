@@ -35,6 +35,7 @@
 - MCP tool | pass | Vague description loses to a richer one. Missing: fix stated explicitly (description: what it does, inputs, returns, when to use vs similar tool); built-ins like Grep also compete.
 - MCP resource | retry (on misconceptions page) | Framed resource as a clearer tool description. Missing: resource = read-only content/catalog; tool = action; fixes exploratory calls; no library analogy given.
 - isError + structured errors | pass | All 4 reactions right. Needed validation example (bad date format → fix input, retry). Not mentioned: empty result is NOT an error; isError separates failure from "found nothing".
+- .mcp.json | retry (on misconceptions page) | Thought a function blurs the token. Unsure which part shares. Missing: committed project file = shared; file holds only ${VAR} text; each machine's env fills it at startup.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
