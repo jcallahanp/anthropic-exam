@@ -614,7 +614,27 @@ Use Vitest. One assert per test. No network calls.</pre></div>
       "<b>Read globs left to right:</b> ** = any folders, * = any name, then the fixed ending."],
  ok:"Same answer as screen “rules + paths (tests)”. Learn the trigger words, then it is instant.",
  trap:"A CLAUDE.md per test folder, or a /test-conventions skill. Both fail “automatic + no duplicates”.",
- retry:["What are the 4 trigger words?","Write the rule file, frontmatter included.","Why not a skill?"]}
+ retry:["What are the 4 trigger words?","Write the rule file, frontmatter included.","Why not a skill?"]},
+{n:"Bash(…*) permission wildcard (lucky guess)",
+ you:"Pure lucky guess.",
+ wrong:"Unknown: how a Bash permission rule matches commands.",
+ rule:'<code>Bash(npm run migrate*)</code> = any command that STARTS WITH “npm run migrate”.',
+ pic:`<div class="b"><span class="sec">Rule: --allowedTools "Bash(npm run migrate*)"</span><pre class="code">npm run migrate             ✓ allowed (intended)
+npm run migrate-cleanup     ✓ allowed (NOT intended!)
+npm run migrate_all_prod    ✓ allowed (NOT intended!)
+npm run build               ✗ not allowed</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">migrate*</span><small>No space before *. A prefix match. Catches every command name that begins with “migrate”.</small></div>
+<div class="b g"><span class="big">Bash(npm run migrate)</span><small>Exact command only.</small></div>
+<div class="b g"><span class="big">migrate *</span><small>Space before *. Allows arguments to migrate (migrate --dry-run), not migrate-cleanup.</small></div>
+</div>`,
+ gap:["<b>allowedTools</b> pre-approves tools so the run does not stop to ask. Bash(...) narrows it to matching commands.",
+      "<b>The * is a wildcard on the command text.</b> No space before it = “starts with”.",
+      "<b>Least privilege:</b> write the narrowest pattern that still works. Exact command if no arguments are needed.",
+      "<b>Same family:</b> hook matcher regex (screen on mcp__billing__). Wide patterns catch things you did not mean."],
+ ok:"Right answer. The cause is the trailing wildcard, not a bug in -p.",
+ trap:"Blaming -p, blaming npm scripts, or “add ‘only run migrate’ to the prompt”. The pattern is too wide.",
+ retry:["What does migrate* match?","Write a rule that allows only the exact migrate command.","What does a space before * change?"]}
 ];
 
 let i=0;
