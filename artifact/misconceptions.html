@@ -677,7 +677,32 @@ paths: ["terraform/**/*"]
       "<b>The key is spelled paths:</b> inside the --- frontmatter, as a list in [ ]."],
  ok:"Same skill as the test-files questions. One decoder fixes all three misses.",
  trap:"terraform/* (one level) or **/*.tf (everywhere). Check: does it start at the right folder AND reach any depth?",
- retry:["What does * match? What does **?","Write the glob for “anything under docs/, any depth”.","Write the glob for “every .sql file anywhere”."]}
+ retry:["What does * match? What does **?","Write the glob for “anything under docs/, any depth”.","Write the glob for “every .sql file anywhere”."]},
+{n:"Folder CLAUDE.md vs glob rule: WHICH ONE? (missed)",
+ you:"Missed the packages/api question.",
+ wrong:"Not sure when a folder CLAUDE.md wins over a .claude/rules/ glob.",
+ rule:'Rules bound to ONE FOLDER <span class="arrow">→</span> CLAUDE.md in that folder. Rules for a FILE TYPE spread everywhere <span class="arrow">→</span> glob rule.',
+ pic:`<div class="b"><span class="sec">The monorepo</span><pre class="code">CLAUDE.md                     ← shared by all packages
+packages/
+├─ api/
+│  ├─ CLAUDE.md               ← ANSWER: api DB + testing conventions
+│  └─ src/db/users.ts
+├─ web/
+└─ shared/</pre></div>
+<div class="flow"><div class="b">Claude edits packages/api/src/db/users.ts</div><span class="ar">→</span><div class="b g">Loads root CLAUDE.md + packages/api/CLAUDE.md</div></div>
+<div class="flow"><div class="b">Claude edits packages/web/App.tsx</div><span class="ar">→</span><div class="b r">api CLAUDE.md does NOT load</div></div>
+<div class="cols">
+<div class="b g"><span class="big">ONE folder (this question)</span><small>“Only when working in packages/api”. The package owns its file. Folder CLAUDE.md.</small></div>
+<div class="b a"><span class="big">SCATTERED file type</span><small>“*.test.ts across src/, lib/, e2e/”. Folders cannot follow it. Glob rule.</small></div>
+<div class="b r"><span class="big">Root CLAUDE.md</span><small>Loads for web and shared too. The question forbids it.</small></div>
+</div>`,
+ gap:["<b>Ask: is the scope a FOLDER or a FILE TYPE?</b> Folder → folder CLAUDE.md. File type spread out → glob rule.",
+      "<b>A folder CLAUDE.md loads when Claude works on files in that folder.</b> That is “actively working in packages/api”.",
+      "<b>A glob rule with paths: [\"packages/api/**/*\"] would also work,</b> but a folder CLAUDE.md is the simple, native fit, owned by the package.",
+      "<b>Do not overcorrect:</b> glob rules won the test-file questions because the tests were SCATTERED. Here nothing is scattered."],
+ ok:"Both tools load on demand. The question's shape (one folder vs scattered type) picks the tool.",
+ trap:"Root CLAUDE.md (loads everywhere) or ~/.claude/CLAUDE.md (only the maintainer's machine).",
+ retry:["Folder or file type: which tool for each?","When does packages/api/CLAUDE.md load?","Why not the root CLAUDE.md?"]}
 ];
 
 let i=0;
