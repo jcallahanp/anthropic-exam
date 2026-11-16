@@ -2,6 +2,7 @@
 
 ## Published pages (update with Artifact `url` = link below; source file = path)
 - LEARN (start here): `artifact/patterns.html` → https://claude.ai/artifact/Q2qBxYYfjwEr9hD6gHkVjx
+- TRIAGE (5-min read: high vs low yield + 6 scenarios): `artifact/triage.html` → https://claude.ai/artifact/UaqTgja4pG2AF8daYFTnJb
 - TEN-MINUTE SHEET (final scan before exam; cue → pick → decoy rows): `artifact/ten-minute.html` → https://claude.ai/artifact/314NMcfo1XpawuS6D1GW7q
 - SPEED RUN (fast lookup during practice tests, one tab per domain): `artifact/speedrun.html` → https://claude.ai/artifact/6JeTiUPbvF9MZYwVzRgw6p
 - MISCONCEPTIONS (round 2, thorough backup): `artifact/misconceptions.html` → https://claude.ai/artifact/MvD3BKyQ82zYiy9PPxzwn6
@@ -97,6 +98,8 @@
 - MISSED (3.3 family, 6th): rules in .claude/rules/ subfolders ARE discovered recursively (docs: memory page). Folder name does not scope; only paths: does. Card added to speed run.
 
 - MISSED (1.6): fixed + independent steps → parallel calls; orchestrator-workers only when steps vary per input. Card added to speed run D1.
+
+- Niche (LOW): `claude -p --output-format json` already returns total_cost_usd + per-model cost breakdown next to .result (docs: headless page). Not in guide.
 
 ## Real-exam reports (research/exam-reports.md, spot-checked by main session)
 - Format matches guide (60 items, 120 min, 4 of 6 scenarios, 720). Guide v1.0 (Jul 2026) allows multiple-response items: read "select N". Same task statements as our v0.2.

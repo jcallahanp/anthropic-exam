@@ -1,0 +1,133 @@
+<title>Exam Triage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: three stacked sections, scanned top to bottom in 5 minutes: HIGH (study), LOW (one line, move on), the 6 scenarios. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#141b26; --muted:#4f5a6b; --line:#d5dbe4;
+  --accent:#0d6c78; --accent-soft:#dcf0f2; --good:#17773a; --good-soft:#e3f4e8; --bad:#b3332a; --bad-soft:#fbe6e3; --low:#6b6f78; --low-soft:#eceef2;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#132b1c; --bad:#f2857a; --bad-soft:#371c19; --low:#a3a8b2; --low-soft:#232a35; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#18202b; --ink:#eef2f7; --muted:#a8b2c1; --line:#2d3846;
+  --accent:#55c6d2; --accent-soft:#15343a; --good:#63d48b; --good-soft:#132b1c; --bad:#f2857a; --bad-soft:#371c19; --low:#a3a8b2; --low-soft:#232a35; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:18px/1.4 var(--body)}
+p{margin:0}
+code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:0 4px;border-radius:5px;overflow-wrap:anywhere}
+.wrap{max-width:1100px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:26px}
+h1{font:700 clamp(1.6rem,4.5vw,2.3rem)/1.1 var(--display);margin:0;text-wrap:balance}
+.sub{color:var(--muted)}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav a{font:700 .9rem var(--display);color:var(--ink);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 12px}
+nav a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+section{display:flex;flex-direction:column;gap:10px;scroll-margin-top:10px}
+h2{font:700 clamp(1.3rem,3.4vw,1.7rem)/1.15 var(--display);margin:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{font:700 .75rem var(--body);letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:3px 10px}
+.pill.hi{background:var(--bad);color:var(--bg)}.pill.lo{background:var(--low-soft);color:var(--low)}.pill.sc{background:var(--accent);color:var(--bg)}
+.note{font-size:.95rem;color:var(--muted)}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:8px}
+.it{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.it.hi{border-left:8px solid var(--bad)}
+.it.lo{background:var(--low-soft);border-color:var(--low-soft);color:var(--ink)}
+.it b{font-family:var(--display);font-size:1.02rem}
+.it span{font-size:.93rem}
+.traps{background:var(--bad-soft);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.traps b{font-family:var(--display);color:var(--bad)}
+.traps ul{margin:0;padding-left:1.2em;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:2px 16px;font-size:.95rem}
+.sc{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.sc h3{font:700 1.15rem/1.2 var(--display);margin:0}
+.sc .set{font-size:.95rem;color:var(--muted)}
+.doms{display:flex;gap:6px;flex-wrap:wrap}.doms span{font:700 .75rem var(--body);background:var(--accent-soft);border-radius:8px;padding:2px 8px}
+.sc ul{margin:0;padding-left:1.2em;font-size:.95rem;display:flex;flex-direction:column;gap:2px}
+.sc .trap{font-size:.92rem;background:var(--bad-soft);border-radius:10px;padding:6px 10px}
+.sc .trap b{color:var(--bad)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr));gap:12px}
+</style>
+
+<main class="wrap">
+  <header style="display:flex;flex-direction:column;gap:8px">
+    <h1>Where to spend your last minutes</h1>
+    <p class="sub">Red = test-takers say these show up a lot. Grey = you asked about these often, but they are rare or not in the guide: know one line and move on. Then the 6 scenarios: you get 4 of them.</p>
+    <nav><a href="#high">High yield</a><a href="#low">Low yield</a><a href="#scen">6 scenarios</a></nav>
+  </header>
+
+  <section id="high">
+    <h2>High yield <span class="pill hi">reported often by test-takers</span></h2>
+    <p class="note">From 20+ first-hand reports. D3 surprises people most, even daily Claude Code users.</p>
+    <div class="list" id="hi"></div>
+    <div class="traps"><b>Wrong answers test-takers name again and again</b><ul id="tr"></ul></div>
+  </section>
+
+  <section id="low">
+    <h2>Low yield <span class="pill lo">you asked a lot · rare or not in guide</span></h2>
+    <p class="note">Not in the guide's task statements, and no first-hand report names them. One line each, then move on.</p>
+    <div class="list" id="lo"></div>
+  </section>
+
+  <section id="scen">
+    <h2>The 6 scenarios <span class="pill sc">4 picked at random · 15 questions each</span></h2>
+    <p class="note">Each scenario frames its questions. Recognize the setting, then expect these question types.</p>
+    <div class="grid2" id="sc"></div>
+  </section>
+</main>
+
+<script>
+const HI=[
+["-p in CI","No -p = waits for typing, CI hangs. -p = run once, print, exit."],
+["CLI flags","-p · --output-format json · --json-schema · --resume · -c · --allowedTools. Fakes: --batch, CLAUDE_HEADLESS."],
+["CLAUDE.md hierarchy","~ = only you. ./ = team + CI. Folder file = that folder. rules + paths = matching files."],
+["Hook vs prompt vs permission","Must ALWAYS → hook or config. Prompt only asks. allowedTools / allowed-tools = permission."],
+["MCP scopes","Team → .mcp.json with ${TOKEN}. Personal → ~/.claude.json. Catalog → resource."],
+["The tool loop","tool_use → your code runs it, appends tool_use + tool_result, resends. end_turn → stop."],
+["tool_choice","auto may skip tools · any = must call one · tool = this one · none = no tools."],
+["Nullable vs required","Field may be absent → nullable. Required with no exit → invented values."],
+["Tool descriptions","Purpose, inputs, examples, edge cases, “use X instead when”. The first fix for wrong tool picks."],
+["Retry or surface?","Format error → retry with the exact error. Data absent → null, no retry. Transient → retry; business/permission → don't."],
+["Subagents + context","Start empty: pass facts in the prompt. Noisy work → subagent / context: fork / Explore."],
+["Resume vs fork","Resume = one line continues. fork_session = independent branches. Stale files → fresh + summary."],
+["Plan vs direct","Big, many files, several designs → plan mode. Small clear fix → just do it."],
+["Grep vs Glob vs Read","Grep = inside files. Glob = file names. Read = open what search found. Bash = run."],
+["Escalation","Human asked · policy gap · no progress. Not sentiment, not self-rated confidence."],
+["Batch API","Only when no one waits. 50% off, ≤ 24 h, custom_id, no mid-task tools."],
+["Context management","Case-facts block for exact numbers. Per-file passes + integration pass for big reviews."]];
+const TR=["Add it to the prompt (when it must be guaranteed)","Bigger model, more agents, more tools, bigger context","Fine-tuning","“Tell it to be more careful”","Self-reported confidence","An iteration cap as the main stop","Escalate on sentiment","A flag or env var that does not exist"];
+const LO=[
+["Agent teams","Agents message each other + shared tasks + long session. Not in the guide."],
+["CLAUDE.local.md","Personal per-repo file, add to .gitignore. Not in the guide."],
+["Hook matcher regex","mcp__srv__(a|b) = these tools; mcp__srv__.* = all. Hooks are in the guide; syntax is not."],
+["Bash(cmd*) wildcard","Trailing * = prefix match. Exact: Bash(npm test)."],
+["custom_id format","Unique, 1–64 chars, letters, digits, - _. Guide only says “use it to match results”."],
+["XML tags","Labeled boxes to separate examples, request, criteria. Not in guide; practice site asks."],
+["AgentDefinition model","Per-subagent model; omitted = inherit. Guide lists description, prompt, tools."],
+["Rules in subfolders","Found recursively; folder name scopes nothing; paths: does."],
+["JSON output cost fields","claude -p --output-format json already returns total_cost_usd and a per-model cost breakdown next to result. No new flag."],
+["Subagent API errors","Partial output + a cut-off note. Not in the guide."],
+["Grep multiline","Phrase split over lines → multiline pattern, or Grep a fragment then Read."]];
+const SC=[
+["1. Customer Support Resolution Agent","Agent SDK agent for returns, billing disputes, account issues. MCP tools: get_customer, lookup_order, process_refund, escalate_to_human. Goal: 80%+ first-contact resolution.",["D1","D2","D5"],
+ ["Verify identity before a refund → hook / prerequisite gate, not a prompt","Refund over a limit → PreToolUse deny + route to human","When to escalate: asked for human, policy gap, no progress","Two customers match → ask for another identifier","Structured errors: transient vs business vs permission","Long chat: keep amounts and IDs in a case-facts block","Handoff summary: customer ID, root cause, amount, recommended action"],
+ "Escalating on angry sentiment, or trusting the model's own confidence."],
+["2. Code Generation with Claude Code","Team uses Claude Code for generation, refactoring, debugging, docs. Custom slash commands, CLAUDE.md, plan mode vs direct.",["D3","D5"],
+ ["Which CLAUDE.md level; team vs personal","rules + paths globs; folder CLAUDE.md","Team slash command in .claude/commands/","Skill vs CLAUDE.md; context: fork, allowed-tools","Plan mode for big multi-file change; direct for small fix","Tests first; interacting issues in one message"],
+ "Team rules in ~/.claude/CLAUDE.md; a CLAUDE.md in every folder."],
+["3. Multi-Agent Research System","Coordinator delegates to subagents: web search, document analysis, synthesis, report writing. Produces cited reports.",["D1","D2","D5"],
+ ["Task in allowedTools; AgentDefinition descriptions","Pass context in the Task prompt (subagents start empty)","Parallel: several Task calls in one reply","Error back to coordinator: type, attempted, partial, alternatives","Keep claim → source mappings through synthesis","Conflicting stats: keep both, annotate sources","fork_session to compare two approaches"],
+ "Assuming subagents share memory; dropping sources in summaries."],
+["4. Developer Productivity with Claude","Agent SDK tool that explores unfamiliar codebases, legacy systems, boilerplate, repetitive tasks. Built-in tools + MCP servers.",["D2","D3","D1"],
+ ["Grep vs Glob vs Read vs Edit vs Write vs Bash","Grep entry point → Read → follow imports","Edit fails (not unique) → Read + Write","Explore subagent for big discovery; Grep for a small lookup","MCP tool ignored → better description","Team MCP in .mcp.json; personal in ~/.claude.json; catalog as resource"],
+ "Reading every file first; using Bash cat/ls instead of Read/Glob."],
+["5. Claude Code for CI/CD","Automated code reviews, test generation, PR feedback. Actionable comments, few false positives.",["D3","D4"],
+ ["-p so the job does not hang","--output-format json + --json-schema → inline PR comments","CLAUDE.md gives CI the project standards","Independent instance reviews, not the author session","Re-run: include prior findings, report only new ones","Categorical criteria, not “only if very sure”","Few-shot examples of real issue vs acceptable code","Batches for overnight reports, never the pre-merge check"],
+ "CLAUDE_HEADLESS / --batch; a confidence threshold to cut false positives."],
+["6. Structured Data Extraction","Extract from unstructured documents, validate with JSON schemas, high accuracy, handle edge cases, feed downstream systems.",["D4","D5"],
+ ["Tool use + JSON schema for guaranteed shape","tool_choice any (unknown type) or forced tool (must run first)","Nullable for absent fields; enum + \"other\" + detail","Validate in code; retry with the exact error; no retry if data absent","Few-shot examples for varied layouts","Batch with custom_id; resubmit only failures","Human review: stratified sampling, field-level calibrated confidence; 97% overall can hide a bad field"],
+ "Required fields with no exit; trusting overall accuracy."]];
+document.getElementById("hi").innerHTML=HI.map(([t,d])=>`<div class="it hi"><b>${t}</b><span>${d}</span></div>`).join("");
+document.getElementById("tr").innerHTML=TR.map(t=>`<li>${t}</li>`).join("");
+document.getElementById("lo").innerHTML=LO.map(([t,d])=>`<div class="it lo"><b>${t}</b><span>${d}</span></div>`).join("");
+document.getElementById("sc").innerHTML=SC.map(([t,set,doms,qs,trap])=>`<div class="sc"><h3>${t}</h3><p class="set">${set}</p><div class="doms">${doms.map(d=>`<span>${d}</span>`).join("")}</div><ul>${qs.map(q=>`<li>${q}</li>`).join("")}</ul><p class="trap"><b>Trap:</b> ${trap}</p></div>`).join("");
+</script>
