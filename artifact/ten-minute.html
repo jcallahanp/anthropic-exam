@@ -106,7 +106,7 @@ modules/old.tf               terraform/*  ✗   terraform/**/*  ✗   **/*.tf �
 [`<q>map a 200-file flow</q>, <q>verbose discovery</q>`,"Explore subagent","Read-only subagent Claude starts itself. Reads many files, returns a summary. You do not chat with it.",[["do it in the main session","Noise fills the main context."]]]]],
 
 ["hooks","Hooks","2 misses · D1",
-`<b>Matcher</b> = WHICH TOOL (name only). <b>Hook code</b> = WHICH CALL (reads <code>tool_input</code>). <b>Must always</b> = hook, not prompt.`,[
+`<b>Matcher</b> = WHICH TOOL (name only). <b>Hook code</b> = WHICH CALL (reads <code>tool_input</code>). <b>Must always</b> = hook, not prompt.<br><b>Callback</b> = that hook code: a function YOU write and hand to the SDK. The SDK “calls it back” each time the matcher fires, passing <code>input_data</code> (with <code>tool_input</code> = the arguments). Your function returns allow or deny.`,[
 [`<q>must always</q>, <q>block</q>, <q>guarantee</q> before a tool runs`,"PreToolUse hook","Your code runs BEFORE the tool. deny = call blocked, and the reason goes to Claude so it can adapt.",[["rule in the system prompt","Usually obeyed. Not guaranteed."]]],
 [`<q>block refunds over $500 for category X</q> (field inside the arguments)`,"Check in the hook code: read tool_input.amount and tool_input.category","The matcher only picks the tool. The code decides about this specific call.",[["put category in the matcher","The matcher never sees arguments."],["PostToolUse","Runs after. The refund already happened."]]],
 [`<q>3 date formats from 3 tools</q>, <q>trim noisy output</q>`,"PostToolUse hook","Your code runs AFTER the tool, BEFORE Claude reads the result. Normalizes or trims it.",[["PreToolUse","Runs before; there is no result yet."]]]]],
