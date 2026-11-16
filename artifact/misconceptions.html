@@ -414,7 +414,58 @@ mcp__billing__get_invoice           ← read-only</pre></div>
       "<b>Analogy:</b> subagent = a courier you send on one errand. Team = coworkers on a shared project board."],
  ok:"Right answer. Now you know the line: one-shot + summary = subagent; talk + shared tasks + long = team.",
  trap:"“Use more subagents with a better coordinator prompt.” WRONG when they must talk to each other.",
- retry:["What can teammates do that subagents cannot?","Name 2 trigger words for each.","Give the courier vs coworkers analogy."]}
+ retry:["What can teammates do that subagents cannot?","Name 2 trigger words for each.","Give the courier vs coworkers analogy."]},
+{n:"AgentDefinition fields (right, but unfamiliar)",
+ you:"Got it right, but I'm not familiar with these fields.",
+ wrong:"Unfamiliar: the fields inside an AgentDefinition, especially model.",
+ rule:'Each AgentDefinition can set its OWN model. The coordinator keeps its model.',
+ pic:`<div class="b a"><span class="sec">The coordinator builds this in code</span><pre class="code">agents = {
+  "security-reviewer-strict": {
+    "description": "Strict security review of auth and payment code",
+    "prompt":      "You are a strict security reviewer...",
+    "tools":       ["Read", "Grep", "Glob"],
+    "model":       "opus"        ← stronger model, ONLY for this subagent
+  },
+  "security-reviewer-routine": {
+    ...same...,
+    "model":       "sonnet"      ← cheaper for routine reviews
+  }
+}</pre></div>
+<div class="cols">
+<div class="b"><span class="big">description</span><small>WHEN the coordinator picks it</small></div>
+<div class="b"><span class="big">prompt</span><small>its role and rules</small></div>
+<div class="b"><span class="big">tools</span><small>least privilege</small></div>
+<div class="b g"><span class="big">model</span><small>which model THIS subagent runs on. Left out = same as the parent (inherit).</small></div>
+</div>
+<div class="flow"><div class="b">Coordinator<small>its own model, unchanged</small></div><span class="ar">→ Task →</span><div class="b g">strict reviewer<small>runs on opus</small></div></div>`,
+ gap:["<b>4 fields to know:</b> description, prompt, tools, model.",
+      "<b>model is per subagent.</b> Setting it changes only that subagent, not the coordinator.",
+      "<b>No model set</b> = the subagent inherits the parent's model.",
+      "<b>“Dynamically builds”</b> = your code writes this object at run time, so it can choose the model per variant."],
+ ok:"Right answer. The pattern: the change goes on the narrowest thing that needs it (one AgentDefinition), not the whole system.",
+ trap:"“Change the coordinator's / session's model” (changes everything) or “tell the subagent to think harder in its prompt” (same model).",
+ retry:["Name the 4 AgentDefinition fields.","Where do you set a stronger model for one subagent only?","What happens if model is left out?"]},
+{n:"Hook matcher vs hook code (missed)",
+ you:"Did not know where the category check goes.",
+ wrong:"Missed: thought the matcher could check arguments.",
+ rule:'Matcher = WHICH TOOL (name only). Hook code = WHICH CALL (reads the arguments).',
+ pic:`<div class="flow"><div class="b">Claude calls refund_customer</div><span class="ar">→</span><div class="b a">Matcher “refund_customer”<small>checks the TOOL NAME only. Match → run the hook.</small></div><span class="ar">→</span><div class="b g">Hook code<small>reads tool_input</small></div></div>
+<div class="b g"><span class="sec">Inside the hook code (callback / script)</span><pre class="code">args = hook_input["tool_input"]
+if args["amount"] > 500 and args["category"] == "electronics":
+    return deny("Refunds over $500 in electronics need a human.")
+return allow</pre></div>
+<div class="cols">
+<div class="b r"><span class="big">Put category in the matcher</span><small>The matcher never sees arguments. It only sees “refund_customer”.</small></div>
+<div class="b r"><span class="big">Put it in the system prompt</span><small>Only asks. Must-always = mechanism (Pattern 1).</small></div>
+<div class="b r"><span class="big">PostToolUse</span><small>Too late. The refund already happened.</small></div>
+</div>`,
+ gap:["<b>Two layers:</b> the matcher filters by tool name. The hook body decides about this specific call.",
+      "<b>The hook receives tool_input:</b> the arguments Claude sent, for example amount and category.",
+      "<b>Conditional rules live in the code:</b> amount over $500 AND category X → deny with a reason.",
+      "<b>The deny reason goes to Claude</b> so it can adapt, for example escalate to a human."],
+ ok:"Linked: this is PreToolUse + Pattern 1. You passed both teach-backs; this adds the matcher vs body split.",
+ trap:"A clever matcher regex that includes “category”. WRONG. Matchers match tool names only.",
+ retry:["What does the matcher check?","Where does the hook read amount and category from?","Why not PostToolUse?"]}
 ];
 
 let i=0;
