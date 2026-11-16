@@ -56,6 +56,7 @@
 - Edit | pass | Not unique → cannot know which one. (Learned from Write vs Edit screen.)
 - Bash | pass | Most powerful/destructive → PreToolUse hooks guard it. Add: hook inspects the command string (e.g. deny rm -rf on prod); prefer Read/Glob over cat/ls.
 - Grep vs Glob | pass | Definitions right. Glob example muddled ("look for a function in a file"); Glob only lists files by name pattern, e.g. **/*.tf.
+- Glob | pass | Glob **/*.tf, then Grep "prod" in those.
 
 ## Next step
 User does teach-backs from the patterns page, then drill, then ask for practice exam 2.
