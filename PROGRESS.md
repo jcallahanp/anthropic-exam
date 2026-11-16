@@ -58,5 +58,8 @@
 - Grep vs Glob | pass | Definitions right. Glob example muddled ("look for a function in a file"); Glob only lists files by name pattern, e.g. **/*.tf.
 - Glob | pass | Glob **/*.tf, then Grep "prod" in those.
 
+## Low-confidence quiz items (right but guessed)
+- Hook matcher for MCP tools: mcp__billing__(a|b|c) regex, not mcp__billing__.* (on misconceptions page)
+
 ## Next step
 Tools deck: first pass DONE (36/36). Next: Patterns deck teach-backs (25), then round 2 on misconceptions page, then drill, then practice exam 2.

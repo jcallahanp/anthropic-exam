@@ -376,7 +376,28 @@ def load_cart():
       "<b>The count of changes is not the reason.</b> Default to Edit for small, safe changes. Write is the fallback."],
  ok:"Right: Read the file first, then write the whole new version. That is the fallback.",
  trap:"“Retry the same Edit” or “Write every time”. WRONG. Edit first; Read + Write only when the anchor is not unique.",
- retry:["What must be true of Edit's old text?","Give one case where Edit fails.","Why can Write not fail that way?"]}
+ retry:["What must be true of Edit's old text?","Give one case where Edit fails.","Why can Write not fail that way?"]},
+{n:"Hook matcher for MCP tools (guessed right)",
+ you:"Got it right on the practice quiz, but it was an educated guess.",
+ wrong:"Low confidence: MCP tool names and hook matchers.",
+ rule:'MCP tool name = <code>mcp__server__tool</code>. The matcher is a REGEX on that name.',
+ pic:`<div class="b"><span class="sec">Tools the billing server exposes</span><pre class="code">mcp__billing__issue_refund          ← moves money
+mcp__billing__void_authorization    ← moves money
+mcp__billing__apply_credit          ← moves money
+mcp__billing__get_invoice           ← read-only</pre></div>
+<div class="cols">
+<div class="b g"><span class="big">mcp__billing__(issue_refund|void_authorization|apply_credit)</span><small>ONE hook. Matches exactly the 3 money tools. get_invoice is NOT matched.</small></div>
+<div class="b r"><span class="big">mcp__billing__.*</span><small>Too wide. Also catches get_invoice and every future read-only tool.</small></div>
+<div class="b r"><span class="big">3 separate hooks</span><small>Works, but duplicates the same check 3 times. The question rules it out.</small></div>
+</div>
+<div class="flow"><div class="b">Regex parts</div><span class="ar">→</span><div class="b a"><code>( … | … )</code><small>a group: “any ONE of these”</small></div><div class="b a"><code>.*</code><small>“anything”, too broad here</small></div></div>`,
+ gap:["<b>Name format:</b> mcp__ + server name + __ + tool name. Two underscores each time.",
+      "<b>The matcher is a regex</b> tested against that full name.",
+      "<b>Group with |</b> picks a fixed list. <b>.*</b> picks everything on the server.",
+      "<b>Why a hook at all:</b> “must always verify identity before money moves” = Pattern 1, a mechanism."],
+ ok:"You picked the right answer. Now know WHY: exact list in a group, full prefix, no wildcard.",
+ trap:"<code>mcp__billing__.*</code>. It looks clean, but it also gates the read-only tools.",
+ retry:["How is an MCP tool named?","Write the matcher for the 3 money tools.","Why is mcp__billing__.* wrong here?"]}
 ];
 
 let i=0;
